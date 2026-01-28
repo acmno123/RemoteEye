@@ -2,36 +2,39 @@ name: RemoteEye Multi-Platform Build
 
 on:
   push:
-    branches: [ main ]  # 當你把代碼推送到 main 分支時會自動觸發
-  workflow_dispatch:      # 讓你可以手動點擊按鈕觸發編譯
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
-    name: Build for ${{ matrix.os }}
+    name: Build on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
+        # 使用具體的版本名稱更穩定
+        os: [windows-2022, macos-13, ubuntu-22.04]
 
     steps:
       - name: 📥 檢出代碼
         uses: actions/checkout@v4
 
-      - name: 🐍 設置 Python 環境
+      - name: 🐍 設置 Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      - name: 📦 安裝必要套件
+      - name: 📦 安裝套件
         run: |
           python -m pip install --upgrade pip
           pip install customtkinter mss pillow pyautogui pyinstaller
 
       - name: 🔨 執行編譯 (PyInstaller)
+        # 使用 bash 確保在 Windows 上也能正確處理路徑
+        shell: bash
         run: |
           pyinstaller --noconsole --onefile --name "RemoteEye_v1.0.6_${{ matrix.os }}" RemoteEye_Global.py
 
-      - name: 📤 儲存編譯成果 (Artifacts)
+      - name: 📤 儲存成果 (Artifacts)
         uses: actions/upload-artifact@v4
         with:
           name: RemoteEye-Release-${{ matrix.os }}
