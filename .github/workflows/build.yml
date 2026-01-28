@@ -11,8 +11,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # 使用 macOS 13 以確保較好的相容性
-        os: [windows-latest, macos-13, ubuntu-22.04]
+        # 這裡已經修正為最新版
+        os: [windows-latest, macos-latest, ubuntu-22.04]
 
     steps:
       - name: 📥 檢出代碼
@@ -28,7 +28,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install customtkinter mss pillow pyautogui pyinstaller
 
-      # --- Windows 編譯步驟 ---
+      # --- Windows 打包 ---
       - name: 🔨 Windows 打包
         if: matrix.os == 'windows-latest'
         run: |
@@ -36,36 +36,28 @@ jobs:
 
       # --- macOS 打包與製作 DMG ---
       - name: 🔨 macOS 打包 (DMG)
-        if: matrix.os == 'macos-13'
+        if: matrix.os == 'macos-latest'
         run: |
-          # 安裝 create-dmg 工具
           brew install create-dmg
-          # 編譯成 .app
+          # 先編譯成 .app
           pyinstaller --noconsole --onedir --windowed --name "RemoteEye" RemoteEye_Global.py
-          # 建立 DMG
-          mkdir -p dist/dmg
+          # 確保路徑乾淨並製作 DMG
           create-dmg \
             --volname "RemoteEye Installer" \
             --window-pos 200 120 \
             --window-size 600 400 \
             --icon-size 100 \
             --icon "RemoteEye.app" 175 190 \
-            --hide-extension "RemoteEye.app" \
             --app-drop-link 425 190 \
             "dist/RemoteEye_macOS.dmg" \
             "dist/RemoteEye.app"
 
-      # --- Linux 打包與製作 AppImage ---
-      - name: 🔨 Linux 打包 (AppImage)
+      # --- Linux 打包 ---
+      - name: 🔨 Linux 打包
         if: matrix.os == 'ubuntu-22.04'
         run: |
-          # 安裝打包工具
-          pip install py2app 
-          pyinstaller --noconsole --onefile --name "RemoteEye_Linux" RemoteEye_Global.py
-          # 賦予直接執行權限
-          chmod +x dist/RemoteEye_Linux
-          # 註：這裡我們先將執行檔改名，方便網站直接下載即用
-          mv dist/RemoteEye_Linux dist/RemoteEye_Linux_App
+          pyinstaller --noconsole --onefile --name "RemoteEye_Linux_App" RemoteEye_Global.py
+          chmod +x dist/RemoteEye_Linux_App
 
       - name: 📤 儲存最終成品
         uses: actions/upload-artifact@v4
