@@ -11,8 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # 更新 macOS 版本，並使用穩定版 Windows/Ubuntu
-        os: [windows-2022, macos-latest, ubuntu-22.04]
+        os: [windows-latest, macos-latest, ubuntu-22.04]
 
     steps:
       - name: 📥 檢出代碼
@@ -28,16 +27,20 @@ jobs:
           python -m pip install --upgrade pip
           pip install customtkinter mss pillow pyautogui pyinstaller
 
-      - name: 🔍 檢查檔案清單 (排錯用)
-        shell: bash
-        run: ls -R
-
-      - name: 🔨 執行編譯 (PyInstaller)
+      - name: 🔨 執行編譯 (自動偵測檔名)
         shell: bash
         run: |
-          # 確保檔名與你上傳到 GitHub 的完全一致
-          # 如果你的檔名其實是 remoteeye_global.py (小寫)，這裡就要改
-          pyinstaller --noconsole --onefile --name "RemoteEye_v1.0.6_${{ matrix.os }}" RemoteEye_Global.py
+          # 自動尋找資料夾下最大的 Python 檔案 (通常就是主程式)
+          # 或者你可以直接把下方的 FILE 換成你真正的檔名，例如 FILE="main.py"
+          FILE=$(ls *.py | head -n 1)
+          echo "偵測到主程式檔案: $FILE"
+          
+          if [ -z "$FILE" ]; then
+            echo "錯誤: 找不到任何 Python 檔案！請確認你已將 .py 檔案上傳到 GitHub。"
+            exit 1
+          fi
+          
+          pyinstaller --noconsole --onefile --name "RemoteEye_v1.0.6_${{ matrix.os }}" "$FILE"
 
       - name: 📤 儲存成果 (Artifacts)
         uses: actions/upload-artifact@v4
