@@ -2,9 +2,9 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>RemoteEye Global v1.0.6 - Jiajin Cross-Platform</title>
+    <title>RemoteEye Global v1.0.6 - Jiajin Distribution</title>
     <style>
-        /* 嘉進核心配色：純黑背景、代碼綠、科技藍 */
+        /* 嘉進核心配色：黑底、綠字、科技藍重點 */
         body { 
             background-color: #000; 
             color: #00ff00; 
@@ -12,19 +12,20 @@
             padding: 40px; 
             line-height: 1.6;
         }
-        .container { max-width: 850px; margin: 0 auto; border: 1px solid #333; padding: 30px; box-shadow: 0 0 20px rgba(59, 130, 246, 0.1); }
+        .container { max-width: 900px; margin: 0 auto; border: 1px solid #333; padding: 30px; box-shadow: 0 0 15px rgba(59, 130, 246, 0.1); }
         .header { border-bottom: 1px solid #333; padding-bottom: 20px; margin-bottom: 30px; }
         h1 { color: #3b82f6; margin: 0; font-size: 28px; letter-spacing: 2px; }
         
-        /* 語言導覽列 */
+        /* 語言切換區 */
         .lang-nav { margin-bottom: 15px; }
         .lang-btn { 
-            background: none; border: 1px solid #444; color: #666; 
+            background: none; border: 1px solid #444; color: #888; 
             padding: 4px 12px; cursor: pointer; margin-right: 8px; font-size: 12px; 
+            font-family: inherit;
         }
         .lang-btn:hover { border-color: #3b82f6; color: #3b82f6; }
         
-        /* 區塊設定 */
+        /* 平台區塊設定 */
         .platform-section { margin-bottom: 35px; border-left: 3px solid #222; padding-left: 20px; }
         .platform-title { color: #888; font-size: 14px; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; }
         
@@ -34,12 +35,13 @@
             font-weight: bold; margin: 5px 10px 5px 0; font-size: 14px; 
             border-radius: 4px; transition: 0.3s; 
         }
+        /* 各平台顏色區分 */
         .win { background: #3b82f6; color: #fff; }
-        .mac { background: #f1f5f9; color: #000; }
+        .mac { background: #f8fafc; color: #000; }
         .linux { background: #f97316; color: #fff; }
-        .btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
         
-        .comment { color: #4b5563; font-style: italic; font-size: 13px; }
+        .btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
+        .comment { color: #4b5563; font-style: italic; font-size: 13px; margin-top: 5px; }
         .status { color: #10b981; margin-bottom: 20px; }
     </style>
 </head>
@@ -48,59 +50,71 @@
 <div class="container">
     <div class="header">
         <div class="lang-nav">
-            <button class="lang-btn" onclick="setLang('zh')">ZH</button>
-            <button class="lang-btn" onclick="setLang('en')">EN</button>
-            <button class="lang-btn" onclick="setLang('ja')">JA</button>
-            <button class="lang-btn" onclick="setLang('ko')">KO</button>
+            <button class="lang-btn" onclick="setLang('zh')">ZH (繁中)</button>
+            <button class="lang-btn" onclick="setLang('en')">EN (English)</button>
+            <button class="lang-btn" onclick="setLang('ja')">JA (日本語)</button>
+            <button class="lang-btn" onclick="setLang('ko')">KO (한국어)</button>
         </div>
         <h1>> RemoteEye_Global_v1.0.6</h1>
-        <p class="comment">// 核心開發者: 嘉進 (Jiajin) | 全平台部署模組已載入</p>
+        <p class="comment">// 核心開發者: 嘉進 (Jiajin) | 跨平台部署與多國語言模組</p>
     </div>
 
-    <p class="status" id="status_msg">[STATUS]: 多國語言支援模組運行中。等待使用者下載指令...</p>
+    <p class="status" id="status_msg">[STATUS]: 系統就緒。請選擇對應平台的發布版本...</p>
 
     <div class="platform-section">
         <div class="platform-title" id="t_win">> Microsoft Windows (x64)</div>
         <a href="RemoteEye_Setup_v1.0.6.exe" class="btn win" id="b_win_s">下載正式安裝版 (EXE)</a>
-        <a href="RemoteEye_Portable_v1.0.6.exe" class="btn win" id="b_win_p" style="opacity: 0.8;">下載免安裝綠色版 (EXE)</a>
+        <a href="RemoteEye_Portable_v1.0.6.exe" class="btn win" id="b_win_p" style="opacity: 0.8;">免安裝綠色版 (EXE)</a>
     </div>
 
     <div class="platform-section">
         <div class="platform-title" id="t_mac">> Apple macOS (Universal)</div>
-        <a href="https://github.com/你的帳號/你的倉庫/actions" class="btn mac" id="b_mac">🍎 下載 macOS 編譯版</a>
-        <p class="comment" id="c_mac">// 提示: 執行前需在「隱私權與安全性」開啟輔助功能授權</p>
+        <a href="https://github.com/你的帳號/你的倉庫/releases" class="btn mac" id="b_mac">🍎 下載 macOS 執行檔</a>
+        <p class="comment" id="c_mac">// 提示: 第一次執行請在「系統設定」開啟輔助功能授權</p>
     </div>
 
     <div class="platform-section">
-        <div class="platform-title" id="t_linux">> Linux Systems (AppImage)</div>
-        <a href="https://github.com/你的帳號/你的倉庫/actions" class="btn linux" id="b_linux">🐧 下載 Linux 編譯版</a>
-        <p class="comment" id="c_linux">// 提示: 下載後請執行 chmod +x 以賦予執行權限</p>
+        <div class="platform-title" id="t_linux">> Linux Distribution (AppImage)</div>
+        <a href="https://github.com/你的帳號/你的倉庫/releases" class="btn linux" id="b_linux">🐧 下載 Linux 執行檔</a>
+        <p class="comment" id="c_linux">// 提示: 下載後需執行 chmod +x 以開啟執行權限</p>
     </div>
 
     <footer style="margin-top:50px; border-top: 1px solid #333; padding-top: 15px; font-size: 11px; color: #444;">
-        © 2026 REMOTEEYE PROJECT. POWERED BY JIAJIN CORE. [REV: 1.0.6-CROSS]
+        © 2026 REMOTEEYE PROJECT. POWERED BY JIAJIN CORE ENGINE. [SYS_OS_COMPATIBLE]
     </footer>
 </div>
 
 <script>
-    const d = {
+    // 語言資料庫
+    const i18n = {
         zh: {
-            status: "[STATUS]: 多國語言支援模組運行中。等待使用者下載指令...",
-            t_win: "> Microsoft Windows (x64)", b_win_s: "下載正式安裝版 (EXE)", b_win_p: "下載免安裝綠色版 (EXE)",
-            t_mac: "> Apple macOS (Universal)", b_mac: "🍎 下載 macOS 編譯版", c_mac: "// 提示: 執行前需在「隱私權與安全性」開啟輔助功能授權",
-            t_linux: "> Linux Systems (AppImage)", b_linux: "🐧 下載 Linux 編譯版", c_linux: "// 提示: 下載後請執行 chmod +x 以賦予執行權限"
+            status: "[STATUS]: 系統就緒。請選擇對應平台的發布版本...",
+            t_win: "> Microsoft Windows (x64)", b_win_s: "下載正式安裝版 (EXE)", b_win_p: "免安裝綠色版 (EXE)",
+            t_mac: "> Apple macOS (Universal)", b_mac: "🍎 下載 macOS 執行檔", c_mac: "// 提示: 第一次執行請在「系統設定」開啟輔助功能授權",
+            t_linux: "> Linux Distribution (AppImage)", b_linux: "🐧 下載 Linux 執行檔", c_linux: "// 提示: 下載後需執行 chmod +x 以開啟執行權限"
         },
         en: {
-            status: "[STATUS]: Multi-language module active. Awaiting user command...",
-            t_win: "> Microsoft Windows (x64)", b_win_s: "Download Installer (EXE)", b_win_p: "Download Portable (EXE)",
-            t_mac: "> Apple macOS (Universal)", b_mac: "🍎 Download for macOS", c_mac: "// Note: Accessibility permissions required in Privacy settings",
-            t_linux: "> Linux Systems (AppImage)", b_linux: "🐧 Download for Linux", c_linux: "// Note: Remember to 'chmod +x' after download"
+            status: "[STATUS]: System Ready. Select a platform-specific distribution...",
+            t_win: "> Microsoft Windows (x64)", b_win_s: "Download Installer (EXE)", b_win_p: "Portable Version (EXE)",
+            t_mac: "> Apple macOS (Universal)", b_mac: "🍎 Download for macOS", c_mac: "// Note: Accessibility permissions required in macOS settings",
+            t_linux: "> Linux Distribution (AppImage)", b_linux: "🐧 Download for Linux", c_linux: "// Note: Run 'chmod +x' after downloading"
+        },
+        ja: {
+            status: "[STATUS]: システム準備完了。プラットフォームを選択してください...",
+            t_win: "> Microsoft Windows (x64)", b_win_s: "インストーラー版 (EXE)", b_win_p: "ポータブル版 (EXE)",
+            t_mac: "> Apple macOS (Universal)", b_mac: "🍎 macOS版をダウンロード", c_mac: "// ヒント: 「アクセシビリティ」権限を有効にしてください",
+            t_linux: "> Linux Distribution (AppImage)", b_linux: "🐧 Linux版をダウンロード", c_linux: "// ヒント: 実行前に chmod +x を実行してください"
+        },
+        ko: {
+            status: "[STATUS]: 시스템 준비 완료. 플랫폼 버전을 선택하십시오...",
+            t_win: "> Microsoft Windows (x64)", b_win_s: "설치 파일 다운로드 (EXE)", b_win_p: "무설치판 다운로드 (EXE)",
+            t_mac: "> Apple macOS (Universal)", b_mac: "🍎 macOS용 다운로드", c_mac: "// 힌트: 시스템 설정에서 '접근성' 권한을 활성화하십시오",
+            t_linux: "> Linux Distribution (AppImage)", b_linux: "🐧 Linux용 다운로드", c_linux: "// 힌트: 다운로드 후 chmod +x 권한을 부여하십시오"
         }
-        // ... 可依此類推加入 ja, ko
     };
 
     function setLang(lang) {
-        const res = d[lang] || d['zh'];
+        const res = i18n[lang] || i18n['zh'];
         document.getElementById('status_msg').innerText = res.status;
         document.getElementById('t_win').innerText = res.t_win;
         document.getElementById('b_win_s').innerText = res.b_win_s;
