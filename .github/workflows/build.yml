@@ -11,8 +11,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # 使用具體的版本名稱更穩定
-        os: [windows-2022, macos-13, ubuntu-22.04]
+        # 更新 macOS 版本，並使用穩定版 Windows/Ubuntu
+        os: [windows-2022, macos-latest, ubuntu-22.04]
 
     steps:
       - name: 📥 檢出代碼
@@ -28,10 +28,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install customtkinter mss pillow pyautogui pyinstaller
 
+      - name: 🔍 檢查檔案清單 (排錯用)
+        shell: bash
+        run: ls -R
+
       - name: 🔨 執行編譯 (PyInstaller)
-        # 使用 bash 確保在 Windows 上也能正確處理路徑
         shell: bash
         run: |
+          # 確保檔名與你上傳到 GitHub 的完全一致
+          # 如果你的檔名其實是 remoteeye_global.py (小寫)，這裡就要改
           pyinstaller --noconsole --onefile --name "RemoteEye_v1.0.6_${{ matrix.os }}" RemoteEye_Global.py
 
       - name: 📤 儲存成果 (Artifacts)
