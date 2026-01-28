@@ -6,7 +6,21 @@
     <title>RemoteEye Global | Next-Gen Remote Solutions</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        :root {
+        /* 頂部捲動進度條 */
+.progress-bar {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: linear-gradient(to right, var(--secondary-accent), var(--primary-accent));
+    width: 0%; z-index: 2000;
+}
+
+/* FAQ 摺疊樣式 */
+.faq-item {
+    background: var(--card-bg); margin-bottom: 10px; border-radius: 12px;
+    overflow: hidden; cursor: pointer; text-align: left; border: 1px solid var(--border-light);
+}
+.faq-question { padding: 20px; font-weight: 700; display: flex; justify-content: space-between; }
+.faq-answer { padding: 0 20px 20px; color: var(--text-dim); display: none; }
+            :root {
             --bg-dark: #000000;
             --primary-accent: #6c5ce7; /* 科技紫 */
             --secondary-accent: #00bcd4; /* 霓虹藍 */
@@ -263,6 +277,11 @@
             setLang('zh');
         });
     </script>
-
+window.onscroll = function() {
+    let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    let scrolled = (winScroll / height) * 100;
+    document.getElementById("myBar").style.width = scrolled + "%";
+};
 </body>
 </html>
