@@ -4,115 +4,131 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RemoteEye Global - Official Distribution</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #0071e3;
-            --text: #1d1d1f;
             --bg: #ffffff;
-            --card-bg: #f5f5f7;
+            --card: #f5f5f7;
+            --text: #1d1d1f;
             --sub-text: #86868b;
         }
 
         body { 
             font-family: 'Inter', -apple-system, sans-serif; 
             background: var(--bg); color: var(--text); 
-            margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
+            margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh;
         }
 
-        .container { width: 100%; max-width: 500px; padding: 40px 20px; text-align: center; }
+        .container { width: 100%; max-width: 550px; padding: 60px 20px; flex-grow: 1; }
 
-        .lang-nav { margin-bottom: 40px; }
-        .lang-link { 
-            color: var(--primary); cursor: pointer; text-decoration: none; 
-            font-size: 13px; margin: 0 12px; font-weight: 500;
-        }
-
+        header { text-align: center; margin-bottom: 40px; }
         h1 { font-size: 42px; font-weight: 700; letter-spacing: -1.2px; margin: 0; }
-        .version { color: var(--sub-text); font-size: 15px; margin: 10px 0 40px 0; }
+        .version { color: var(--sub-text); font-size: 15px; margin-top: 10px; }
 
+        /* 下載卡片 */
         .platform-card {
-            background: var(--card-bg); border-radius: 24px; padding: 30px; margin-bottom: 24px;
-            transition: transform 0.2s;
+            background: var(--card); border-radius: 24px; padding: 25px; margin-bottom: 20px;
+            text-align: center; transition: 0.3s;
         }
-        .platform-card:hover { transform: scale(1.02); }
-
+        .platform-card:hover { background: #eeeef0; }
         .tag { font-size: 11px; font-weight: 700; color: var(--sub-text); text-transform: uppercase; margin-bottom: 15px; display: block; }
-
         .btn {
             display: block; padding: 14px 20px; background: var(--primary); color: white;
-            text-decoration: none; border-radius: 25px; font-size: 15px; font-weight: 600;
-            transition: opacity 0.2s;
+            text-decoration: none; border-radius: 20px; font-size: 15px; font-weight: 600;
         }
-        .btn:hover { opacity: 0.8; }
         .btn-outline { background: transparent; border: 1.5px solid var(--primary); color: var(--primary); margin-top: 10px; }
 
-        .hint { font-size: 12px; color: var(--sub-text); margin-top: 15px; line-height: 1.5; text-align: left; }
-        
-        footer { margin-top: 60px; font-size: 12px; color: #d2d2d7; }
+        /* 版權聲明區塊 */
+        .copyright-section {
+            border-top: 1px solid #e5e5e5; width: 100%; max-width: 800px;
+            padding: 40px 20px; margin-top: 40px; color: var(--sub-text); font-size: 12px; line-height: 1.6;
+        }
+        .copyright-title { font-weight: 600; color: var(--text); margin-bottom: 8px; }
+
+        /* 反饋系統浮動按鈕 */
+        .feedback-trigger {
+            position: fixed; bottom: 30px; right: 30px;
+            background: var(--text); color: white; border: none;
+            padding: 12px 20px; border-radius: 30px; font-weight: 600; cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: 0.3s;
+        }
+        .feedback-trigger:hover { transform: translateY(-3px); background: var(--primary); }
+
+        /* 反饋彈窗 */
+        #feedback-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); justify-content: center; align-items: center; z-index: 1000;
+        }
+        .modal-content {
+            background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px;
+        }
+        .modal-content h3 { margin-top: 0; }
+        textarea { width: 100%; height: 100px; border: 1px solid #ddd; border-radius: 10px; padding: 10px; margin: 15px 0; font-family: inherit; }
+        .modal-btns { display: flex; gap: 10px; }
+        .modal-btns button { flex: 1; padding: 10px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600; }
+        .btn-send { background: var(--primary); color: white; }
+        .btn-close { background: #eee; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <nav class="lang-nav">
-        <a class="lang-link" onclick="setLang('zh')">繁中</a>
-        <a class="lang-link" onclick="setLang('en')">English</a>
-        <a class="lang-link" onclick="setLang('ja')">日本語</a>
-    </nav>
-
     <header>
         <h1>RemoteEye</h1>
-        <p class="version">Global Stable v1.0.6</p>
+        <p class="version">Global v1.0.6 Official Build</p>
     </header>
 
     <div class="platform-card">
-        <span class="tag" id="t_win">Microsoft Windows</span>
-        <a href="RemoteEye_Windows.exe" class="btn" id="b_win_s">下載安裝程式 (.exe)</a>
-        <a href="RemoteEye_Windows.exe" class="btn btn-outline" id="b_win_p">免安裝綠色版</a>
+        <span class="tag">Microsoft Windows</span>
+        <a href="RemoteEye_Windows.exe" class="btn">下載安裝程式 (.exe)</a>
+        <a href="RemoteEye_Windows.exe" class="btn btn-outline">免安裝版</a>
     </div>
 
     <div class="platform-card">
-        <span class="tag" id="t_mac">Apple macOS</span>
-        <a href="RemoteEye_macOS.dmg" class="btn" id="b_mac">下載安裝磁碟 (.dmg)</a>
-        <div class="hint" id="c_mac">無需解壓。開啟 DMG 後直接將圖示拖入應用程式資料夾即可。</div>
+        <span class="tag">Apple macOS</span>
+        <a href="RemoteEye_macOS.dmg" class="btn">下載安裝磁碟 (.dmg)</a>
     </div>
 
     <div class="platform-card">
-        <span class="tag" id="t_linux">Linux Distribution</span>
-        <a href="RemoteEye_Linux_App" class="btn btn-outline" id="b_linux">下載執行檔</a>
-        <div class="hint" id="c_linux">下載後直接執行。若無法開啟，請賦予其執行權限。</div>
+        <span class="tag">Linux Distribution</span>
+        <a href="RemoteEye_Linux_App" class="btn btn-outline">下載免安裝執行檔</a>
     </div>
 
-    <footer>© 2026 RemoteEye Project.</footer>
+    <div class="copyright-section">
+        <p class="copyright-title">Legal & Privacy Statement</p>
+        <p>© 2026 RemoteEye Project. All rights reserved. 
+        本軟體僅供遠端技術支援與學術交流使用。使用者須遵守當地法律，禁止將本工具用於未經授權之入侵或干擾他人電腦系統之行為。開發團隊不對任何因使用不當造成的損失負責。</p>
+    </div>
+</div>
+
+<button class="feedback-trigger" onclick="toggleModal(true)">反饋問題 Feedback</button>
+
+<div id="feedback-modal">
+    <div class="modal-content">
+        <h3>提交反饋</h3>
+        <p style="color: #666; font-size: 13px;">請告訴我們您的建議或遇到的錯誤：</p>
+        <textarea id="feedback-text" placeholder="輸入內容..."></textarea>
+        <div class="modal-btns">
+            <button class="btn-close" onclick="toggleModal(false)">取消</button>
+            <button class="btn-send" onclick="sendFeedback()">提交</button>
+        </div>
+    </div>
 </div>
 
 <script>
-    const i18n = {
-        zh: {
-            t_win: "Microsoft Windows", b_win_s: "下載安裝程式 (.exe)", b_win_p: "免安裝綠色版",
-            t_mac: "Apple macOS", b_mac: "下載安裝磁碟 (.dmg)", c_mac: "無需解壓。開啟 DMG 後將圖示拖入應用程式資料夾即可。",
-            t_linux: "Linux Distribution", b_linux: "下載執行檔", c_linux: "下載後直接執行。若無法開啟，請賦予其執行權限。"
-        },
-        en: {
-            t_win: "Microsoft Windows", b_win_s: "Download Installer (.exe)", b_win_p: "Portable Version",
-            t_mac: "Apple macOS", b_mac: "Download DMG Image", c_mac: "No extraction needed. Open DMG and drag the app to Applications folder.",
-            t_linux: "Linux Distribution", b_linux: "Download Binary", c_linux: "Run directly. Grant executable permission if needed."
-        },
-        ja: {
-            t_win: "Microsoft Windows", b_win_s: "インストーラー (.exe)", b_win_p: "ポータブル版",
-            t_mac: "Apple macOS", b_mac: "DMG イメージをダウンロード", c_mac: "解凍は不要です。DMGを開き、アプリをアプリケーションフォルダにドラッグしてください。",
-            t_linux: "Linux Distribution", b_linux: "バイナリをダウンロード", c_linux: "ダウンロード後に直接実行してください。"
-        }
-    };
+    function toggleModal(show) {
+        document.getElementById('feedback-modal').style.display = show ? 'flex' : 'none';
+    }
 
-    function setLang(lang) {
-        const res = i18n[lang] || i18n['zh'];
-        for (let id in res) {
-            const el = document.getElementById(id);
-            if (el) el.innerText = res[id];
-        }
+    function sendFeedback() {
+        const text = document.getElementById('feedback-text').value;
+        if (!text) return alert("請輸入內容");
+        
+        // 這裡目前模擬提交，你可以串接 Email 或 Google Form API
+        alert("感謝您的反饋！我們已收到您的訊息。");
+        document.getElementById('feedback-text').value = "";
+        toggleModal(false);
     }
 </script>
 
