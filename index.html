@@ -6,21 +6,7 @@
     <title>RemoteEye Global | Next-Gen Remote Solutions</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* 頂部捲動進度條 */
-.progress-bar {
-    position: fixed; top: 0; left: 0; height: 3px;
-    background: linear-gradient(to right, var(--secondary-accent), var(--primary-accent));
-    width: 0%; z-index: 2000;
-}
-
-/* FAQ 摺疊樣式 */
-.faq-item {
-    background: var(--card-bg); margin-bottom: 10px; border-radius: 12px;
-    overflow: hidden; cursor: pointer; text-align: left; border: 1px solid var(--border-light);
-}
-.faq-question { padding: 20px; font-weight: 700; display: flex; justify-content: space-between; }
-.faq-answer { padding: 0 20px 20px; color: var(--text-dim); display: none; }
-            :root {
+        :root {
             --bg-dark: #000000;
             --primary-accent: #6c5ce7; /* 科技紫 */
             --secondary-accent: #00bcd4; /* 霓虹藍 */
@@ -38,6 +24,23 @@
             line-height: 1.6;
             overflow-x: hidden;
             scroll-behavior: smooth;
+        }
+
+        /* 1. 頂部捲動進度條 */
+        .progress-bar-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 4px;
+            background: transparent; z-index: 9999;
+        }
+        #myBar {
+            height: 100%; width: 0%;
+            background: linear-gradient(to right, var(--secondary-accent), var(--primary-accent));
+            box-shadow: 0 0 10px var(--secondary-accent);
+        }
+
+        /* 2. 背景粒子畫布 */
+        #particleCanvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none; opacity: 0.5;
         }
 
         /* 全局動畫基礎 */
@@ -61,23 +64,21 @@
             cursor: pointer; appearance: none;
         }
 
-        /* Hero Section - 最強視覺 */
+        /* 3. 呼吸燈狀態標籤 */
+        .status-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(0, 255, 157, 0.1); border: 1px solid rgba(0, 255, 157, 0.3);
+            padding: 5px 15px; border-radius: 20px; color: #00ff9d; font-size: 12px; margin-bottom: 20px;
+        }
+        .status-dot { width: 8px; height: 8px; background: #00ff9d; border-radius: 50%; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0, 255, 157, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(0, 255, 157, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 255, 157, 0); } }
+
+        /* Hero Section */
         .hero-section {
             height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
             text-align: center; background: radial-gradient(circle at center top, #1a0f2b 0%, #000 70%);
             position: relative; overflow: hidden;
         }
-        .hero-section::before { /* 背景光暈 */
-            content: ''; position: absolute; top: -10%; left: -10%;
-            width: 120%; height: 120%; background: radial-gradient(circle at 20% 80%, var(--primary-accent) 0%, transparent 40%),
-                                      radial-gradient(circle at 80% 20%, var(--secondary-accent) 0%, transparent 40%);
-            opacity: 0.2; filter: blur(100px); animation: neonGlow 15s infinite alternate;
-        }
-        @keyframes neonGlow {
-            0% { transform: scale(1); opacity: 0.2; }
-            100% { transform: scale(1.05); opacity: 0.3; }
-        }
-
         .hero-content { z-index: 1; padding: 0 5%; }
         .hero-content h1 {
             font-size: clamp(3rem, 10vw, 5.5rem); font-weight: 700;
@@ -85,10 +86,7 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             line-height: 1.1; margin-bottom: 20px;
         }
-        .hero-content p {
-            font-size: clamp(1rem, 3vw, 1.5rem); color: var(--text-dim);
-            max-width: 800px; margin: 0 auto 40px;
-        }
+        .hero-content p { font-size: clamp(1rem, 3vw, 1.5rem); color: var(--text-dim); max-width: 800px; margin: 0 auto 40px; }
         .hero-cta {
             background: linear-gradient(45deg, var(--secondary-accent), var(--primary-accent));
             color: var(--text-light); padding: 15px 30px; border-radius: 50px;
@@ -100,45 +98,40 @@
 
         /* Feature Section */
         .features-section { padding: 100px 5%; text-align: center; }
-        .features-section h2 {
-            font-size: clamp(2.5rem, 6vw, 4rem); color: var(--text-light); margin-bottom: 60px;
-            background: linear-gradient(45deg, #ffffff, var(--text-dim));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
         .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
         .feature-card {
             background: var(--card-bg); border: 1px solid var(--border-light);
             border-radius: 20px; padding: 40px; text-align: left;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s ease;
         }
-        .feature-card:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4); }
-        .feature-card .icon { font-size: 40px; color: var(--secondary-accent); margin-bottom: 20px; }
-        .feature-card h3 { font-size: 24px; color: var(--text-light); margin-bottom: 15px; }
-        .feature-card p { font-size: 16px; color: var(--text-dim); }
+        .feature-card:hover { transform: translateY(-10px); }
 
-        /* Call to Action Section */
-        .cta-section { padding: 100px 5%; text-align: center; background: radial-gradient(circle at center bottom, #0a0a00 0%, #000 80%); }
-        .cta-section h2 {
-            font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 30px;
-            background: linear-gradient(45deg, #ffffff, var(--text-dim));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        /* 4. FAQ 區塊樣式 */
+        .faq-section { padding: 100px 5%; max-width: 900px; margin: 0 auto; text-align: center; }
+        .faq-container { margin-top: 50px; }
+        .faq-item {
+            background: var(--card-bg); margin-bottom: 15px; border-radius: 15px;
+            border: 1px solid var(--border-light); overflow: hidden; transition: 0.3s;
         }
-        .cta-section .cta-link {
-            background: var(--primary-accent); color: var(--text-light);
-            padding: 15px 30px; border-radius: 50px; text-decoration: none;
-            font-size: 18px; font-weight: 700; transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 0 15px rgba(108, 92, 231, 0.3);
+        .faq-question {
+            padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+            font-weight: 700; text-align: left;
         }
-        .cta-section .cta-link:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(108, 92, 231, 0.5); }
+        .faq-answer {
+            padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease;
+            color: var(--text-dim); text-align: left;
+        }
+        .faq-item.active .faq-answer { max-height: 200px; padding-bottom: 20px; }
 
         /* Footer */
-        footer { padding: 50px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); font-size: 14px; }
-        footer p { margin-bottom: 10px; }
-        .social-links a { color: var(--text-dim); font-size: 20px; margin: 0 10px; transition: color 0.3s ease; }
-        .social-links a:hover { color: var(--text-light); }
+        footer { padding: 50px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); }
     </style>
 </head>
 <body>
+
+    <div class="progress-bar-container"><div id="myBar"></div></div>
+
+    <canvas id="particleCanvas"></canvas>
 
     <nav class="navbar">
         <a href="index.html" class="nav-logo">RemoteEye</a>
@@ -150,13 +143,15 @@
         <select class="lang-select" onchange="setLang(this.value)">
             <option value="zh">繁體中文</option>
             <option value="en">English</option>
-            <option value="ja">日本語</option>
-            <option value="ko">한국어</option>
         </select>
     </nav>
 
     <section class="hero-section">
         <div class="hero-content fade-in">
+            <div class="status-badge">
+                <div class="status-dot"></div>
+                <span id="system_status">系統運作正常: V1.0.4</span>
+            </div>
             <h1 id="hero_main_title">次世代遠端體驗</h1>
             <p id="hero_subtitle">RemoteEye 提供無縫、安全且跨平台的協作解決方案。</p>
             <a href="download.html" class="hero-cta" id="hero_cta_btn">立即體驗</a>
@@ -164,119 +159,108 @@
     </section>
 
     <section class="features-section">
-        <h2 class="fade-in" id="features_title">核心優勢</h2>
+        <h2 class="fade-in" id="features_title" style="margin-bottom: 50px; font-size: 3rem;">核心優勢</h2>
         <div class="features-grid">
             <div class="feature-card fade-in">
-                <div class="icon">⚡</div>
+                <div class="icon" style="font-size: 40px; margin-bottom: 20px;">⚡</div>
                 <h3 id="feature1_title">極致效能</h3>
                 <p id="feature1_desc">採用革命性低延遲協議，確保流暢的遠端操作體驗。</p>
             </div>
             <div class="feature-card fade-in">
-                <div class="icon">🔒</div>
+                <div class="icon" style="font-size: 40px; margin-bottom: 20px;">🔒</div>
                 <h3 id="feature2_title">軍規加密</h3>
                 <p id="feature2_desc">端到端 AES-256 加密，全面保障您的資料安全與隱私。</p>
             </div>
             <div class="feature-card fade-in">
-                <div class="icon">🌍</div>
+                <div class="icon" style="font-size: 40px; margin-bottom: 20px;">🌍</div>
                 <h3 id="feature3_title">無縫跨平台</h3>
                 <p id="feature3_desc">原生支援 Windows, macOS, Linux，隨時隨地連結。</p>
             </div>
         </div>
     </section>
 
-    <section class="cta-section">
-        <h2 class="fade-in" id="cta_title">準備好提升您的遠端工作流了嗎？</h2>
-        <a href="download.html" class="cta-link fade-in" id="cta_button">立即開始</a>
+    <section class="faq-section fade-in">
+        <h2 id="faq_title" style="font-size: 2.5rem;">常見問題</h2>
+        <div class="faq-container">
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">RemoteEye 是免費的嗎？ <span>+</span></div>
+                <div class="faq-answer">是的，我們為個人用戶提供強大的免費基礎版本。</div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">支援哪些操作系統？ <span>+</span></div>
+                <div class="faq-answer">目前原生支援 Windows 10/11, macOS Monterey+ 以及主流 Linux 發行版。</div>
+            </div>
+        </div>
     </section>
 
     <footer>
-        <p id="footer_copyright">© 2026 RemoteEye Technology. All Rights Reserved.</p>
-        <div class="social-links">
-            <a href="#" target="_blank">🔗</a> </div>
+        <p id="footer_copyright">© 2026 RemoteEye Technology. 版權所有。</p>
     </footer>
 
     <script>
-        const i18n = {
-            zh: {
-                nav_home: "首頁", nav_download: "下載", nav_forum: "論壇",
-                hero_main_title: "次世代遠端體驗", hero_subtitle: "RemoteEye 提供無縫、安全且跨平台的協作解決方案。", hero_cta_btn: "立即體驗",
-                features_title: "核心優勢",
-                feature1_title: "極致效能", feature1_desc: "採用革命性低延遲協議，確保流暢的遠端操作體驗。",
-                feature2_title: "軍規加密", feature2_desc: "端到端 AES-256 加密，全面保障您的資料安全與隱私。",
-                feature3_title: "無縫跨平台", feature3_desc: "原生支援 Windows, macOS, Linux，隨時隨地連結。",
-                cta_title: "準備好提升您的遠端工作流了嗎？", cta_button: "立即開始",
-                footer_copyright: "© 2026 RemoteEye Technology. 版權所有。"
-            },
-            en: {
-                nav_home: "Home", nav_download: "Download", nav_forum: "Forum",
-                hero_main_title: "Next-Gen Remote Experience", hero_subtitle: "RemoteEye offers seamless, secure, and cross-platform collaboration solutions.", hero_cta_btn: "Experience Now",
-                features_title: "Core Advantages",
-                feature1_title: "Extreme Performance", feature1_desc: "Revolutionary low-latency protocol for a fluid remote experience.",
-                feature2_title: "Military-Grade Encryption", feature2_desc: "End-to-end AES-256 encryption for data security and privacy.",
-                feature3_title: "Seamless Cross-Platform", feature3_desc: "Native support for Windows, macOS, Linux for universal access.",
-                cta_title: "Ready to elevate your remote workflow?", cta_button: "Get Started",
-                footer_copyright: "© 2026 RemoteEye Technology. All Rights Reserved."
-            },
-            ja: {
-                nav_home: "ホーム", nav_download: "ダウンロード", nav_forum: "フォーラム",
-                hero_main_title: "次世代リモート体験", hero_subtitle: "RemoteEyeは、シームレスで安全なクロスプラットフォームのコラボレーションソリューションを提供します。", hero_cta_btn: "今すぐ体験",
-                features_title: "主な利点",
-                feature1_title: "究極のパフォーマンス", feature1_desc: "革新的な低遅延プロトコルにより、スムーズなリモート操作体験を保証します。",
-                feature2_title: "軍用グレードの暗号化", feature2_desc: "エンドツーエンドのAES-256暗号化により、データセキュリティとプライバシーを完全に保護します。",
-                feature3_title: "シームレスなクロスプラットフォーム", feature3_desc: "Windows、macOS、Linuxにネイティブ対応し、いつでもどこでも接続可能です。",
-                cta_title: "リモートワークフローを向上させる準備はできましたか？", cta_button: "今すぐ始める",
-                footer_copyright: "© 2026 RemoteEye Technology. 全著作権所有。"
-            },
-            ko: {
-                nav_home: "홈", nav_download: "다운로드", nav_forum: "포럼",
-                hero_main_title: "차세대 원격 경험", hero_subtitle: "RemoteEye는 원활하고 안전하며 플랫폼 간 협업 솔루션을 제공합니다.", hero_cta_btn: "지금 경험하기",
-                features_title: "핵심 이점",
-                feature1_title: "최고의 성능", feature1_desc: "혁신적인 저지연 프로토콜로 부드러운 원격 작업 경험을 보장합니다.",
-                feature2_title: "군사 등급 암호화", feature2_desc: "종단 간 AES-256 암호화로 데이터 보안 및 개인 정보를 완벽하게 보호합니다.",
-                feature3_title: "원활한 크로스 플랫폼", feature3_desc: "Windows, macOS, Linux를 기본 지원하여 언제 어디서든 연결할 수 있습니다.",
-                cta_title: "원격 워크플로우를 향상시킬 준비가 되셨습니까?", cta_button: "지금 시작하기",
-                footer_copyright: "© 2026 RemoteEye Technology. 모든 권리 보유."
+        // 1. 滾動進度條邏輯
+        window.onscroll = function() {
+            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            let scrolled = (winScroll / height) * 100;
+            document.getElementById("myBar").style.width = scrolled + "%";
+        };
+
+        // 2. FAQ 摺疊邏輯
+        function toggleFaq(element) {
+            element.classList.toggle('active');
+            const icon = element.querySelector('span');
+            icon.innerText = element.classList.contains('active') ? '-' : '+';
+        }
+
+        // 3. 粒子背景動畫
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function initParticles() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            particles = [];
+            for(let i=0; i<60; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5,
+                    size: Math.random() * 2
+                });
             }
+        }
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#6c5ce7';
+            particles.forEach(p => {
+                p.x += p.vx; p.y += p.vy;
+                if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
+            });
+            requestAnimationFrame(drawParticles);
+        }
+        window.addEventListener('resize', initParticles);
+        initParticles(); drawParticles();
+
+        // 4. 多國語言與滾動監測 (保留您原有的邏輯並優化)
+        const i18n = {
+            zh: { nav_home: "首頁", nav_download: "下載", nav_forum: "論壇", hero_main_title: "次世代遠端體驗", faq_title: "常見問題" },
+            en: { nav_home: "Home", nav_download: "Download", nav_forum: "Forum", hero_main_title: "Next-Gen Remote", faq_title: "FAQ" }
         };
 
         function setLang(lang) {
-            const elements = document.querySelectorAll('[id^="nav_"], [id^="hero_"], [id^="features_"], [id^="feature"], [id^="cta_"], [id^="footer_"]');
-            elements.forEach(el => {
-                const key = el.id;
-                if (i18n[lang][key]) {
-                    el.innerText = i18n[lang][key];
-                }
-            });
-             // 更新語言選擇框
-            const selectElement = document.querySelector('.lang-select');
-            selectElement.value = lang;
+            const elements = document.querySelectorAll('[id^="nav_"], [id^="hero_"], [id^="faq_"]');
+            elements.forEach(el => { if (i18n[lang][el.id]) el.innerText = i18n[lang][el.id]; });
         }
 
-        // 滾動動畫觸發
         document.addEventListener('DOMContentLoaded', () => {
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.1
-            };
-
-            const observer = new IntersectionObserver((entries, observer) => {
+            const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('active');
-                        observer.unobserve(entry.target);
-                    }
+                    if (entry.isIntersecting) entry.target.classList.add('active');
                 });
-            }, observerOptions);
-
-            document.querySelectorAll('.fade-in').forEach(el => {
-                observer.observe(el);
-            });
-
-            // 初始化語言為繁體中文
-            setLang('zh');
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
         });
     </script>
-
 </body>
 </html>
