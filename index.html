@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RemoteEye Global - Official Distribution</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>RemoteEye Global - 官方發布</title>
+    <link href="https://docs.google.com/forms/d/e/1FAIpQLSd87313wWqTvsPIvBVqZ5iznxgx5QH7uUg0tkq996iXwjATpQ/viewform?usp=publish-editor" rel="stylesheet">
     <style>
         :root {
             --primary: #0071e3;
@@ -26,23 +26,25 @@
         h1 { font-size: 42px; font-weight: 700; letter-spacing: -1.2px; margin: 0; }
         .version { color: var(--sub-text); font-size: 15px; margin-top: 10px; }
 
-        /* 下載卡片 */
         .platform-card {
             background: var(--card); border-radius: 24px; padding: 25px; margin-bottom: 20px;
             text-align: center; transition: 0.3s;
         }
-        .platform-card:hover { background: #eeeef0; }
+        .platform-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
         .tag { font-size: 11px; font-weight: 700; color: var(--sub-text); text-transform: uppercase; margin-bottom: 15px; display: block; }
+        
         .btn {
             display: block; padding: 14px 20px; background: var(--primary); color: white;
             text-decoration: none; border-radius: 20px; font-size: 15px; font-weight: 600;
+            transition: 0.2s;
         }
+        .btn:hover { opacity: 0.8; }
         .btn-outline { background: transparent; border: 1.5px solid var(--primary); color: var(--primary); margin-top: 10px; }
 
-        /* 版權聲明區塊 */
+        /* 版權聲明 */
         .copyright-section {
             border-top: 1px solid #e5e5e5; width: 100%; max-width: 800px;
-            padding: 40px 20px; margin-top: 40px; color: var(--sub-text); font-size: 12px; line-height: 1.6;
+            padding: 40px 20px; margin-top: 40px; color: var(--sub-text); font-size: 12px; line-height: 1.8;
         }
         .copyright-title { font-weight: 600; color: var(--text); margin-bottom: 8px; }
 
@@ -50,25 +52,25 @@
         .feedback-trigger {
             position: fixed; bottom: 30px; right: 30px;
             background: var(--text); color: white; border: none;
-            padding: 12px 20px; border-radius: 30px; font-weight: 600; cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: 0.3s;
+            padding: 12px 24px; border-radius: 30px; font-weight: 600; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: 0.3s;
         }
-        .feedback-trigger:hover { transform: translateY(-3px); background: var(--primary); }
+        .feedback-trigger:hover { background: var(--primary); transform: scale(1.05); }
 
         /* 反饋彈窗 */
         #feedback-modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); justify-content: center; align-items: center; z-index: 1000;
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 1000;
         }
         .modal-content {
-            background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px;
+            background: white; padding: 30px; border-radius: 24px; width: 90%; max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
         }
-        .modal-content h3 { margin-top: 0; }
-        textarea { width: 100%; height: 100px; border: 1px solid #ddd; border-radius: 10px; padding: 10px; margin: 15px 0; font-family: inherit; }
+        textarea { width: 100%; height: 120px; border: 1px solid #e5e5e5; border-radius: 12px; padding: 12px; margin: 15px 0; font-size: 14px; resize: none; }
         .modal-btns { display: flex; gap: 10px; }
-        .modal-btns button { flex: 1; padding: 10px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600; }
+        .modal-btns button { flex: 1; padding: 12px; border-radius: 12px; border: none; cursor: pointer; font-weight: 600; transition: 0.2s; }
         .btn-send { background: var(--primary); color: white; }
-        .btn-close { background: #eee; }
+        .btn-close { background: #f5f5f7; color: var(--text); }
     </style>
 </head>
 <body>
@@ -76,17 +78,17 @@
 <div class="container">
     <header>
         <h1>RemoteEye</h1>
-        <p class="version">Global v1.0.6 Official Build</p>
+        <p class="version">Professional Global v1.0.6</p>
     </header>
 
     <div class="platform-card">
-        <span class="tag">Microsoft Windows</span>
+        <span class="tag">Windows (x64)</span>
         <a href="RemoteEye_Windows.exe" class="btn">下載安裝程式 (.exe)</a>
-        <a href="RemoteEye_Windows.exe" class="btn btn-outline">免安裝版</a>
+        <a href="RemoteEye_Windows.exe" class="btn btn-outline">下載免安裝版</a>
     </div>
 
     <div class="platform-card">
-        <span class="tag">Apple macOS</span>
+        <span class="tag">macOS (Universal)</span>
         <a href="RemoteEye_macOS.dmg" class="btn">下載安裝磁碟 (.dmg)</a>
     </div>
 
@@ -96,9 +98,9 @@
     </div>
 
     <div class="copyright-section">
-        <p class="copyright-title">Legal & Privacy Statement</p>
-        <p>© 2026 RemoteEye Project. All rights reserved. 
-        本軟體僅供遠端技術支援與學術交流使用。使用者須遵守當地法律，禁止將本工具用於未經授權之入侵或干擾他人電腦系統之行為。開發團隊不對任何因使用不當造成的損失負責。</p>
+        <p class="copyright-title">法律與授權聲明</p>
+        <p>© 2026 RemoteEye Project. All rights reserved. <br>
+        本工具僅供合法遠端桌面維護使用。嚴禁任何未經許可的系統存取行為。開發者不對因誤用或非法使用本軟體而導致的任何數據損毀、法律訴訟或經濟損失承擔責任。下載即代表您同意本條款。</p>
     </div>
 </div>
 
@@ -106,28 +108,49 @@
 
 <div id="feedback-modal">
     <div class="modal-content">
-        <h3>提交反饋</h3>
-        <p style="color: #666; font-size: 13px;">請告訴我們您的建議或遇到的錯誤：</p>
-        <textarea id="feedback-text" placeholder="輸入內容..."></textarea>
+        <h3 style="margin:0">提交反饋</h3>
+        <p style="color: #666; font-size: 13px; margin-top: 8px;">您的建議將幫助我們改進產品。</p>
+        <textarea id="feedback-text" placeholder="請詳細描述您的問題或建議..."></textarea>
         <div class="modal-btns">
             <button class="btn-close" onclick="toggleModal(false)">取消</button>
-            <button class="btn-send" onclick="sendFeedback()">提交</button>
+            <button class="btn-send" onclick="sendFeedback()">傳送提交</button>
         </div>
     </div>
 </div>
 
+<iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted) {window.location.reload();}"></iframe>
+
 <script>
+    let submitted = false;
+
     function toggleModal(show) {
         document.getElementById('feedback-modal').style.display = show ? 'flex' : 'none';
     }
 
     function sendFeedback() {
         const text = document.getElementById('feedback-text').value;
-        if (!text) return alert("請輸入內容");
+        if (!text) {
+            alert("請輸入反饋內容");
+            return;
+        }
+
+        // --- Google 表單串接區 ---
+        const formID = "你的表單網址ID"; // 替換這裡
+        const entryID = "entry.123456789"; // 替換這裡的 Entry ID
         
-        // 這裡目前模擬提交，你可以串接 Email 或 Google Form API
-        alert("感謝您的反饋！我們已收到您的訊息。");
-        document.getElementById('feedback-text').value = "";
+        const googleFormUrl = `https://docs.google.com/forms/d/e/${formID}/formResponse?${entryID}=${encodeURIComponent(text)}&submit=Submit`;
+        
+        // 建立一個臨時的表單進行提交
+        const form = document.createElement("form");
+        form.action = googleFormUrl;
+        form.method = "POST";
+        form.target = "hidden_iframe"; // 防止跳轉到 Google 頁面
+        document.body.appendChild(form);
+        
+        submitted = true;
+        form.submit();
+        
+        alert("提交成功！感謝您的寶貴意見。");
         toggleModal(false);
     }
 </script>
