@@ -4,7 +4,7 @@
 ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-**RemoteEye Global** 是一款輕量、極速且跨越國界的遠端協作工具。由嘉進（Jiajin）核心驅動，旨在提供最直覺、免設定的遠端支援體驗。
+**RemoteEye Global** 是一款輕量、極速且跨越國界的遠端協作工具。提供最直覺、免設定的遠端支援體驗。
 
 ## 🌟 功能亮點
 
