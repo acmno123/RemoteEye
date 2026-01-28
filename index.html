@@ -2,110 +2,138 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>RemoteEye Global v1.0.6 - Build System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RemoteEye Global - Official Distribution</title>
     <style>
-        /* 嘉進元祖配色：純黑背景、代碼綠、灰色註解 */
+        /* 現代專業配色：深邃藍黑、極簡白、平順灰 */
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f8fafc;
+            --text: #1e293b;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+        }
+
         body { 
-            background-color: #000; 
-            color: #00ff00; 
-            font-family: 'Consolas', 'Lucida Console', monospace; 
-            margin: 0; padding: 50px;
+            background-color: var(--bg); 
+            color: var(--text); 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            margin: 0; padding: 0;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
         }
-        .console-box { max-width: 900px; margin: 0 auto; border: 1px solid #00ff00; padding: 25px; box-shadow: 0 0 10px #004400; }
-        .header { border-bottom: 1px solid #00ff00; padding-bottom: 15px; margin-bottom: 25px; }
-        
-        /* 語言導覽 */
-        .lang-nav { margin-bottom: 10px; }
-        .lang-btn { 
-            background: #000; border: 1px solid #00ff00; color: #00ff00; 
-            padding: 2px 8px; cursor: pointer; font-family: inherit; font-size: 12px;
-        }
-        .lang-btn:hover { background: #00ff00; color: #000; }
 
-        h1 { font-size: 22px; margin: 0; text-transform: uppercase; letter-spacing: 2px; }
-        .comment { color: #555; }
-        
-        /* 下載區塊 */
-        .platform-block { margin: 20px 0; border-left: 2px solid #004400; padding-left: 15px; }
-        .platform-label { color: #fff; font-weight: bold; font-size: 14px; margin-bottom: 10px; }
-        
-        /* 元祖風按鈕 */
-        .btn { 
-            display: inline-block; 
-            background: #000; 
-            color: #00ff00; 
-            border: 1px solid #00ff00; 
-            padding: 10px 20px; 
-            text-decoration: none; 
-            font-size: 14px;
-            margin-right: 10px;
-            margin-bottom: 10px;
+        .container { 
+            width: 100%; max-width: 600px; padding: 40px 20px;
         }
-        .btn:hover { background: #00ff00; color: #000; font-weight: bold; }
 
-        .footer { margin-top: 40px; font-size: 12px; border-top: 1px solid #222; padding-top: 10px; color: #333; }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* 語言切換選單 */
+        .lang-nav {
+            display: flex; justify-content: flex-end; gap: 12px; margin-bottom: 20px;
+        }
+        .lang-btn {
+            background: none; border: none; color: #64748b; 
+            cursor: pointer; font-size: 13px; font-weight: 500;
+        }
+        .lang-btn:hover { color: var(--primary); }
+
+        h1 { font-size: 24px; font-weight: 700; margin: 0 0 8px 0; color: #0f172a; }
+        .subtitle { color: #64748b; font-size: 14px; margin-bottom: 32px; }
+
+        .section { margin-bottom: 24px; }
+        .platform-name { font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+
+        /* 按鈕樣式 */
+        .btn-group { display: flex; flex-wrap: wrap; gap: 10px; }
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 10px 20px; background: var(--primary); color: white;
+            text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        .btn-outline { background: white; color: var(--text); border: 1px solid var(--border); }
+        .btn-outline:hover { background: #f1f5f9; border-color: #cbd5e1; }
+
+        .note { font-size: 12px; color: #94a3b8; margin-top: 8px; line-height: 1.5; }
+        .footer { text-align: center; margin-top: 32px; font-size: 12px; color: #94a3b8; }
     </style>
 </head>
 <body>
 
-<div class="console-box">
-    <div class="header">
-        <div class="lang-nav">
-            <button class="lang-btn" onclick="setLang('zh')">ZH</button>
-            <button class="lang-btn" onclick="setLang('en')">EN</button>
-            <button class="lang-btn" onclick="setLang('ja')">JA</button>
-            <button class="lang-btn" onclick="setLang('ko')">KO</button>
+<div class="container">
+    <div class="lang-nav">
+        <button class="lang-btn" onclick="setLang('zh')">繁體中文</button>
+        <button class="lang-btn" onclick="setLang('en')">English</button>
+        <button class="lang-btn" onclick="setLang('ja')">日本語</button>
+        <button class="lang-btn" onclick="setLang('ko')">한국어</button>
+    </div>
+
+    <div class="card">
+        <h1>RemoteEye Global</h1>
+        <p class="subtitle">v1.0.6 Multi-Platform Stable Build</p>
+
+        <div class="section">
+            <div class="platform-name" id="t_win">Windows (x64)</div>
+            <div class="btn-group">
+                <a href="RemoteEye_Setup_v1.0.6.exe" class="btn" id="b_win_s">下載安裝版</a>
+                <a href="RemoteEye_Portable_v1.0.6.exe" class="btn btn-outline" id="b_win_p">免安裝版</a>
+            </div>
         </div>
-        <h1>RemoteEye Global [Version 1.0.6]</h1>
-        <p class="comment">// 原始開發者: 嘉進 (Jiajin) | 跨平台部署模組已掛載</p>
-    </div>
 
-    <div id="status">> SYSTEM STATUS: <span style="color: #fff;">READY FOR DOWNLOAD</span></div>
-    
-    <div class="platform-block">
-        <div class="platform-label" id="t_win">OS: WINDOWS_X64</div>
-        <a href="RemoteEye_Setup_v1.0.6.exe" class="btn" id="b_win_s">GET_INSTALLER (.EXE)</a>
-        <a href="RemoteEye_Portable_v1.0.6.exe" class="btn" id="b_win_p">GET_PORTABLE (.EXE)</a>
-    </div>
+        <div class="section">
+            <div class="platform-name" id="t_mac">macOS (Universal)</div>
+            <div class="btn-group">
+                <a href="RemoteEye_macOS.zip" class="btn" id="b_mac">下載 macOS 版 (.ZIP)</a>
+            </div>
+            <div class="note" id="c_mac">
+                ※ 提示：解壓後請「右鍵開啟」，並於系統設定授予「輔助功能」權限。
+            </div>
+        </div>
 
-    <div class="platform-block">
-        <div class="platform-label" id="t_mac">OS: MACOS_UNIVERSAL</div>
-        <a href="https://github.com/acmno123/RemoteEye/releases/tag/RemoteEye" class="btn" id="b_mac">GET_MACOS_BUILD</a>
-        <p class="comment" id="c_mac"># 註: 需要在系統設定中手動授權「輔助功能」</p>
-    </div>
-
-    <div class="platform-block">
-        <div class="platform-label" id="t_linux">OS: LINUX_DISTRIBUTION</div>
-        <a href="https://github.com/acmno123/RemoteEye/releases/tag/RemoteEye" class="btn" id="b_linux">GET_LINUX_BUILD</a>
-        <p class="comment" id="c_linux"># 註: 執行前請執行 'chmod +x' 賦予權限</p>
+        <div class="section">
+            <div class="platform-name" id="t_linux">Linux</div>
+            <div class="btn-group">
+                <a href="RemoteEye_Linux" class="btn btn-outline" id="b_linux">下載 Linux 版</a>
+            </div>
+            <div class="note" id="c_linux">※ 提示：下載後請執行 chmod +x 賦予執行權限。</div>
+        </div>
     </div>
 
     <div class="footer">
-        (C) 2026 REMOTEEYE PROJECT. ALL RIGHTS RESERVED BY JIAJIN.
+        © 2026 RemoteEye Project. All rights reserved.
     </div>
 </div>
 
 <script>
     const i18n = {
         zh: {
-            t_win: "OS: WINDOWS_X64 (微軟系統)", b_win_s: "下載安裝版 (EXE)", b_win_p: "下載免安裝版 (EXE)",
-            t_mac: "OS: MACOS_UNIVERSAL (蘋果系統)", b_mac: "下載 macOS 執行檔", c_mac: "# 註: 需要在系統設定中手動授權「輔助功能」",
-            t_linux: "OS: LINUX_DISTRIBUTION (通用發行版)", b_linux: "下載 Linux 執行檔", c_linux: "# 註: 執行前請執行 'chmod +x' 賦予權限"
+            t_win: "Windows (x64)", b_win_s: "下載安裝版", b_win_p: "免安裝版",
+            t_mac: "macOS (Universal)", b_mac: "下載 macOS 版 (.ZIP)", c_mac: "※ 提示：解壓後請「右鍵開啟」，並於系統設定授予「輔助功能」權限。",
+            t_linux: "Linux", b_linux: "下載 Linux 版", c_linux: "※ 提示：下載後請執行 chmod +x 賦予執行權限。"
         },
         en: {
-            t_win: "OS: WINDOWS_X64", b_win_s: "GET_INSTALLER (.EXE)", b_win_p: "GET_PORTABLE (.EXE)",
-            t_mac: "OS: MACOS_UNIVERSAL", b_mac: "GET_MACOS_BUILD", c_mac: "# Note: Manual accessibility permission required",
-            t_linux: "OS: LINUX_DISTRIBUTION", b_linux: "GET_LINUX_BUILD", c_linux: "# Note: Run 'chmod +x' before executing"
+            t_win: "Windows (x64)", b_win_s: "Download Installer", b_win_p: "Portable Version",
+            t_mac: "macOS (Universal)", b_mac: "Download for macOS (.ZIP)", c_mac: "※ Note: Right-click to 'Open'. Accessibility permissions required.",
+            t_linux: "Linux", b_linux: "Download for Linux", c_linux: "※ Note: Run 'chmod +x' after download."
         },
         ja: {
-            t_win: "OS: WINDOWS_X64 (ウィンドウズ)", b_win_s: "インストーラー版", b_win_p: "ポータブル版",
-            t_mac: "OS: MACOS_UNIVERSAL (マック)", b_mac: "macOS版をダウンロード", c_mac: "# 注: アクセシビリティ権限を有効にしてください",
-            t_linux: "OS: LINUX_DISTRIBUTION", b_linux: "Linux版をダウンロード", c_linux: "# 注: 実行前に chmod +x を入力してください"
+            t_win: "Windows (x64)", b_win_s: "インストーラー版", b_win_p: "ポータブル版",
+            t_mac: "macOS (Universal)", b_mac: "macOS版をダウンロード", c_mac: "※ 注：アクセシビリティ権限を有効にする必要があります。",
+            t_linux: "Linux", b_linux: "Linux版をダウンロード", c_linux: "※ 注：実行前に chmod +x を実行してください。"
         },
         ko: {
-            t_win: "OS: WINDOWS_X64 (윈도우)", b_win_s: "설치 파일 (EXE)", b_win_p: "무설치판 (EXE)",
-            t_mac: "OS: MACOS_UNIVERSAL (맥)", b_mac: "macOS용 다운로드", c_mac: "# 참고: 접근성 권한 허용이 필요합니다",
-            t_linux: "OS: LINUX_DISTRIBUTION", b_linux: "Linux용 다운로드", c_linux: "# 참고: 실행 전 chmod +x 권한을 부여하세요"
+            t_win: "Windows (x64)", b_win_s: "설치 파일 다운로드", b_win_p: "무설치 버전",
+            t_mac: "macOS (Universal)", b_mac: "macOS용 다운로드", c_mac: "※ 참고: 접근성 권한 허용이 필요합니다.",
+            t_linux: "Linux", b_linux: "Linux용 다운로드", c_linux: "※ 참고: 다운로드 후 chmod +x 권한을 부여하세요."
         }
     };
 
