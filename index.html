@@ -1,59 +1,175 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RemoteEye | 穿透空間的遠端控制專家</title>
-    <style>
-        :root { --primary: #3b82f6; --secondary: #10b981; --bg: #0f172a; --card-bg: #1e293b; --text: #f8fafc; }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, sans-serif; text-align: center; }
-        .container { max-width: 900px; margin: 0 auto; padding: 50px 20px; }
+import customtkinter as ctk
+import socket, threading, mss, zlib, pyautogui, os, time
+from PIL import Image, ImageTk
+from tkinter import filedialog, messagebox
+
+# --- 嘉進版六國語言字典 ---
+LANG_MAP = {
+    "zh_TW": {
+        "title": "RemoteEye Global v1.0.6 (嘉進版)", "main_label": "請選擇運行模式", "btn_ctrl": "協助他人\n(控制端)",
+        "btn_agent": "接受協助\n(受控端)", "ip_label": "您的連線 IP:", "status_wait": "狀態: 等待連線...",
+        "back_menu": "返回主選單", "ip_placeholder": "輸入目標 IP", "connect": "立即連線",
+        "send_file": "傳送檔案", "lang_select": "語言設定", "file_success": "檔案接收成功！"
+    },
+    "en": {
+        "title": "RemoteEye Global v1.0.6", "main_label": "Select Mode", "btn_ctrl": "Support Others\n(Controller)",
+        "btn_agent": "Get Support\n(Agent)", "ip_label": "Your IP:", "status_wait": "Status: Waiting...",
+        "back_menu": "Main Menu", "ip_placeholder": "Target IP", "connect": "Connect",
+        "send_file": "Send File", "lang_select": "Language", "file_success": "Received!"
+    },
+    "ja": { "title": "RemoteEye Global v1.0.6", "main_label": "モードを選択", "btn_ctrl": "操作側", "btn_agent": "被操作側", "ip_label": "あなたの IP:", "status_wait": "待機中...", "back_menu": "戻る", "ip_placeholder": "相手の IP", "connect": "接続", "send_file": "送信", "lang_select": "言語", "file_success": "完了！" },
+    "fr": { "title": "RemoteEye Global v1.0.6", "main_label": "Choisir le mode", "btn_ctrl": "Contrôleur", "btn_agent": "Agent", "ip_label": "Votre IP:", "status_wait": "En attente...", "back_menu": "Menu", "ip_placeholder": "IP cible", "connect": "Connecter", "send_file": "Envoyer", "lang_select": "Langue", "file_success": "Reçu !" },
+    "es": { "title": "RemoteEye Global v1.0.6", "main_label": "Seleccionar modo", "btn_ctrl": "Controlador", "btn_agent": "Agente", "ip_label": "Tu IP:", "status_wait": "Esperando...", "back_menu": "Menú", "ip_placeholder": "IP destino", "connect": "Conectar", "send_file": "Enviar", "lang_select": "Idioma", "file_success": "Recibido" },
+    "ko": { "title": "RemoteEye Global v1.0.6", "main_label": "모드 선택", "btn_ctrl": "제어측", "btn_agent": "피제어측", "ip_label": "내 IP:", "status_wait": "대기 중...", "back_menu": "메뉴", "ip_placeholder": "대상 IP", "connect": "연결", "send_file": "전송", "lang_select": "언어", "file_success": "수신 완료" }
+}
+
+pyautogui.FAILSAFE = False
+ctk.set_appearance_mode("dark")
+
+class RemoteEyeApp(ctk.CTk):
+    def __init__(self):
+        super().__init__()
+        self.current_lang = "zh_TW"
+        self.sock = None
+        self.image_id = None
+        self.tk_img = None
+        self.remote_res = (1920, 1080)
+        self.refresh_ui()
+
+    def refresh_ui(self):
+        for widget in self.winfo_children(): widget.destroy()
+        L = LANG_MAP[self.current_lang]
+        self.title(L["title"])
+        self.geometry("600x550")
+        ctk.CTkLabel(self, text="RemoteEye Global", font=("Arial", 35, "bold"), text_color="#3b82f6").pack(pady=20)
+        ctk.CTkLabel(self, text=L["main_label"], font=("Arial", 16)).pack(pady=5)
         
-        /* 品牌區域 */
-        .logo-area img { width: 180px; filter: drop-shadow(0 0 15px var(--primary)); margin-bottom: 20px; }
-        h1 { font-size: 3rem; margin: 10px 0; background: linear-gradient(90deg, #60a5fa, #34d399); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        
-        /* 下載按鈕 */
-        .download-box { background: var(--card-bg); padding: 40px; border-radius: 30px; border: 1px solid #334155; margin: 40px 0; }
-        .main-btn { display: inline-block; background: var(--primary); color: white; padding: 18px 40px; border-radius: 15px; font-size: 1.5rem; font-weight: bold; text-decoration: none; transition: 0.3s; box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
-        .main-btn:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(59, 130, 246, 0.6); }
-        .sub-links { margin-top: 20px; font-size: 0.9rem; color: #94a3b8; }
-        .sub-links a { color: #60a5fa; text-decoration: none; margin: 0 10px; }
+        btn_frame = ctk.CTkFrame(self, fg_color="transparent")
+        btn_frame.pack(pady=20)
+        ctk.CTkButton(btn_frame, text=L["btn_ctrl"], height=120, width=220, command=self.init_controller_ui).grid(row=0, column=0, padx=20)
+        ctk.CTkButton(btn_frame, text=L["btn_agent"], height=120, width=220, fg_color="#10b981", command=self.init_agent_ui).grid(row=0, column=1, padx=20)
 
-        /* 特色說明 */
-        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 50px; }
-        .f-item { padding: 20px; border-radius: 15px; background: rgba(255,255,255,0.05); }
-    </style>
-</head>
-<body>
+        lang_frame = ctk.CTkFrame(self)
+        lang_frame.pack(pady=30, fill="x", padx=120)
+        ctk.CTkLabel(lang_frame, text=L["lang_select"]).pack(side="left", padx=15)
+        self.lang_menu = ctk.CTkOptionMenu(lang_frame, values=list(LANG_MAP.keys()), command=self.change_language)
+        self.lang_menu.set(self.current_lang)
+        self.lang_menu.pack(side="right", padx=15)
 
-<div class="container">
-    <div class="logo-area">
-        <img src="logo.png" alt="RemoteEye Logo">
-        <h1>RemoteEye Global</h1>
-        <p>穩定、安全、跨語言的開源遠端控制方案</p>
-    </div>
+    def change_language(self, new_lang):
+        self.current_lang = new_lang
+        self.refresh_ui()
 
-    <div class="download-box">
-        <a href="RemoteEye_Setup.exe" class="main-btn">🚀 立即下載安裝檔</a>
-        <div class="sub-links">
-            <span>版本: v1.0.5</span> | 
-            <span>支援: Win 10 / 11</span> | 
-            <a href="RemoteEye_v1.0.5.exe">下載免安裝綠色版</a>
-        </div>
-    </div>
+    def init_agent_ui(self):
+        for widget in self.winfo_children(): widget.destroy()
+        L = LANG_MAP[self.current_lang]
+        ip = socket.gethostbyname(socket.gethostname())
+        ctk.CTkLabel(self, text=L["ip_label"], font=("Arial", 18)).pack(pady=10)
+        ctk.CTkLabel(self, text=ip, font=("Arial", 28, "bold"), text_color="#10b981").pack(pady=10)
+        self.status_label = ctk.CTkLabel(self, text=L["status_wait"], text_color="gray")
+        self.status_label.pack(pady=10)
+        ctk.CTkButton(self, text=L["back_menu"], fg_color="gray", command=self.refresh_ui).pack(pady=20)
+        threading.Thread(target=self.run_agent_server, daemon=True).start()
 
-    <div class="features">
-        <div class="f-item">🌐 <b>多國語言</b><br>繁中 / 英文 / 日文</div>
-        <div class="f-item">⚡ <b>極速傳輸</b><br>支援檔案一鍵推送</div>
-        <div class="f-item">🛡️ <b>安全加密</b><br>點對點傳輸不經伺服器</div>
-        <div class="f-item">✨ <b>流暢畫面</b><br>雙重緩衝技術無閃爍</div>
-    </div>
+    def run_agent_server(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.bind(('0.0.0.0', 65432))
+        s.listen(1)
+        while True:
+            conn, addr = s.accept()
+            self.after(0, lambda: self.status_label.configure(text=f"Connected: {addr[0]}", text_color="#10b981"))
+            with mss.mss() as sct:
+                m = sct.monitors[1]
+                res = f"{m['width']},{m['height']}".encode()
+                conn.sendall(len(res).to_bytes(4, 'big') + res)
+                threading.Thread(target=self.agent_stream, args=(conn,), daemon=True).start()
+                self.agent_receive(conn)
 
-    <footer style="margin-top: 100px; color: #475569;">
-        <p>&copy; 2026 RemoteEye Project. 專案已在 GitHub 開源。</p>
-    </div>
-</div>
+    def agent_stream(self, conn):
+        with mss.mss() as sct:
+            while True:
+                st = time.time()
+                try:
+                    img = Image.frombytes("RGB", sct.monitors[1]['size'], sct.grab(sct.monitors[1]).bgra, "raw", "BGRX")
+                    data = zlib.compress(img.tobytes(), 3)
+                    conn.sendall(len(data).to_bytes(4, 'big') + data)
+                    time.sleep(max(0, 0.05 - (time.time() - st)))
+                except: break
 
-</body>
-</html>
+    def agent_receive(self, conn):
+        while True:
+            try:
+                h = conn.recv(1024).decode()
+                if h.startswith("click"):
+                    _, x, y = h.split(","); pyautogui.click(int(x), int(y))
+                elif h.startswith("file:"):
+                    _, name, size = h.split(":"); size = int(size)
+                    with open(os.path.join(os.path.expanduser("~"), "Desktop", name), "wb") as f:
+                        recv = 0
+                        while recv < size:
+                            chunk = conn.recv(min(size-recv, 4096))
+                            f.write(chunk); recv += len(chunk)
+                    self.after(0, lambda: self.status_label.configure(text=LANG_MAP[self.current_lang]["file_success"]))
+            except: break
+
+    def init_controller_ui(self):
+        for widget in self.winfo_children(): widget.destroy()
+        self.geometry("1100x850")
+        L = LANG_MAP[self.current_lang]
+        nav = ctk.CTkFrame(self)
+        nav.pack(fill="x", padx=10, pady=5)
+        self.ip_entry = ctk.CTkEntry(nav, placeholder_text=L["ip_placeholder"], width=200)
+        self.ip_entry.pack(side="left", padx=10)
+        ctk.CTkButton(nav, text=L["connect"], width=100, command=self.connect_to_agent).pack(side="left", padx=5)
+        ctk.CTkButton(nav, text=L["send_file"], width=100, fg_color="#10b981", command=self.send_file).pack(side="left", padx=5)
+        ctk.CTkButton(nav, text=L["back_menu"], width=100, fg_color="gray", command=self.refresh_ui).pack(side="right", padx=10)
+        self.canvas = ctk.CTkCanvas(self, bg="#1a1a1a", highlightthickness=0)
+        self.canvas.pack(expand=True, fill="both", padx=10, pady=10)
+        self.canvas.bind("<Button-1>", self.on_click)
+
+    def connect_to_agent(self):
+        ip = self.ip_entry.get().strip()
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            self.sock.connect((ip, 65432))
+            l = int.from_bytes(self.sock.recv(4), 'big')
+            res = self.sock.recv(l).decode().split(',')
+            self.remote_res = (int(res[0]), int(res[1]))
+            threading.Thread(target=self.receive_view, daemon=True).start()
+        except: pass
+
+    def receive_view(self):
+        while True:
+            try:
+                sz = int.from_bytes(self.sock.recv(4), 'big')
+                data = b""
+                while len(data) < sz: data += self.sock.recv(sz - len(data))
+                img = Image.frombytes("RGB", self.remote_res, zlib.decompress(data)).resize((self.canvas.winfo_width(), self.canvas.winfo_height()), Image.Resampling.NEAREST)
+                self.tk_img = ImageTk.PhotoImage(img)
+                self.after(0, self.draw)
+            except: break
+
+    def draw(self):
+        if self.image_id is None: self.image_id = self.canvas.create_image(0, 0, anchor="nw", image=self.tk_img)
+        else: self.canvas.itemconfig(self.image_id, image=self.tk_img)
+
+    def send_file(self):
+        p = filedialog.askopenfilename()
+        if p and self.sock:
+            n, s = os.path.basename(p), os.path.getsize(p)
+            self.sock.sendall(f"file:{n}:{s}".encode())
+            time.sleep(0.5)
+            with open(p, "rb") as f:
+                while True:
+                    c = f.read(4096)
+                    if not c: break
+                    self.sock.sendall(c)
+
+    def on_click(self, e):
+        if not self.sock: return
+        rx = int(e.x * (self.remote_res[0] / self.canvas.winfo_width()))
+        ry = int(e.y * (self.remote_res[1] / self.canvas.winfo_height()))
+        self.sock.sendall(f"click,{rx},{ry}".encode())
+
+if __name__ == "__main__":
+    RemoteEyeApp().mainloop()
