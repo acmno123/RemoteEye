@@ -14,6 +14,7 @@
             --text-dim: #a0a0a0;
             --card-bg: rgba(255, 255, 255, 0.05);
             --border-light: rgba(255, 255, 255, 0.1);
+            --success: #00ff9d;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -100,23 +101,37 @@
             transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative; overflow: hidden;
         }
+        /* 推薦標籤樣式 */
+        .download-card.recommended::before {
+            content: "RECOMMENDED";
+            position: absolute; top: 15px; right: -30px;
+            background: var(--secondary-accent); color: #000;
+            font-size: 10px; font-weight: 900; padding: 5px 40px;
+            transform: rotate(45deg);
+        }
         .download-card:hover { 
             transform: translateY(-15px); 
             border-color: var(--secondary-accent);
             background: rgba(255, 255, 255, 0.08);
         }
         
-        /* 下載按鈕發光特效 */
+        /* 下載按鈕 */
         .download-btn {
             background: var(--primary-accent); color: var(--text-light);
             padding: 15px 25px; border-radius: 50px; text-decoration: none;
             font-size: 16px; font-weight: 700; display: block; width: 100%;
             transition: 0.3s; margin-bottom: 15px;
             box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+            cursor: pointer; border: none; outline: none;
         }
         .download-btn:hover { 
             box-shadow: 0 0 25px var(--primary-accent);
             transform: scale(1.02);
+        }
+        .download-btn.loading {
+            background: var(--success) !important;
+            color: #000 !important;
+            pointer-events: none;
         }
 
         .checksum {
@@ -166,27 +181,27 @@
         <p class="sub-title">選擇您的作業系統，立即開啟超低延遲遠端之旅</p>
         
         <div class="download-grid">
-            <div class="download-card">
+            <div class="download-card" id="card-win">
                 <div class="icon" style="font-size: 50px; margin-bottom: 15px;">🪟</div>
                 <h3 id="dl_win_title">Windows</h3>
                 <p id="dl_win_desc" style="font-size: 14px; color: var(--text-dim); margin-bottom: 20px;">推薦用於 Windows 10/11 (64-bit)</p>
-                <a href="#" class="download-btn" id="dl_win_installer">立即下載 (.exe)</a>
+                <button class="download-btn" id="dl_win_btn" onclick="handleDownload(this, 'Windows')">立即下載 (.exe)</button>
                 <div class="checksum" onclick="copyText('7f83b2...')">SHA256: 7f83b2... (點擊複製)</div>
             </div>
 
-            <div class="download-card">
+            <div class="download-card" id="card-mac">
                 <div class="icon" style="font-size: 50px; margin-bottom: 15px;">🍎</div>
                 <h3 id="dl_mac_title">macOS</h3>
                 <p id="dl_mac_desc" style="font-size: 14px; color: var(--text-dim); margin-bottom: 20px;">兼容 M1/M2/M3 及 Intel 芯片</p>
-                <a href="#" class="download-btn" id="dl_mac_dmg">取得 DMG</a>
+                <button class="download-btn" id="dl_mac_btn" onclick="handleDownload(this, 'macOS')">取得 DMG</button>
                 <div class="checksum">SHA256: a82c11...</div>
             </div>
 
-            <div class="download-card">
+            <div class="download-card" id="card-linux">
                 <div class="icon" style="font-size: 50px; margin-bottom: 15px;">🐧</div>
                 <h3 id="dl_linux_title">Linux</h3>
                 <p id="dl_linux_desc" style="font-size: 14px; color: var(--text-dim); margin-bottom: 20px;">跨發行版通用 AppImage</p>
-                <a href="#" class="download-btn" id="dl_linux_appimage">取得 AppImage</a>
+                <button class="download-btn" id="dl_linux_btn" onclick="handleDownload(this, 'Linux')">取得 AppImage</button>
                 <div class="checksum">SHA256: e92f33...</div>
             </div>
         </div>
@@ -212,21 +227,59 @@
     </footer>
 
     <script>
-        // 1. 滾動進度條
+        // 1. 自動偵測系統並標註推薦
+        window.onload = () => {
+            const userAgent = window.navigator.userAgent;
+            if (userAgent.includes("Win")) document.getElementById('card-win').classList.add('recommended');
+            else if (userAgent.includes("Mac")) document.getElementById('card-mac').classList.add('recommended');
+            else if (userAgent.includes("Linux")) document.getElementById('card-linux').classList.add('recommended');
+            init(); // 啟動粒子
+            animate();
+        };
+
+        // 2. 下載處理函數 (新增的功能)
+        function handleDownload(btn, platform) {
+            const originalText = btn.innerText;
+            btn.classList.add('loading');
+            
+            let progress = 0;
+            const timer = setInterval(() => {
+                progress += Math.floor(Math.random() * 20) + 5;
+                if (progress >= 100) {
+                    clearInterval(timer);
+                    btn.innerText = "✅ 下載已啟動";
+                    
+                    // 模擬真實下載觸發
+                    const link = document.createElement('a');
+                    link.href = "#"; // 這裡以後放真實檔案網址
+                    link.download = `RemoteEye_${platform}_v1.0.4.zip`;
+                    link.click();
+
+                    setTimeout(() => {
+                        btn.classList.remove('loading');
+                        btn.innerText = originalText;
+                    }, 3000);
+                } else {
+                    btn.innerText = `準備中 ${progress}%`;
+                }
+            }, 200);
+        }
+
+        // 3. 滾動進度條
         window.onscroll = () => {
             let winScroll = document.documentElement.scrollTop;
             let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
             document.getElementById("myBar").style.width = (winScroll / height) * 100 + "%";
         };
 
-        // 2. 實時計數器邏輯
+        // 4. 實時計數器
         let count = 1284560;
         setInterval(() => {
-            count += Math.floor(Math.random() * 3); // 隨機增加 0-2 次下載
+            count += Math.floor(Math.random() * 3);
             document.getElementById('download-count').innerText = count.toLocaleString();
         }, 3000);
 
-        // 3. 粒子動畫
+        // 5. 粒子動畫
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -246,22 +299,11 @@
             });
             requestAnimationFrame(animate);
         }
-        window.onresize = init; init(); animate();
+        window.onresize = init;
 
-        // 4. 工具函數
         function copyText(txt) {
             navigator.clipboard.writeText(txt);
             alert("校驗碼已複製到剪貼簿！");
-        }
-
-        const i18n = {
-            zh: { nav_home: "首頁", nav_download: "下載", nav_forum: "論壇", dl_page_title: "下載 RemoteEye", log_title: "最新版本資訊 (v1.0.4)" },
-            en: { nav_home: "Home", nav_download: "Download", nav_forum: "Forum", dl_page_title: "Download RemoteEye", log_title: "Latest Release (v1.0.4)" }
-        };
-
-        function setLang(lang) {
-            const elements = document.querySelectorAll('[id^="nav_"], [id^="dl_"], [id^="log_"]');
-            elements.forEach(el => { if (i18n[lang][el.id]) el.innerText = i18n[lang][el.id]; });
         }
     </script>
 </body>
