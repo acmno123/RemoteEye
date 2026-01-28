@@ -3,188 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RemoteEye Global | Professional Remote Support</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>RemoteEye Global | Next-Gen Remote Solutions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #050507;
-            --primary: #0071e3;
-            --accent: #5efce8;
-            --text-main: #ffffff;
-            --text-sub: #94a3b8;
-            --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.1);
+            --bg-dark: #000000;
+            --primary-accent: #6c5ce7; /* 科技紫 */
+            --secondary-accent: #00bcd4; /* 霓虹藍 */
+            --text-light: #ffffff;
+            --text-dim: #a0a0a0;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --border-light: rgba(255, 255, 255, 0.1);
         }
 
-        * { box-sizing: border-box; }
-        body { 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Space Grotesk', sans-serif;
             background: var(--bg-dark);
-            color: var(--text-main);
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            margin: 0; overflow-x: hidden;
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
         }
 
-        /* 背景流光 */
-        .bg-glow {
-            position: fixed; top: 0; left: 50%; transform: translateX(-50%);
-            width: 100vw; height: 100vh;
-            background: radial-gradient(circle at 50% -10%, #1e293b 0%, transparent 60%);
-            z-index: -1;
+        /* 全局動畫基礎 */
+        .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 1s ease-out, transform 1s ease-out; }
+        .fade-in.active { opacity: 1; transform: translateY(0); }
+
+        /* 導航列 */
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 5%; position: fixed; width: 100%; top: 0; z-index: 1000;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 16px; font-weight: 500; transition: color 0.3s ease; }
+        .nav-links a:hover { color: var(--text-light); }
+        .lang-select {
+            background: var(--card-bg); border: 1px solid var(--border-light);
+            color: var(--text-light); padding: 8px 12px; border-radius: 8px; font-size: 14px;
+            cursor: pointer; appearance: none;
         }
 
-        .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
-
-        /* 語言切換 */
-        .nav { display: flex; justify-content: flex-end; padding: 20px 0; gap: 10px; }
-        .lang-btn {
-            background: var(--glass); border: 1px solid var(--border); color: var(--text-sub);
-            padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 12px; transition: 0.3s;
+        /* Hero Section - 最強視覺 */
+        .hero-section {
+            height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; background: radial-gradient(circle at center top, #1a0f2b 0%, #000 70%);
+            position: relative; overflow: hidden;
         }
-        .lang-btn:hover, .lang-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .hero-section::before { /* 背景光暈 */
+            content: ''; position: absolute; top: -10%; left: -10%;
+            width: 120%; height: 120%; background: radial-gradient(circle at 20% 80%, var(--primary-accent) 0%, transparent 40%),
+                                      radial-gradient(circle at 80% 20%, var(--secondary-accent) 0%, transparent 40%);
+            opacity: 0.2; filter: blur(100px); animation: neonGlow 15s infinite alternate;
+        }
+        @keyframes neonGlow {
+            0% { transform: scale(1); opacity: 0.2; }
+            100% { transform: scale(1.05); opacity: 0.3; }
+        }
 
-        /* --- 簡介介面 (Hero Section) --- */
-        .hero { text-align: center; padding: 80px 0 60px; }
-        .hero h1 { 
-            font-size: clamp(40px, 8vw, 72px); font-weight: 800; letter-spacing: -3px; margin: 0;
-            background: linear-gradient(180deg, #fff 0%, #64748b 100%);
+        .hero-content { z-index: 1; padding: 0 5%; }
+        .hero-content h1 {
+            font-size: clamp(3rem, 10vw, 5.5rem); font-weight: 700;
+            background: linear-gradient(45deg, var(--secondary-accent), var(--primary-accent));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            line-height: 1.1; margin-bottom: 20px;
+        }
+        .hero-content p {
+            font-size: clamp(1rem, 3vw, 1.5rem); color: var(--text-dim);
+            max-width: 800px; margin: 0 auto 40px;
+        }
+        .hero-cta {
+            background: linear-gradient(45deg, var(--secondary-accent), var(--primary-accent));
+            color: var(--text-light); padding: 15px 30px; border-radius: 50px;
+            text-decoration: none; font-size: 18px; font-weight: 700;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 200, 255, 0.3);
+        }
+        .hero-cta:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0, 200, 255, 0.5); }
+
+        /* Feature Section */
+        .features-section { padding: 100px 5%; text-align: center; }
+        .features-section h2 {
+            font-size: clamp(2.5rem, 6vw, 4rem); color: var(--text-light); margin-bottom: 60px;
+            background: linear-gradient(45deg, #ffffff, var(--text-dim));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-        .hero p { color: var(--text-sub); font-size: clamp(16px, 4vw, 20px); max-width: 600px; margin: 20px auto; line-height: 1.6; }
-
-        /* --- 功能特性 (Features) --- */
-        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 80px; }
-        .f-card {
-            background: var(--glass); border: 1px solid var(--border); backdrop-filter: blur(10px);
-            padding: 30px; border-radius: 24px; text-align: left;
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .feature-card {
+            background: var(--card-bg); border: 1px solid var(--border-light);
+            border-radius: 20px; padding: 40px; text-align: left;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .f-card h3 { margin: 0 0 10px 0; color: var(--accent); font-size: 18px; }
-        .f-card p { margin: 0; color: var(--text-sub); font-size: 14px; line-height: 1.5; }
+        .feature-card:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4); }
+        .feature-card .icon { font-size: 40px; color: var(--secondary-accent); margin-bottom: 20px; }
+        .feature-card h3 { font-size: 24px; color: var(--text-light); margin-bottom: 15px; }
+        .feature-card p { font-size: 16px; color: var(--text-dim); }
 
-        /* --- 下載區塊 --- */
-        .download-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .dl-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
-            border: 1px solid var(--border); padding: 40px; border-radius: 30px; text-align: center;
-            transition: 0.4s;
+        /* Call to Action Section */
+        .cta-section { padding: 100px 5%; text-align: center; background: radial-gradient(circle at center bottom, #0a0a00 0%, #000 80%); }
+        .cta-section h2 {
+            font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 30px;
+            background: linear-gradient(45deg, #ffffff, var(--text-dim));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-        .dl-card:hover { border-color: var(--primary); transform: translateY(-5px); background: rgba(255,255,255,0.04); }
-        .dl-card h2 { margin: 10px 0; font-size: 24px; }
-        
-        .btn {
-            display: inline-block; width: 100%; padding: 15px; margin-top: 20px;
-            background: #fff; color: #000; border-radius: 15px;
-            text-decoration: none; font-weight: 700; font-size: 15px; transition: 0.3s;
+        .cta-section .cta-link {
+            background: var(--primary-accent); color: var(--text-light);
+            padding: 15px 30px; border-radius: 50px; text-decoration: none;
+            font-size: 18px; font-weight: 700; transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 0 15px rgba(108, 92, 231, 0.3);
         }
-        .btn:hover { background: var(--accent); box-shadow: 0 0 20px rgba(94, 252, 232, 0.4); }
-        .btn-outline { background: transparent; color: #fff; border: 1px solid var(--border); }
-        .btn-outline:hover { background: #fff; color: #000; }
+        .cta-section .cta-link:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(108, 92, 231, 0.5); }
 
-        /* 頁尾 */
-        footer { margin-top: 100px; padding: 40px 0; border-top: 1px solid var(--border); text-align: center; color: var(--text-sub); font-size: 12px; }
-
-        .feedback-float {
-            position: fixed; bottom: 30px; right: 30px;
-            background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid var(--border);
-            color: #fff; padding: 12px 24px; border-radius: 50px; text-decoration: none; font-size: 14px; font-weight: 600;
-        }
+        /* Footer */
+        footer { padding: 50px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); font-size: 14px; }
+        footer p { margin-bottom: 10px; }
+        .social-links a { color: var(--text-dim); font-size: 20px; margin: 0 10px; transition: color 0.3s ease; }
+        .social-links a:hover { color: var(--text-light); }
     </style>
 </head>
 <body>
 
-<div class="bg-glow"></div>
-
-<div class="container">
-    <nav class="nav">
-        <button class="lang-btn active" onclick="setLang('zh')">繁中</button>
-        <button class="lang-btn" onclick="setLang('en')">EN</button>
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo">RemoteEye</a>
+        <div class="nav-links">
+            <a href="index.html" id="nav_home">首頁</a>
+            <a href="download.html" id="nav_download">下載</a>
+            <a href="forum.html" id="nav_forum">論壇</a>
+        </div>
+        <select class="lang-select" onchange="setLang(this.value)">
+            <option value="zh">繁體中文</option>
+            <option value="en">English</option>
+            <option value="ja">日本語</option>
+            <option value="ko">한국어</option>
+        </select>
     </nav>
 
-    <section class="hero">
-        <h1 id="h_title">遠端協作，重新定義</h1>
-        <p id="h_subtitle">RemoteEye 提供極速、安全且跨平台的遠端桌面解決方案，讓技術支援不再受限於距離與系統。</p>
-    </section>
-
-    <section class="features">
-        <div class="f-card">
-            <h3 id="f1_t">🚀 極致性能</h3>
-            <p id="f1_d">採用自研流體傳輸協議，在低頻寬環境下依然保持高畫質與低延遲。</p>
-        </div>
-        <div class="f-card">
-            <h3 id="f2_t">🛡️ 安全加密</h3>
-            <p id="f2_d">端到端 AES-256 加密傳輸，確保每一幀畫面與指令都僅在授權設備間流通。</p>
-        </div>
-        <div class="f-card">
-            <h3 id="f3_t">💻 跨平台運行</h3>
-            <p id="f3_d">原生支援 Windows, macOS 與 Linux，檔案輕量化，無需繁瑣安裝程序。</p>
+    <section class="hero-section">
+        <div class="hero-content fade-in">
+            <h1 id="hero_main_title">次世代遠端體驗</h1>
+            <p id="hero_subtitle">RemoteEye 提供無縫、安全且跨平台的協作解決方案。</p>
+            <a href="download.html" class="hero-cta" id="hero_cta_btn">立即體驗</a>
         </div>
     </section>
 
-    <div class="download-grid">
-        <div class="dl-card">
-            <span>🪟</span>
-            <h2 id="t_win">Windows</h2>
-            <a href="RemoteEye_Windows.exe" class="btn" id="b_win_s">下載安裝程式</a>
-            <a href="RemoteEye_Windows.exe" class="btn btn-outline" id="b_win_p">免安裝版本</a>
+    <section class="features-section">
+        <h2 class="fade-in" id="features_title">核心優勢</h2>
+        <div class="features-grid">
+            <div class="feature-card fade-in">
+                <div class="icon">⚡</div>
+                <h3 id="feature1_title">極致效能</h3>
+                <p id="feature1_desc">採用革命性低延遲協議，確保流暢的遠端操作體驗。</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="icon">🔒</div>
+                <h3 id="feature2_title">軍規加密</h3>
+                <p id="feature2_desc">端到端 AES-256 加密，全面保障您的資料安全與隱私。</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="icon">🌍</div>
+                <h3 id="feature3_title">無縫跨平台</h3>
+                <p id="feature3_desc">原生支援 Windows, macOS, Linux，隨時隨地連結。</p>
+            </div>
         </div>
-        <div class="dl-card">
-            <span>🍎</span>
-            <h2 id="t_mac">macOS</h2>
-            <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 20px;">Support Apple Silicon & Intel</p>
-            <a href="RemoteEye_macOS.dmg" class="btn" id="b_mac">下載 DMG 映像檔</a>
-        </div>
-        <div class="dl-card">
-            <span>🐧</span>
-            <h2 id="t_linux">Linux</h2>
-            <a href="RemoteEye_Linux_App" class="btn btn-outline" id="b_linux">下載執行檔案</a>
-        </div>
-    </div>
+    </section>
+
+    <section class="cta-section">
+        <h2 class="fade-in" id="cta_title">準備好提升您的遠端工作流了嗎？</h2>
+        <a href="download.html" class="cta-link fade-in" id="cta_button">立即開始</a>
+    </section>
 
     <footer>
-        <p id="legal">© 2026 RemoteEye Technology. 本工具僅供技術支援與學術交流使用。</p>
+        <p id="footer_copyright">© 2026 RemoteEye Technology. All Rights Reserved.</p>
+        <div class="social-links">
+            <a href="#" target="_blank">🔗</a> </div>
     </footer>
-</div>
 
-<a href="https://docs.google.com/forms/d/e/1FAIpQLSd87313wWqTvsPIvBVqZ5iznxgx5QH7uUg0tkq996iXwjATpQ/viewform" target="_blank" class="feedback-float" id="f_btn">
-    問題反饋 Feedback
-</a>
+    <script>
+        const i18n = {
+            zh: {
+                nav_home: "首頁", nav_download: "下載", nav_forum: "論壇",
+                hero_main_title: "次世代遠端體驗", hero_subtitle: "RemoteEye 提供無縫、安全且跨平台的協作解決方案。", hero_cta_btn: "立即體驗",
+                features_title: "核心優勢",
+                feature1_title: "極致效能", feature1_desc: "採用革命性低延遲協議，確保流暢的遠端操作體驗。",
+                feature2_title: "軍規加密", feature2_desc: "端到端 AES-256 加密，全面保障您的資料安全與隱私。",
+                feature3_title: "無縫跨平台", feature3_desc: "原生支援 Windows, macOS, Linux，隨時隨地連結。",
+                cta_title: "準備好提升您的遠端工作流了嗎？", cta_button: "立即開始",
+                footer_copyright: "© 2026 RemoteEye Technology. 版權所有。"
+            },
+            en: {
+                nav_home: "Home", nav_download: "Download", nav_forum: "Forum",
+                hero_main_title: "Next-Gen Remote Experience", hero_subtitle: "RemoteEye offers seamless, secure, and cross-platform collaboration solutions.", hero_cta_btn: "Experience Now",
+                features_title: "Core Advantages",
+                feature1_title: "Extreme Performance", feature1_desc: "Revolutionary low-latency protocol for a fluid remote experience.",
+                feature2_title: "Military-Grade Encryption", feature2_desc: "End-to-end AES-256 encryption for data security and privacy.",
+                feature3_title: "Seamless Cross-Platform", feature3_desc: "Native support for Windows, macOS, Linux for universal access.",
+                cta_title: "Ready to elevate your remote workflow?", cta_button: "Get Started",
+                footer_copyright: "© 2026 RemoteEye Technology. All Rights Reserved."
+            },
+            ja: {
+                nav_home: "ホーム", nav_download: "ダウンロード", nav_forum: "フォーラム",
+                hero_main_title: "次世代リモート体験", hero_subtitle: "RemoteEyeは、シームレスで安全なクロスプラットフォームのコラボレーションソリューションを提供します。", hero_cta_btn: "今すぐ体験",
+                features_title: "主な利点",
+                feature1_title: "究極のパフォーマンス", feature1_desc: "革新的な低遅延プロトコルにより、スムーズなリモート操作体験を保証します。",
+                feature2_title: "軍用グレードの暗号化", feature2_desc: "エンドツーエンドのAES-256暗号化により、データセキュリティとプライバシーを完全に保護します。",
+                feature3_title: "シームレスなクロスプラットフォーム", feature3_desc: "Windows、macOS、Linuxにネイティブ対応し、いつでもどこでも接続可能です。",
+                cta_title: "リモートワークフローを向上させる準備はできましたか？", cta_button: "今すぐ始める",
+                footer_copyright: "© 2026 RemoteEye Technology. 全著作権所有。"
+            },
+            ko: {
+                nav_home: "홈", nav_download: "다운로드", nav_forum: "포럼",
+                hero_main_title: "차세대 원격 경험", hero_subtitle: "RemoteEye는 원활하고 안전하며 플랫폼 간 협업 솔루션을 제공합니다.", hero_cta_btn: "지금 경험하기",
+                features_title: "핵심 이점",
+                feature1_title: "최고의 성능", feature1_desc: "혁신적인 저지연 프로토콜로 부드러운 원격 작업 경험을 보장합니다.",
+                feature2_title: "군사 등급 암호화", feature2_desc: "종단 간 AES-256 암호화로 데이터 보안 및 개인 정보를 완벽하게 보호합니다.",
+                feature3_title: "원활한 크로스 플랫폼", feature3_desc: "Windows, macOS, Linux를 기본 지원하여 언제 어디서든 연결할 수 있습니다.",
+                cta_title: "원격 워크플로우를 향상시킬 준비가 되셨습니까?", cta_button: "지금 시작하기",
+                footer_copyright: "© 2026 RemoteEye Technology. 모든 권리 보유."
+            }
+        };
 
-<script>
-    const i18n = {
-        zh: {
-            h_title: "遠端協作，重新定義",
-            h_subtitle: "RemoteEye 提供極速、安全且跨平台的遠端桌面解決方案，讓技術支援不再受限於距離與系統。",
-            f1_t: "🚀 極致性能", f1_d: "採用自研流體傳輸協議，在低頻寬環境下保持流暢。",
-            f2_t: "🛡️ 安全加密", f2_d: "端到端 AES-256 加密，保護您的數據安全。",
-            f3_t: "💻 跨平台運行", f3_d: "原生支援三大系統，輕量免安裝。",
-            t_win: "Windows", b_win_s: "下載安裝程式", b_win_p: "免安裝版本",
-            t_mac: "macOS", b_mac: "下載 DMG 映像檔",
-            t_linux: "Linux", b_linux: "下載執行檔案",
-            legal: "© 2026 RemoteEye Technology. 本工具僅供技術支援與學術交流使用。",
-            f_btn: "問題反饋 Feedback"
-        },
-        en: {
-            h_title: "Remote Collaboration, Redefined",
-            h_subtitle: "RemoteEye delivers high-speed, secure, and cross-platform remote desktop solutions.",
-            f1_t: "🚀 High Performance", f1_d: "Low latency streaming even in low bandwidth environments.",
-            f2_t: "🛡️ Enterprise Security", f2_d: "End-to-end AES-256 encryption for your privacy.",
-            f3_t: "💻 Cross-Platform", f3_d: "Native support for Win, Mac, and Linux.",
-            t_win: "Windows", b_win_s: "Download Installer", b_win_p: "Portable EXE",
-            t_mac: "macOS", b_mac: "Download DMG Image",
-            t_linux: "Linux", b_linux: "Download Binary",
-            legal: "© 2026 RemoteEye Technology. For technical support and educational use only.",
-            f_btn: "Feedback & Support"
+        function setLang(lang) {
+            const elements = document.querySelectorAll('[id^="nav_"], [id^="hero_"], [id^="features_"], [id^="feature"], [id^="cta_"], [id^="footer_"]');
+            elements.forEach(el => {
+                const key = el.id;
+                if (i18n[lang][key]) {
+                    el.innerText = i18n[lang][key];
+                }
+            });
+             // 更新語言選擇框
+            const selectElement = document.querySelector('.lang-select');
+            selectElement.value = lang;
         }
-    };
 
-    function setLang(lang) {
-        const res = i18n[lang];
-        for (let id in res) {
-            document.getElementById(id).innerText = res[id];
-        }
-        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-        event.target.classList.add('active');
-    }
-</script>
+        // 滾動動畫觸發
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+
+            // 初始化語言為繁體中文
+            setLang('zh');
+        });
+    </script>
 
 </body>
 </html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RemoteEye Global | Community Forum</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #000000;
+            --primary-accent: #6c5ce7;
+            --secondary-accent: #00bcd4;
+            --text-light: #ffffff;
+            --text-dim: #a0a0a0;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --border-light: rgba(255, 255, 255, 0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            display: flex; flex-direction: column; min-height: 100vh;
+        }
+
+        /* 導航列 (保持一致) */
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 5%; width: 100%; top: 0; z-index: 1000;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 16px; font-weight: 500; transition: 0.3s; }
+        .nav-links a:hover { color: var(--text-light); }
+
+        /* 論壇頁 Hero */
+        .forum-hero {
+            padding: 120px 5% 60px; text-align: center;
+            background: radial-gradient(circle at center top, #1a0f2b 0%, #000 70%);
+        }
+        .forum-hero h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem); font-weight: 700;
+            background: linear-gradient(45deg, var(--secondary-accent), var(--primary-accent));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .forum-hero p { color: var(--text-dim); margin-top: 20px; font-size: 1.2rem; }
+
+        /* 社群區塊 */
+        .community-grid {
+            max-width: 1100px; margin: 0 auto; padding: 40px 24px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px;
+        }
+
+        .forum-card {
+            background: var(--card-bg); border: 1px solid var(--border-light);
+            border-radius: 24px; padding: 40px; transition: 0.4s; position: relative;
+            overflow: hidden;
+        }
+        .forum-card:hover { transform: translateY(-10px); border-color: var(--primary-accent); }
+        .forum-card h3 { font-size: 24px; margin-bottom: 15px; color: var(--secondary-accent); }
+        .forum-card p { color: var(--text-dim); margin-bottom: 25px; height: 50px; }
+
+        .action-btn {
+            display: inline-block; padding: 12px 28px; border-radius: 50px;
+            text-decoration: none; font-weight: 700; background: var(--text-light); color: #000;
+            transition: 0.3s;
+        }
+        .action-btn:hover { background: var(--accent); transform: scale(1.05); box-shadow: 0 0 20px rgba(0, 188, 212, 0.4); }
+
+        /* 公告欄區塊 */
+        .announcement-list {
+            max-width: 800px; margin: 60px auto; padding: 0 24px;
+        }
+        .announcement-item {
+            background: rgba(255,255,255,0.02); border-left: 4px solid var(--primary-accent);
+            padding: 20px; margin-bottom: 15px; border-radius: 0 12px 12px 0;
+        }
+        .announcement-item span { color: var(--secondary-accent); font-size: 12px; font-weight: 800; display: block; }
+        .announcement-item b { display: block; margin-top: 5px; color: #fff; }
+
+        footer { padding: 50px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); margin-top: auto; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo">RemoteEye</a>
+        <div class="nav-links">
+            <a href="index.html">首頁</a>
+            <a href="download.html">下載</a>
+            <a href="forum.html">論壇</a>
+        </div>
+    </nav>
+
+    <section class="forum-hero">
+        <h1>Community & Support</h1>
+        <p>在這裡交流技術、反饋問題，與全球開發者共同進步。</p>
+    </section>
+
+    <div class="community-grid">
+        <div class="forum-card">
+            <h3>📝 反饋中心</h3>
+            <p>遇到 Bug 或是需要新功能？直接透過 Google 表單與開發團隊聯繫。</p>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSd87313wWqTvsPIvBVqZ5iznxgx5QH7uUg0tkq996iXwjATpQ/viewform" target="_blank" class="action-btn">提交反饋</a>
+        </div>
+
+        <div class="forum-card">
+            <h3>💬 技術討論</h3>
+            <p>加入社群討論區，與其他使用者交流遠端控制的最佳實踐。</p>
+            <a href="#" class="action-btn" style="background: transparent; color: #fff; border: 1px solid var(--border-light);">即將開放</a>
+        </div>
+
+        <div class="forum-card">
+            <h3>🛠️ GitHub 開源社群</h3>
+            <p>查看原始碼、回報 Issue 或參與專案貢獻。</p>
+            <a href="你的GITHUB網址" target="_blank" class="action-btn">前往 GitHub</a>
+        </div>
+    </div>
+
+    <div class="announcement-list">
+        <h2 style="margin-bottom: 30px; text-align: center;">最新公告</h2>
+        <div class="announcement-item">
+            <span>2026.01.28</span>
+            <b>RemoteEye v1.0.6 正式版發佈，優化了 macOS 系統的傳輸效率。</b>
+        </div>
+        <div class="announcement-item">
+            <span>2026.01.15</span>
+            <b>論壇測試版啟動，歡迎所有開發者參與壓力測試。</b>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 RemoteEye Technology. All Rights Reserved.</p>
+    </footer>
+
+</body>
+</html>
