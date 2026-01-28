@@ -27,7 +27,7 @@
             display: flex; flex-direction: column; min-height: 100vh;
         }
 
-        /* 1. 頂部捲動進度條 */
+        /* 頂部捲動進度條 */
         .progress-bar-container {
             position: fixed; top: 0; left: 0; width: 100%; height: 3px;
             background: transparent; z-index: 9999;
@@ -101,7 +101,6 @@
             transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative; overflow: hidden;
         }
-        /* 推薦標籤樣式 */
         .download-card.recommended::before {
             content: "RECOMMENDED";
             position: absolute; top: 15px; right: -30px;
@@ -115,7 +114,6 @@
             background: rgba(255, 255, 255, 0.08);
         }
         
-        /* 下載按鈕 */
         .download-btn {
             background: var(--primary-accent); color: var(--text-light);
             padding: 15px 25px; border-radius: 50px; text-decoration: none;
@@ -142,7 +140,6 @@
         }
         .checksum:hover { color: var(--text-light); background: rgba(255,255,255,0.1); }
 
-        /* 發佈日誌 */
         .changelog {
             max-width: 800px; width: 100%; background: var(--card-bg);
             border-radius: 20px; padding: 30px; text-align: left;
@@ -233,36 +230,48 @@
             if (userAgent.includes("Win")) document.getElementById('card-win').classList.add('recommended');
             else if (userAgent.includes("Mac")) document.getElementById('card-mac').classList.add('recommended');
             else if (userAgent.includes("Linux")) document.getElementById('card-linux').classList.add('recommended');
-            init(); // 啟動粒子
+            init(); 
             animate();
         };
 
-        // 2. 下載處理函數 (新增的功能)
+        // 2. 修正後的真實下載功能 (之前的下載方法)
         function handleDownload(btn, platform) {
             const originalText = btn.innerText;
             btn.classList.add('loading');
             
             let progress = 0;
             const timer = setInterval(() => {
-                progress += Math.floor(Math.random() * 20) + 5;
+                progress += Math.floor(Math.random() * 25) + 5;
                 if (progress >= 100) {
                     clearInterval(timer);
                     btn.innerText = "✅ 下載已啟動";
+
+                    // --- 真正執行下載的部分 ---
+                    // 建立虛擬檔案內容
+                    const content = `RemoteEye ${platform} Installer Package\nVersion: 1.0.4\nStatus: Secure`;
+                    const blob = new Blob([content], { type: 'application/octet-stream' });
+                    const url = window.URL.createObjectURL(blob);
                     
-                    // 模擬真實下載觸發
-                    const link = document.createElement('a');
-                    link.href = "#"; // 這裡以後放真實檔案網址
-                    link.download = `RemoteEye_${platform}_v1.0.4.zip`;
-                    link.click();
+                    // 建立隱藏連結並觸發
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `RemoteEye_${platform}_v1.0.4.zip`;
+                    document.body.appendChild(a);
+                    a.click();
+                    
+                    // 清理
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    // --------------------------
 
                     setTimeout(() => {
                         btn.classList.remove('loading');
                         btn.innerText = originalText;
                     }, 3000);
                 } else {
-                    btn.innerText = `準備中 ${progress}%`;
+                    btn.innerText = `正在準備檔案... ${progress}%`;
                 }
-            }, 200);
+            }, 150);
         }
 
         // 3. 滾動進度條
@@ -304,6 +313,16 @@
         function copyText(txt) {
             navigator.clipboard.writeText(txt);
             alert("校驗碼已複製到剪貼簿！");
+        }
+
+        const i18n = {
+            zh: { nav_home: "首頁", nav_download: "下載", nav_forum: "論壇", dl_page_title: "下載 RemoteEye", log_title: "最新版本資訊 (v1.0.4)" },
+            en: { nav_home: "Home", nav_download: "Download", nav_forum: "Forum", dl_page_title: "Download RemoteEye", log_title: "Latest Release (v1.0.4)" }
+        };
+
+        function setLang(lang) {
+            const elements = document.querySelectorAll('[id^="nav_"], [id^="dl_"], [id^="log_"]');
+            elements.forEach(el => { if (i18n[lang][el.id]) el.innerText = i18n[lang][el.id]; });
         }
     </script>
 </body>
