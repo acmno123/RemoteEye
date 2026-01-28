@@ -2,125 +2,115 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RemoteEye Global | 嘉進官方版</title>
+    <title>RemoteEye Global v1.0.6 - Jiajin Cross-Platform</title>
     <style>
-        :root { 
-            --bg: #020617; --card: #0f172a; --primary: #3b82f6; --accent: #10b981; --text: #f1f5f9; 
-        }
+        /* 嘉進核心配色：純黑背景、代碼綠、科技藍 */
         body { 
-            margin: 0; background: var(--bg); color: var(--text); 
-            font-family: 'Segoe UI', system-ui, sans-serif; text-align: center; 
-            min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+            background-color: #000; 
+            color: #00ff00; 
+            font-family: 'Consolas', 'Courier New', monospace; 
+            padding: 40px; 
+            line-height: 1.6;
         }
+        .container { max-width: 850px; margin: 0 auto; border: 1px solid #333; padding: 30px; box-shadow: 0 0 20px rgba(59, 130, 246, 0.1); }
+        .header { border-bottom: 1px solid #333; padding-bottom: 20px; margin-bottom: 30px; }
+        h1 { color: #3b82f6; margin: 0; font-size: 28px; letter-spacing: 2px; }
         
-        /* 背景流光效果 */
-        .glow {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 30%, rgba(59, 130, 246, 0.12), transparent 70%);
-            z-index: -1;
+        /* 語言導覽列 */
+        .lang-nav { margin-bottom: 15px; }
+        .lang-btn { 
+            background: none; border: 1px solid #444; color: #666; 
+            padding: 4px 12px; cursor: pointer; margin-right: 8px; font-size: 12px; 
         }
-
-        .container { max-width: 650px; margin: 40px auto; padding: 0 20px; }
+        .lang-btn:hover { border-color: #3b82f6; color: #3b82f6; }
         
-        .box { 
-            background: var(--card); padding: 50px 40px; border-radius: 35px; 
-            border: 1px solid rgba(255,255,255,0.08);
-            box-shadow: 0 30px 60px -12px rgba(0,0,0,0.6); 
-        }
-
-        /* 語言切換選單 */
-        .lang-switcher { text-align: right; margin-bottom: 15px; }
-        select { 
-            background: #1e293b; color: #94a3b8; border: 1px solid #334155; 
-            padding: 6px 12px; border-radius: 10px; cursor: pointer; outline: none; font-size: 14px;
-        }
-
-        h1 { 
-            font-size: 3rem; margin: 15px 0 5px 0;
-            background: linear-gradient(to right, #60a5fa, #34d399);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            font-weight: 800;
-        }
+        /* 區塊設定 */
+        .platform-section { margin-bottom: 35px; border-left: 3px solid #222; padding-left: 20px; }
+        .platform-title { color: #888; font-size: 14px; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; }
         
-        .subtitle { color: #94a3b8; font-size: 1.1rem; margin-bottom: 40px; letter-spacing: 1px; }
-
-        /* 按鈕區塊 */
-        .btn-group { display: flex; flex-direction: column; gap: 18px; }
+        /* 按鈕風格 */
         .btn { 
-            padding: 20px; border-radius: 18px; font-weight: 700; font-size: 1.15rem;
-            text-decoration: none; color: white; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            display: flex; align-items: center; justify-content: center; gap: 12px;
+            display: inline-block; padding: 12px 25px; text-decoration: none; 
+            font-weight: bold; margin: 5px 10px 5px 0; font-size: 14px; 
+            border-radius: 4px; transition: 0.3s; 
         }
+        .win { background: #3b82f6; color: #fff; }
+        .mac { background: #f1f5f9; color: #000; }
+        .linux { background: #f97316; color: #fff; }
+        .btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
         
-        /* 安裝版亮色設計 */
-        .btn-setup { 
-            background: var(--primary); 
-            box-shadow: 0 12px 20px -5px rgba(59, 130, 246, 0.4);
-        }
-        
-        /* 免安裝版綠色邊框設計 */
-        .btn-portable { 
-            background: rgba(16, 185, 129, 0.05); 
-            border: 2px solid var(--accent); 
-            color: var(--accent);
-        }
-        
-        .btn:hover { transform: translateY(-4px); filter: brightness(1.2); }
-        .btn-portable:hover { background: var(--accent); color: white; }
-        
-        .info-text { margin-top: 35px; color: #475569; font-size: 0.9rem; font-family: monospace; }
-        .footer { margin-top: 60px; color: #334155; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; }
+        .comment { color: #4b5563; font-style: italic; font-size: 13px; }
+        .status { color: #10b981; margin-bottom: 20px; }
     </style>
 </head>
 <body>
 
-<div class="glow"></div>
-
 <div class="container">
-    <div class="lang-switcher">
-        <select id="langSelect" onchange="updateLang()">
-            <option value="zh">繁體中文</option>
-            <option value="en">English</option>
-            <option value="ja">日本語</option>
-            <option value="fr">Français</option>
-            <option value="es">Español</option>
-            <option value="ko">한국어</option>
-        </select>
-    </div>
-
-    <div class="box">
-        <img src="logo.png" width="90" style="border-radius: 24px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.4));">
-        <h1>RemoteEye Global</h1>
-        <p class="subtitle" id="webSub">六國語言 · 嘉進核心專業版 v1.0.6</p>
-        
-        <div class="btn-group">
-            <a href="RemoteEye_Setup_v1.0.6.exe" class="btn btn-setup" id="btnSetup">🚀 下載官方安裝版</a>
-            <a href="RemoteEye_Portable_v1.0.6.exe" class="btn btn-portable" id="btnPort">📦 下載綠色免安裝版</a>
+    <div class="header">
+        <div class="lang-nav">
+            <button class="lang-btn" onclick="setLang('zh')">ZH</button>
+            <button class="lang-btn" onclick="setLang('en')">EN</button>
+            <button class="lang-btn" onclick="setLang('ja')">JA</button>
+            <button class="lang-btn" onclick="setLang('ko')">KO</button>
         </div>
-        
-        <p id="webInfo" class="info-text">COMPATIBLE WITH WINDOWS 10 / 11 (X64)</p>
+        <h1>> RemoteEye_Global_v1.0.6</h1>
+        <p class="comment">// 核心開發者: 嘉進 (Jiajin) | 全平台部署模組已載入</p>
     </div>
 
-    <div class="footer">© 2026 REMOTEEYE PROJECT. POWERED BY JIAJIN.</div>
+    <p class="status" id="status_msg">[STATUS]: 多國語言支援模組運行中。等待使用者下載指令...</p>
+
+    <div class="platform-section">
+        <div class="platform-title" id="t_win">> Microsoft Windows (x64)</div>
+        <a href="RemoteEye_Setup_v1.0.6.exe" class="btn win" id="b_win_s">下載正式安裝版 (EXE)</a>
+        <a href="RemoteEye_Portable_v1.0.6.exe" class="btn win" id="b_win_p" style="opacity: 0.8;">下載免安裝綠色版 (EXE)</a>
+    </div>
+
+    <div class="platform-section">
+        <div class="platform-title" id="t_mac">> Apple macOS (Universal)</div>
+        <a href="https://github.com/你的帳號/你的倉庫/actions" class="btn mac" id="b_mac">🍎 下載 macOS 編譯版</a>
+        <p class="comment" id="c_mac">// 提示: 執行前需在「隱私權與安全性」開啟輔助功能授權</p>
+    </div>
+
+    <div class="platform-section">
+        <div class="platform-title" id="t_linux">> Linux Systems (AppImage)</div>
+        <a href="https://github.com/你的帳號/你的倉庫/actions" class="btn linux" id="b_linux">🐧 下載 Linux 編譯版</a>
+        <p class="comment" id="c_linux">// 提示: 下載後請執行 chmod +x 以賦予執行權限</p>
+    </div>
+
+    <footer style="margin-top:50px; border-top: 1px solid #333; padding-top: 15px; font-size: 11px; color: #444;">
+        © 2026 REMOTEEYE PROJECT. POWERED BY JIAJIN CORE. [REV: 1.0.6-CROSS]
+    </footer>
 </div>
 
 <script>
-    const i18n = {
-        zh: { sub: "六國語言 · 嘉進核心專業版 v1.0.6", setup: "🚀 下載官方安裝版", port: "📦 下載綠色免安裝版", info: "COMPATIBLE WITH WINDOWS 10 / 11 (X64)" },
-        en: { sub: "6 Languages · Jiajin Core Pro v1.0.6", setup: "🚀 Download Installer", port: "📦 Download Portable (EXE)", info: "COMPATIBLE WITH WINDOWS 10 / 11 (X64)" },
-        ja: { sub: "6ヶ国語 · 嘉進コア Pro v1.0.6", setup: "🚀 インストーラー版", port: "📦 ポータブル版 (EXE)", info: "WINDOWS 10 / 11 に対応" },
-        fr: { sub: "6 Langues · Edition Pro v1.0.6", setup: "🚀 Télécharger l'installateur", port: "📦 Version Portable (EXE)", info: "SYSTÈME: WINDOWS 10 / 11" },
-        es: { sub: "6 Idiomas · Edición Pro v1.0.6", setup: "🚀 Descargar Instalador", port: "📦 Versión Portátil (EXE)", info: "SISTEMA: WINDOWS 10 / 11" },
-        ko: { sub: "6개 언어 · 가진 코어 프로 v1.0.6", setup: "🚀 설치 파일 다운로드", port: "📦 무설치판 다운로드 (EXE)", info: "지원 OS: WINDOWS 10 / 11" }
+    const d = {
+        zh: {
+            status: "[STATUS]: 多國語言支援模組運行中。等待使用者下載指令...",
+            t_win: "> Microsoft Windows (x64)", b_win_s: "下載正式安裝版 (EXE)", b_win_p: "下載免安裝綠色版 (EXE)",
+            t_mac: "> Apple macOS (Universal)", b_mac: "🍎 下載 macOS 編譯版", c_mac: "// 提示: 執行前需在「隱私權與安全性」開啟輔助功能授權",
+            t_linux: "> Linux Systems (AppImage)", b_linux: "🐧 下載 Linux 編譯版", c_linux: "// 提示: 下載後請執行 chmod +x 以賦予執行權限"
+        },
+        en: {
+            status: "[STATUS]: Multi-language module active. Awaiting user command...",
+            t_win: "> Microsoft Windows (x64)", b_win_s: "Download Installer (EXE)", b_win_p: "Download Portable (EXE)",
+            t_mac: "> Apple macOS (Universal)", b_mac: "🍎 Download for macOS", c_mac: "// Note: Accessibility permissions required in Privacy settings",
+            t_linux: "> Linux Systems (AppImage)", b_linux: "🐧 Download for Linux", c_linux: "// Note: Remember to 'chmod +x' after download"
+        }
+        // ... 可依此類推加入 ja, ko
     };
 
-    function updateLang() {
-        const l = document.getElementById('langSelect').value;
-        document.getElementById('webSub').innerText = i18n[l].sub;
-        document.getElementById('btnSetup').innerText = i18n[l].setup;
-        document.getElementById('btnPort').innerText = i18n[l].port;
-        document.getElementById('webInfo').innerText = i18n[l].info;
+    function setLang(lang) {
+        const res = d[lang] || d['zh'];
+        document.getElementById('status_msg').innerText = res.status;
+        document.getElementById('t_win').innerText = res.t_win;
+        document.getElementById('b_win_s').innerText = res.b_win_s;
+        document.getElementById('b_win_p').innerText = res.b_win_p;
+        document.getElementById('t_mac').innerText = res.t_mac;
+        document.getElementById('b_mac').innerText = res.b_mac;
+        document.getElementById('c_mac').innerText = res.c_mac;
+        document.getElementById('t_linux').innerText = res.t_linux;
+        document.getElementById('b_linux').innerText = res.b_linux;
+        document.getElementById('c_linux').innerText = res.c_linux;
     }
 </script>
 
