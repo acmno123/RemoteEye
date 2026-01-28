@@ -27,20 +27,26 @@ jobs:
           python -m pip install --upgrade pip
           pip install customtkinter mss pillow pyautogui pyinstaller
 
-      - name: 🔨 執行編譯 (自動偵測檔名)
+      - name: 🔍 檔案清單確認
         shell: bash
         run: |
-          # 自動尋找資料夾下最大的 Python 檔案 (通常就是主程式)
-          # 或者你可以直接把下方的 FILE 換成你真正的檔名，例如 FILE="main.py"
-          FILE=$(ls *.py | head -n 1)
-          echo "偵測到主程式檔案: $FILE"
+          echo "當前目錄路徑: $(pwd)"
+          echo "檔案清單如下:"
+          ls -F
+
+      - name: 🔨 執行編譯
+        shell: bash
+        run: |
+          # 這裡請手動輸入你真正的檔名，例如：main.py
+          # 我假設你的檔名是 RemoteEye_Global.py
+          TARGET_FILE="RemoteEye_Global.py"
           
-          if [ -z "$FILE" ]; then
-            echo "錯誤: 找不到任何 Python 檔案！請確認你已將 .py 檔案上傳到 GitHub。"
+          if [ -f "$TARGET_FILE" ]; then
+            pyinstaller --noconsole --onefile --name "RemoteEye_v1.0.6_${{ matrix.os }}" "$TARGET_FILE"
+          else
+            echo "錯誤：找不到 $TARGET_FILE ！請確認檔案已 Push 到 GitHub 根目錄。"
             exit 1
           fi
-          
-          pyinstaller --noconsole --onefile --name "RemoteEye_v1.0.6_${{ matrix.os }}" "$FILE"
 
       - name: 📤 儲存成果 (Artifacts)
         uses: actions/upload-artifact@v4
