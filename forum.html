@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RemoteEye Global | Community Forum</title>
+    <title>RemoteEye | Open Forum</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -12,78 +12,63 @@
             --secondary-accent: #00bcd4;
             --text-light: #ffffff;
             --text-dim: #a0a0a0;
-            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-bg: rgba(255, 255, 255, 0.03);
             --border-light: rgba(255, 255, 255, 0.1);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Space Grotesk', sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-light);
-            line-height: 1.6;
-            overflow-x: hidden;
-            display: flex; flex-direction: column; min-height: 100vh;
+            background: var(--bg-dark); color: var(--text-light);
+            margin: 0; display: flex; flex-direction: column; min-height: 100vh;
         }
 
-        /* 導航列 (保持一致) */
+        /* 導航列 */
         .navbar {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 5%; width: 100%; top: 0; z-index: 1000;
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 20px 5%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border-light); position: sticky; top: 0; z-index: 1000;
         }
-        .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
-        .nav-links { display: flex; gap: 30px; }
-        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 16px; font-weight: 500; transition: 0.3s; }
-        .nav-links a:hover { color: var(--text-light); }
+        .nav-logo { font-size: 22px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
+        .nav-links a { color: var(--text-dim); text-decoration: none; margin-left: 25px; transition: 0.3s; }
+        .nav-links a:hover { color: #fff; }
 
-        /* 論壇頁 Hero */
-        .forum-hero {
-            padding: 120px 5% 60px; text-align: center;
-            background: radial-gradient(circle at center top, #1a0f2b 0%, #000 70%);
-        }
-        .forum-hero h1 {
-            font-size: clamp(2.5rem, 8vw, 4.5rem); font-weight: 700;
-            background: linear-gradient(45deg, var(--secondary-accent), var(--primary-accent));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-        .forum-hero p { color: var(--text-dim); margin-top: 20px; font-size: 1.2rem; }
-
-        /* 社群區塊 */
-        .community-grid {
-            max-width: 1100px; margin: 0 auto; padding: 40px 24px;
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px;
+        /* 論壇佈局 */
+        .forum-container {
+            display: grid; grid-template-columns: 300px 1fr;
+            max-width: 1400px; margin: 40px auto; gap: 30px; padding: 0 20px; flex-grow: 1;
         }
 
-        .forum-card {
+        /* 左側側邊欄 */
+        .sidebar { display: flex; flex-direction: column; gap: 20px; }
+        .stat-card {
             background: var(--card-bg); border: 1px solid var(--border-light);
-            border-radius: 24px; padding: 40px; transition: 0.4s; position: relative;
-            overflow: hidden;
+            padding: 25px; border-radius: 20px;
         }
-        .forum-card:hover { transform: translateY(-10px); border-color: var(--primary-accent); }
-        .forum-card h3 { font-size: 24px; margin-bottom: 15px; color: var(--secondary-accent); }
-        .forum-card p { color: var(--text-dim); margin-bottom: 25px; height: 50px; }
+        .stat-card h4 { color: var(--secondary-accent); margin-bottom: 15px; font-size: 14px; letter-spacing: 1px; }
+        .stat-item { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; }
+        .stat-item span { color: var(--text-dim); }
 
-        .action-btn {
-            display: inline-block; padding: 12px 28px; border-radius: 50px;
-            text-decoration: none; font-weight: 700; background: var(--text-light); color: #000;
-            transition: 0.3s;
+        /* 右側討論區 (內嵌 GitHub Discussions 或 Giscus) */
+        .discussion-area {
+            background: var(--card-bg); border: 1px solid var(--border-light);
+            border-radius: 24px; padding: 30px; min-height: 600px;
+            position: relative;
         }
-        .action-btn:hover { background: var(--accent); transform: scale(1.05); box-shadow: 0 0 20px rgba(0, 188, 212, 0.4); }
+        .discussion-placeholder {
+            text-align: center; padding: 100px 20px;
+        }
+        .open-btn {
+            background: var(--primary-accent); color: white; padding: 12px 30px;
+            border-radius: 50px; text-decoration: none; font-weight: 700; display: inline-block; margin-top: 20px;
+        }
 
-        /* 公告欄區塊 */
-        .announcement-list {
-            max-width: 800px; margin: 60px auto; padding: 0 24px;
+        /* 響應式 */
+        @media (max-width: 900px) {
+            .forum-container { grid-template-columns: 1fr; }
+            .sidebar { order: 2; }
         }
-        .announcement-item {
-            background: rgba(255,255,255,0.02); border-left: 4px solid var(--primary-accent);
-            padding: 20px; margin-bottom: 15px; border-radius: 0 12px 12px 0;
-        }
-        .announcement-item span { color: var(--secondary-accent); font-size: 12px; font-weight: 800; display: block; }
-        .announcement-item b { display: block; margin-top: 5px; color: #fff; }
 
-        footer { padding: 50px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); margin-top: auto; }
+        footer { padding: 40px; text-align: center; color: var(--text-dim); font-size: 13px; }
     </style>
 </head>
 <body>
@@ -93,49 +78,58 @@
         <div class="nav-links">
             <a href="index.html">首頁</a>
             <a href="download.html">下載</a>
-            <a href="forum.html">論壇</a>
+            <a href="forum.html" style="color: #fff; font-weight: bold;">開放論壇</a>
         </div>
     </nav>
 
-    <section class="forum-hero">
-        <h1>Community & Support</h1>
-        <p>在這裡交流技術、反饋問題，與全球開發者共同進步。</p>
-    </section>
+    <div class="forum-container">
+        <aside class="sidebar">
+            <div class="stat-card">
+                <h4>FORUM STATS</h4>
+                <div class="stat-item"><span>線上人數</span><b>124</b></div>
+                <div class="stat-item"><span>討論主題</span><b>1.2k</b></div>
+                <div class="stat-item"><span>累積回覆</span><b>8.5k</b></div>
+            </div>
+            
+            <div class="stat-card">
+                <h4>快速連結</h4>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSd87313wWqTvsPIvBVqZ5iznxgx5QH7uUg0tkq996iXwjATpQ/viewform" style="color: var(--accent); text-decoration: none; font-size: 14px;">→ 提交 Bug 反饋</a>
+                <br><br>
+                <a href="#" style="color: var(--accent); text-decoration: none; font-size: 14px;">→ 開發者文件</a>
+            </div>
+        </aside>
 
-    <div class="community-grid">
-        <div class="forum-card">
-            <h3>📝 反饋中心</h3>
-            <p>遇到 Bug 或是需要新功能？直接透過 Google 表單與開發團隊聯繫。</p>
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLSd87313wWqTvsPIvBVqZ5iznxgx5QH7uUg0tkq996iXwjATpQ/viewform" target="_blank" class="action-btn">提交反饋</a>
-        </div>
+        <main class="discussion-area">
+            <div class="discussion-placeholder">
+                <h2 style="font-size: 32px; margin-bottom: 10px;">開放式社群討論</h2>
+                <p style="color: var(--text-dim);">我們使用 GitHub Discussions 作為官方開放論壇，讓交流更透明。</p>
+                
+                <div id="<script src="https://giscus.app/client.js"
+        data-repo="acmno123/RemoteEye"
+        data-repo-id="R_kgDORC_9Aw"
+        data-category="Announcements"
+        data-category-id="DIC_kwDORC_9A84C1iRy"
+        data-mapping="title"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-TW"
+        crossorigin="anonymous"
+        async>
+</script>">
+                    </div>
 
-        <div class="forum-card">
-            <h3>💬 技術討論</h3>
-            <p>加入社群討論區，與其他使用者交流遠端控制的最佳實踐。</p>
-            <a href="#" class="action-btn" style="background: transparent; color: #fff; border: 1px solid var(--border-light);">即將開放</a>
-        </div>
-
-        <div class="forum-card">
-            <h3>🛠️ GitHub 開源社群</h3>
-            <p>查看原始碼、回報 Issue 或參與專案貢獻。</p>
-            <a href="你的GITHUB網址" target="_blank" class="action-btn">前往 GitHub</a>
-        </div>
-    </div>
-
-    <div class="announcement-list">
-        <h2 style="margin-bottom: 30px; text-align: center;">最新公告</h2>
-        <div class="announcement-item">
-            <span>2026.01.28</span>
-            <b>RemoteEye v1.0.6 正式版發佈，優化了 macOS 系統的傳輸效率。</b>
-        </div>
-        <div class="announcement-item">
-            <span>2026.01.15</span>
-            <b>論壇測試版啟動，歡迎所有開發者參與壓力測試。</b>
-        </div>
+                <a href="https://github.com/acmno123/RemoteEye/discussions" target="_blank" class="open-btn">
+                    進入 GitHub 論壇參與討論
+                </a>
+            </div>
+        </main>
     </div>
 
     <footer>
-        <p>© 2026 RemoteEye Technology. All Rights Reserved.</p>
+        © 2026 RemoteEye Technology. 開放、透明、高效。
     </footer>
 
 </body>
