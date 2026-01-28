@@ -1,4 +1,4 @@
-name: RemoteEye Multi-Platform Build
+name: RemoteEye Professional Build
 
 on:
   push:
@@ -11,7 +11,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-22.04]
+        # 使用 macOS 13 以確保較好的相容性
+        os: [windows-latest, macos-13, ubuntu-22.04]
 
     steps:
       - name: 📥 檢出代碼
@@ -22,28 +23,55 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: 📦 安裝套件
+      - name: 📦 安裝共用套件
         run: |
           python -m pip install --upgrade pip
           pip install customtkinter mss pillow pyautogui pyinstaller
 
-      - name: 🔨 執行編譯 (自動偵測檔名)
-        shell: bash
+      # --- Windows 編譯步驟 ---
+      - name: 🔨 Windows 打包
+        if: matrix.os == 'windows-latest'
         run: |
-          # 自動尋找資料夾下最大的 Python 檔案 (通常就是主程式)
-          # 或者你可以直接把下方的 FILE 換成你真正的檔名，例如 FILE="main.py"
-          FILE=$(ls *.py | head -n 1)
-          echo "偵測到主程式檔案: $FILE"
-          
-          if [ -z "$FILE" ]; then
-            echo "錯誤: 找不到任何 Python 檔案！請確認你已將 .py 檔案上傳到 GitHub。"
-            exit 1
-          fi
-          
-          pyinstaller --noconsole --onefile --name "RemoteEye_v1.0.6_${{ matrix.os }}" "$FILE"
+          pyinstaller --noconsole --onefile --name "RemoteEye_Windows" RemoteEye_Global.py
 
-      - name: 📤 儲存成果 (Artifacts)
+      # --- macOS 打包與製作 DMG ---
+      - name: 🔨 macOS 打包 (DMG)
+        if: matrix.os == 'macos-13'
+        run: |
+          # 安裝 create-dmg 工具
+          brew install create-dmg
+          # 編譯成 .app
+          pyinstaller --noconsole --onedir --windowed --name "RemoteEye" RemoteEye_Global.py
+          # 建立 DMG
+          mkdir -p dist/dmg
+          create-dmg \
+            --volname "RemoteEye Installer" \
+            --window-pos 200 120 \
+            --window-size 600 400 \
+            --icon-size 100 \
+            --icon "RemoteEye.app" 175 190 \
+            --hide-extension "RemoteEye.app" \
+            --app-drop-link 425 190 \
+            "dist/RemoteEye_macOS.dmg" \
+            "dist/RemoteEye.app"
+
+      # --- Linux 打包與製作 AppImage ---
+      - name: 🔨 Linux 打包 (AppImage)
+        if: matrix.os == 'ubuntu-22.04'
+        run: |
+          # 安裝打包工具
+          pip install py2app 
+          pyinstaller --noconsole --onefile --name "RemoteEye_Linux" RemoteEye_Global.py
+          # 賦予直接執行權限
+          chmod +x dist/RemoteEye_Linux
+          # 註：這裡我們先將執行檔改名，方便網站直接下載即用
+          mv dist/RemoteEye_Linux dist/RemoteEye_Linux_App
+
+      - name: 📤 儲存最終成品
         uses: actions/upload-artifact@v4
         with:
           name: RemoteEye-Release-${{ matrix.os }}
-          path: dist/
+          path: |
+            dist/*.exe
+            dist/*.dmg
+            dist/RemoteEye_Linux_App
