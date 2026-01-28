@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RemoteEye | Open Forum</title>
+    <title>RemoteEye Global | Community Forum</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -12,125 +12,223 @@
             --secondary-accent: #00bcd4;
             --text-light: #ffffff;
             --text-dim: #a0a0a0;
-            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-bg: rgba(255, 255, 255, 0.05);
             --border-light: rgba(255, 255, 255, 0.1);
+            --success-green: #00ff9d;
         }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Space Grotesk', sans-serif;
-            background: var(--bg-dark); color: var(--text-light);
-            margin: 0; display: flex; flex-direction: column; min-height: 100vh;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
         }
+
+        /* 1. 全局視覺組件 (進度條 & 粒子) */
+        .progress-bar-container { position: fixed; top: 0; left: 0; width: 100%; height: 3px; z-index: 9999; }
+        #myBar { height: 100%; width: 0%; background: linear-gradient(to right, var(--secondary-accent), var(--primary-accent)); }
+        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.3; pointer-events: none; }
 
         /* 導航列 */
         .navbar {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 5%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--border-light); position: sticky; top: 0; z-index: 1000;
+            padding: 20px 5%; position: fixed; width: 100%; top: 0; z-index: 1000;
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-light);
         }
-        .nav-logo { font-size: 22px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
-        .nav-links a { color: var(--text-dim); text-decoration: none; margin-left: 25px; transition: 0.3s; }
-        .nav-links a:hover { color: #fff; }
+        .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a { color: var(--text-dim); text-decoration: none; transition: 0.3s; }
+        .nav-links a:hover { color: var(--text-light); }
 
-        /* 論壇佈局 */
-        .forum-container {
-            display: grid; grid-template-columns: 300px 1fr;
-            max-width: 1400px; margin: 40px auto; gap: 30px; padding: 0 20px; flex-grow: 1;
+        /* 論壇主體 */
+        .forum-container { max-width: 1000px; margin: 120px auto 50px; padding: 0 5%; }
+        
+        /* 標題與發帖按鈕 */
+        .forum-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; }
+        .forum-header h1 { font-size: 2.5rem; background: linear-gradient(45deg, #fff, var(--text-dim)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .new-post-btn {
+            background: var(--primary-accent); color: #fff; padding: 12px 25px; 
+            border-radius: 12px; text-decoration: none; font-weight: 700; transition: 0.3s;
+            border: none; cursor: pointer;
         }
+        .new-post-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--primary-accent); }
 
-        /* 左側側邊欄 */
-        .sidebar { display: flex; flex-direction: column; gap: 20px; }
-        .stat-card {
+        /* 2. 熱門標籤區 */
+        .tags-container { display: flex; gap: 10px; margin-bottom: 30px; overflow-x: auto; padding-bottom: 10px; }
+        .tag {
             background: var(--card-bg); border: 1px solid var(--border-light);
-            padding: 25px; border-radius: 20px;
+            padding: 6px 15px; border-radius: 20px; font-size: 13px; color: var(--text-dim);
+            white-space: nowrap; cursor: pointer; transition: 0.3s;
         }
-        .stat-card h4 { color: var(--secondary-accent); margin-bottom: 15px; font-size: 14px; letter-spacing: 1px; }
-        .stat-item { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; }
-        .stat-item span { color: var(--text-dim); }
+        .tag:hover, .tag.active { border-color: var(--secondary-accent); color: var(--secondary-accent); background: rgba(0, 188, 212, 0.1); }
 
-        /* 右側討論區 (內嵌 GitHub Discussions 或 Giscus) */
-        .discussion-area {
+        /* 3. 貼文列表 */
+        .post-card {
             background: var(--card-bg); border: 1px solid var(--border-light);
-            border-radius: 24px; padding: 30px; min-height: 600px;
-            position: relative;
+            border-radius: 16px; padding: 25px; margin-bottom: 20px;
+            transition: 0.3s; display: flex; justify-content: space-between; align-items: center;
         }
-        .discussion-placeholder {
-            text-align: center; padding: 100px 20px;
+        .post-card:hover { border-color: rgba(255,255,255,0.2); transform: translateX(5px); background: rgba(255,255,255,0.08); }
+        
+        .post-info h3 { font-size: 1.2rem; margin-bottom: 8px; color: var(--text-light); }
+        .post-meta { font-size: 13px; color: var(--text-dim); display: flex; gap: 15px; }
+        .post-status { color: var(--success-green); font-weight: bold; }
+
+        .post-stats { display: flex; gap: 20px; text-align: center; }
+        .stat-item { display: flex; flex-direction: column; }
+        .stat-num { font-weight: 700; color: var(--text-light); }
+        .stat-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; }
+
+        /* 4. 模擬彈窗 (Modal) */
+        .modal {
+            display: none; position: fixed; z-index: 2000; top: 0; left: 0; 
+            width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
         }
-        .open-btn {
-            background: var(--primary-accent); color: white; padding: 12px 30px;
-            border-radius: 50px; text-decoration: none; font-weight: 700; display: inline-block; margin-top: 20px;
+        .modal-content {
+            background: #111; border: 1px solid var(--primary-accent);
+            width: 90%; max-width: 500px; margin: 10% auto; padding: 30px; border-radius: 20px;
+        }
+        .modal-content input, .modal-content textarea {
+            width: 100%; background: #000; border: 1px solid var(--border-light);
+            color: #fff; padding: 12px; margin-top: 15px; border-radius: 8px;
         }
 
-        /* 響應式 */
-        @media (max-width: 900px) {
-            .forum-container { grid-template-columns: 1fr; }
-            .sidebar { order: 2; }
-        }
-
-        footer { padding: 40px; text-align: center; color: var(--text-dim); font-size: 13px; }
+        footer { padding: 40px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); font-size: 14px; }
     </style>
 </head>
 <body>
 
+    <div class="progress-bar-container"><div id="myBar"></div></div>
+    <canvas id="particleCanvas"></canvas>
+
     <nav class="navbar">
         <a href="index.html" class="nav-logo">RemoteEye</a>
         <div class="nav-links">
-            <a href="index.html">首頁</a>
-            <a href="download.html">下載</a>
-            <a href="forum.html" style="color: #fff; font-weight: bold;">開放論壇</a>
+            <a href="index.html" id="nav_home">首頁</a>
+            <a href="download.html" id="nav_download">下載</a>
+            <a href="forum.html" id="nav_forum">論壇</a>
         </div>
+        <select style="background:none; color:#fff; border:none; cursor:pointer;">
+            <option>繁體中文</option>
+            <option>English</option>
+        </select>
     </nav>
 
-    <div class="forum-container">
-        <aside class="sidebar">
-            <div class="stat-card">
-                <h4>FORUM STATS</h4>
-                <div class="stat-item"><span>線上人數</span><b>124</b></div>
-                <div class="stat-item"><span>討論主題</span><b>1.2k</b></div>
-                <div class="stat-item"><span>累積回覆</span><b>8.5k</b></div>
+    <main class="forum-container">
+        <div class="forum-header">
+            <div>
+                <h1 id="forum_title">技術社群</h1>
+                <p style="color: var(--text-dim);">與全球開發者討論遠端協作的未來</p>
             </div>
-            
-            <div class="stat-card">
-                <h4>快速連結</h4>
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSd87313wWqTvsPIvBVqZ5iznxgx5QH7uUg0tkq996iXwjATpQ/viewform" style="color: var(--accent); text-decoration: none; font-size: 14px;">→ 提交 Bug 反饋</a>
-                <br><br>
-                <a href="#" style="color: var(--accent); text-decoration: none; font-size: 14px;">→ 開發者文件</a>
-            </div>
-        </aside>
+            <button class="new-post-btn" onclick="openModal()">+ 發布新話題</button>
+        </div>
 
-        <main class="discussion-area">
-            <div class="discussion-placeholder">
-                <h2 style="font-size: 32px; margin-bottom: 10px;">開放式社群討論</h2>
-                <p style="color: var(--text-dim);">我們使用 GitHub Discussions 作為官方開放論壇，讓交流更透明。</p>
-                
-                <div id="<script src="https://giscus.app/client.js"
-        data-repo="acmno123/RemoteEye"
-        data-repo-id="R_kgDORC_9Aw"
-        data-category="Announcements"
-        data-category-id="DIC_kwDORC_9A84C1iRy"
-        data-mapping="title"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="bottom"
-        data-theme="preferred_color_scheme"
-        data-lang="zh-TW"
-        crossorigin="anonymous"
-        async>
-</script>">
+        <div class="tags-container">
+            <div class="tag active">全部內容</div>
+            <div class="tag"># Bug回報</div>
+            <div class="tag"># 功能建議</div>
+            <div class="tag"># 教學文</div>
+            <div class="tag"># 系統公告</div>
+            <div class="tag"># 使用心得</div>
+        </div>
+
+        <div id="post-list">
+            <div class="post-card">
+                <div class="post-info">
+                    <span class="post-status">● 公告</span>
+                    <h3>RemoteEye V1.0.4 正式發布：優化了 4K 串流延遲</h3>
+                    <div class="post-meta">
+                        <span>管理員 @Admin</span>
+                        <span>2 小時前</span>
                     </div>
-
-                <a href="https://github.com/acmno123/RemoteEye/discussions" target="_blank" class="open-btn">
-                    進入 GitHub 論壇參與討論
-                </a>
+                </div>
+                <div class="post-stats">
+                    <div class="stat-item"><span class="stat-num">1.2k</span><span class="stat-label">瀏覽</span></div>
+                    <div class="stat-item"><span class="stat-num">48</span><span class="stat-label">回覆</span></div>
+                </div>
             </div>
-        </main>
+
+            <div class="post-card">
+                <div class="post-info">
+                    <h3>如何在 Linux Ubuntu 22.04 上安裝 RemoteEye？</h3>
+                    <div class="post-meta">
+                        <span>嘉進 @GiaJin</span>
+                        <span>昨天</span>
+                    </div>
+                </div>
+                <div class="post-stats">
+                    <div class="stat-item"><span class="stat-num">850</span><span class="stat-label">瀏覽</span></div>
+                    <div class="stat-item"><span class="stat-num">12</span><span class="stat-label">回覆</span></div>
+                </div>
+            </div>
+
+            <div class="post-card">
+                <div class="post-info">
+                    <h3>建議增加「多人協作白板」功能</h3>
+                    <div class="post-meta">
+                        <span>設計師 @TechLink</span>
+                        <span>3 天前</span>
+                    </div>
+                </div>
+                <div class="post-stats">
+                    <div class="stat-item"><span class="stat-num">420</span><span class="stat-label">瀏覽</span></div>
+                    <div class="stat-item"><span class="stat-num">25</span><span class="stat-label">回覆</span></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="postModal" class="modal">
+        <div class="modal-content">
+            <h2 style="color: var(--secondary-accent);">發起新討論</h2>
+            <input type="text" placeholder="話題標題">
+            <textarea rows="5" placeholder="分享你的想法..."></textarea>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="new-post-btn" style="flex:1" onclick="closeModal()">送出貼文</button>
+                <button class="new-post-btn" style="flex:1; background: #333;" onclick="closeModal()">取消</button>
+            </div>
+        </div>
     </div>
 
     <footer>
-        © 2026 RemoteEye Technology. 開放、透明、高效。
+        <p>© 2026 RemoteEye Technology. 讓遠端連結無處不在。</p>
     </footer>
 
+    <script>
+        // 進度條
+        window.onscroll = () => {
+            let winScroll = document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            document.getElementById("myBar").style.width = (winScroll / height) * 100 + "%";
+        };
+
+        // 彈窗控制
+        function openModal() { document.getElementById('postModal').style.display = 'block'; }
+        function closeModal() { document.getElementById('postModal').style.display = 'none'; }
+
+        // 粒子動畫 (簡約版)
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let pts = [];
+        function init() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            pts = [];
+            for(let i=0; i<40; i++) pts.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, v:Math.random()*0.5});
+        }
+        function draw() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#6c5ce7';
+            pts.forEach(p => {
+                p.y -= p.v; if(p.y < 0) p.y = canvas.height;
+                ctx.beginPath(); ctx.arc(p.x, p.y, 1, 0, Math.PI*2); ctx.fill();
+            });
+            requestAnimationFrame(draw);
+        }
+        window.onresize = init; init(); draw();
+    </script>
 </body>
 </html>

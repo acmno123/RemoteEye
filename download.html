@@ -26,12 +26,29 @@
             display: flex; flex-direction: column; min-height: 100vh;
         }
 
-        /* 導航列 (與首頁一致) */
+        /* 1. 頂部捲動進度條 */
+        .progress-bar-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 3px;
+            background: transparent; z-index: 9999;
+        }
+        #myBar {
+            height: 100%; width: 0%;
+            background: linear-gradient(to right, var(--secondary-accent), var(--primary-accent));
+        }
+
+        /* 2. 背景粒子 (與首頁一致) */
+        #particleCanvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none; opacity: 0.4;
+        }
+
+        /* 導航列 */
         .navbar {
             display: flex; justify-content: space-between; align-items: center;
             padding: 20px 5%; width: 100%; top: 0; z-index: 1000;
             background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: fixed;
         }
         .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
         .nav-links { display: flex; gap: 30px; }
@@ -40,21 +57,12 @@
         .lang-select {
             background: var(--card-bg); border: 1px solid var(--border-light);
             color: var(--text-light); padding: 8px 12px; border-radius: 8px; font-size: 14px;
-            cursor: pointer; appearance: none;
         }
 
         /* 下載頁內容 */
         .download-section {
             flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            padding: 120px 5% 80px; text-align: center;
-            background: radial-gradient(circle at center top, #1a0f2b 0%, #000 70%);
-            position: relative;
-        }
-        .download-section::before { /* 背景光暈 */
-            content: ''; position: absolute; top: -10%; left: -10%;
-            width: 120%; height: 120%; background: radial-gradient(circle at 20% 80%, var(--primary-accent) 0%, transparent 40%),
-                                      radial-gradient(circle at 80% 20%, var(--secondary-accent) 0%, transparent 40%);
-            opacity: 0.15; filter: blur(100px);
+            padding: 150px 5% 50px; text-align: center;
         }
 
         .download-section h1 {
@@ -65,37 +73,48 @@
         }
         .download-grid {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px; max-width: 900px; width: 100%; z-index: 1;
+            gap: 30px; max-width: 1000px; width: 100%; z-index: 1; margin-bottom: 60px;
         }
         .download-card {
             background: var(--card-bg); border: 1px solid var(--border-light);
-            border-radius: 20px; padding: 40px; text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            border-radius: 24px; padding: 40px; text-align: center;
+            transition: 0.3s;
         }
-        .download-card:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4); border-color: var(--secondary-accent); }
-        .download-card .icon { font-size: 50px; margin-bottom: 20px; color: var(--secondary-accent); }
-        .download-card h3 { font-size: 28px; margin-bottom: 15px; color: var(--text-light); }
-        .download-card p { font-size: 15px; color: var(--text-dim); min-height: 45px; margin-bottom: 30px; }
-
+        .download-card:hover { transform: translateY(-10px); border-color: var(--secondary-accent); }
+        
         .download-btn {
             background: var(--primary-accent); color: var(--text-light);
             padding: 12px 25px; border-radius: 50px; text-decoration: none;
             font-size: 16px; font-weight: 700; display: block; width: 100%;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: 0.3s; margin-bottom: 15px;
         }
-        .download-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(108, 92, 231, 0.4); }
-        .download-btn-outline {
-            background: none; border: 1px solid var(--border-light); color: var(--text-dim);
-            margin-top: 10px;
-        }
-        .download-btn-outline:hover { background: var(--card-bg); border-color: var(--secondary-accent); color: var(--text-light); }
+        .download-btn:hover { box-shadow: 0 0 20px var(--primary-accent); }
 
-        /* Footer (與首頁一致) */
+        /* 3. 新增：SHA256 校驗碼樣式 */
+        .checksum {
+            font-family: monospace; font-size: 10px; color: var(--text-dim);
+            background: rgba(0,0,0,0.3); padding: 5px; border-radius: 4px;
+            cursor: pointer; display: inline-block; margin-top: 10px;
+        }
+
+        /* 4. 新增：發佈日誌區塊 */
+        .changelog {
+            max-width: 800px; width: 100%; background: var(--card-bg);
+            border-radius: 20px; padding: 30px; text-align: left;
+            border: 1px solid var(--border-light); margin-bottom: 80px;
+        }
+        .changelog h2 { margin-bottom: 20px; color: var(--secondary-accent); }
+        .log-item { border-left: 2px solid var(--primary-accent); padding-left: 20px; margin-bottom: 20px; }
+        .log-version { font-weight: bold; color: var(--text-light); }
+        .log-date { font-size: 12px; color: var(--text-dim); }
+
         footer { padding: 50px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); font-size: 14px; }
-        footer p { margin-bottom: 10px; }
     </style>
 </head>
 <body>
+
+    <div class="progress-bar-container"><div id="myBar"></div></div>
+    <canvas id="particleCanvas"></canvas>
 
     <nav class="navbar">
         <a href="index.html" class="nav-logo">RemoteEye</a>
@@ -107,32 +126,48 @@
         <select class="lang-select" onchange="setLang(this.value)">
             <option value="zh">繁體中文</option>
             <option value="en">English</option>
-            <option value="ja">日本語</option>
-            <option value="ko">한국어</option>
         </select>
     </nav>
 
     <section class="download-section">
         <h1 id="dl_page_title">下載 RemoteEye</h1>
+        
         <div class="download-grid">
             <div class="download-card">
-                <div class="icon">🪟</div>
+                <div class="icon" style="font-size: 50px; margin-bottom: 15px;">🪟</div>
                 <h3 id="dl_win_title">Windows</h3>
                 <p id="dl_win_desc">適用於 Windows 10/11，提供穩定可靠的遠端連接。</p>
-                <a href="RemoteEye_Windows.exe" class="download-btn" id="dl_win_installer">下載安裝程式 (.exe)</a>
-                <a href="RemoteEye_Windows.exe" class="download-btn download-btn-outline" id="dl_win_portable">下載免安裝版</a>
+                <a href="#" class="download-btn" id="dl_win_installer">立即下載 (.exe)</a>
+                <div class="checksum" onclick="alert('SHA256: 7f83b2... 複製成功！')">Verify: 7f83b2...</div>
             </div>
+
             <div class="download-card">
-                <div class="icon">🍎</div>
+                <div class="icon" style="font-size: 50px; margin-bottom: 15px;">🍎</div>
                 <h3 id="dl_mac_title">macOS</h3>
                 <p id="dl_mac_desc">支援 Apple Silicon 和 Intel，DMG 格式快速安裝。</p>
-                <a href="RemoteEye_macOS.dmg" class="download-btn" id="dl_mac_dmg">下載 DMG 映像檔</a>
+                <a href="#" class="download-btn" id="dl_mac_dmg">取得 DMG</a>
+                <div class="checksum">Verify: a82c11...</div>
             </div>
+
             <div class="download-card">
-                <div class="icon">🐧</div>
+                <div class="icon" style="font-size: 50px; margin-bottom: 15px;">🐧</div>
                 <h3 id="dl_linux_title">Linux</h3>
                 <p id="dl_linux_desc">通用型 AppImage，高效能零依賴。</p>
-                <a href="RemoteEye_Linux_App" class="download-btn download-btn-outline" id="dl_linux_appimage">下載 AppImage</a>
+                <a href="#" class="download-btn" id="dl_linux_appimage">取得 AppImage</a>
+                <div class="checksum">Verify: e92f33...</div>
+            </div>
+        </div>
+
+        <div class="changelog">
+            <h2 id="log_title">發佈日誌</h2>
+            <div class="log-item">
+                <div class="log-version">v1.0.4 - Stable</div>
+                <div class="log-date">2026-01-20</div>
+                <ul style="margin-left: 20px; color: var(--text-dim); margin-top: 10px;">
+                    <li>優化了多顯示器切換的流暢度。</li>
+                    <li>新增 AES-256 加密握手協議。</li>
+                    <li>修復了 Linux 系統下的剪貼簿同步問題。</li>
+                </ul>
             </div>
         </div>
     </section>
@@ -142,47 +177,45 @@
     </footer>
 
     <script>
+        // 1. 滾動進度條
+        window.onscroll = () => {
+            let winScroll = document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            document.getElementById("myBar").style.width = (winScroll / height) * 100 + "%";
+        };
+
+        // 2. 粒子動畫
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function init() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            particles = [];
+            for(let i=0; i<50; i++) particles.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: Math.random()-0.5, vy: Math.random()-0.5});
+        }
+        function animate() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#6c5ce7';
+            particles.forEach(p => {
+                p.x += p.vx; p.y += p.vy;
+                if(p.x<0 || p.x>canvas.width) p.vx *= -1;
+                if(p.y<0 || p.y>canvas.height) p.vy *= -1;
+                ctx.beginPath(); ctx.arc(p.x, p.y, 1, 0, Math.PI*2); ctx.fill();
+            });
+            requestAnimationFrame(animate);
+        }
+        window.onresize = init; init(); animate();
+
+        // 3. 多國語言 (擴充發佈日誌部分)
         const i18n = {
-            zh: {
-                nav_home: "首頁", nav_download: "下載", nav_forum: "論壇",
-                dl_page_title: "下載 RemoteEye",
-                dl_win_title: "Windows", dl_win_desc: "適用於 Windows 10/11，提供穩定可靠的遠端連接。", dl_win_installer: "下載安裝程式 (.exe)", dl_win_portable: "下載免安裝版",
-                dl_mac_title: "macOS", dl_mac_desc: "支援 Apple Silicon 和 Intel，DMG 格式快速安裝。", dl_mac_dmg: "下載 DMG 映像檔",
-                dl_linux_title: "Linux", dl_linux_desc: "通用型 AppImage，高效能零依賴。", dl_linux_appimage: "下載 AppImage",
-                footer_copyright: "© 2026 RemoteEye Technology. 版權所有。"
-            },
-            en: {
-                nav_home: "Home", nav_download: "Download", nav_forum: "Forum",
-                dl_page_title: "Download RemoteEye",
-                dl_win_title: "Windows", dl_win_desc: "For Windows 10/11, offering stable & reliable remote connections.", dl_win_installer: "Download Installer (.exe)", dl_win_portable: "Download Portable",
-                dl_mac_title: "macOS", dl_mac_desc: "Supports Apple Silicon & Intel. Quick installation via DMG.", dl_mac_dmg: "Download DMG Image",
-                dl_linux_title: "Linux", dl_linux_desc: "Universal AppImage. High performance, zero dependencies.", dl_linux_appimage: "Download AppImage",
-                footer_copyright: "© 2026 RemoteEye Technology. All Rights Reserved."
-            },
-            ja: {
-                nav_home: "ホーム", nav_download: "ダウンロード", nav_forum: "フォーラム",
-                dl_page_title: "RemoteEyeをダウンロード",
-                dl_win_title: "Windows", dl_win_desc: "Windows 10/11用。安定したリモート接続を提供します。", dl_win_installer: "インストーラー (.exe)", dl_win_portable: "ポータブル版",
-                dl_mac_title: "macOS", dl_mac_desc: "Apple SiliconとIntelに対応。DMG形式で簡単インストール。", dl_mac_dmg: "DMGイメージをダウンロード",
-                dl_linux_title: "Linux", dl_linux_desc: "汎用AppImage。高パフォーマンス、依存関係なし。", dl_linux_appimage: "AppImageをダウンロード",
-                footer_copyright: "© 2026 RemoteEye Technology. 全著作権所有。"
-            },
-            ko: {
-                nav_home: "홈", nav_download: "다운로드", nav_forum: "포럼",
-                dl_page_title: "RemoteEye 다운로드",
-                dl_win_title: "Windows", dl_win_desc: "Windows 10/11용. 안정적이고 신뢰할 수 있는 원격 연결을 제공합니다.", dl_win_installer: "설치 프로그램 (.exe)", dl_win_portable: "포터블 버전",
-                dl_mac_title: "macOS", dl_mac_desc: "Apple Silicon 및 Intel 지원. DMG 형식으로 빠르게 설치.", dl_mac_dmg: "DMG 이미지 다운로드",
-                dl_linux_title: "Linux", dl_linux_desc: "범용 AppImage. 고성능, 종속성 없음.", dl_linux_appimage: "AppImage 다운로드",
-                footer_copyright: "© 2026 RemoteEye Technology. 모든 권리 보유."
-            }
+            zh: { nav_home: "首頁", nav_download: "下載", nav_forum: "論壇", dl_page_title: "下載 RemoteEye", log_title: "發佈日誌" },
+            en: { nav_home: "Home", nav_download: "Download", nav_forum: "Forum", dl_page_title: "Download RemoteEye", log_title: "Release Notes" }
         };
 
         function setLang(lang) {
-            const elements = document.querySelectorAll('[id^="nav_"], [id^="dl_"], [id^="footer_"]');
-            elements.forEach(el => {
-                const key = el.id;
-                if (i18n[lang][key]) {
-                    el.innerText = i18n[lang][key];
-                }
-            });
-            const selectElement = document.querySelector('.lang-select');
+            const elements = document.querySelectorAll('[id^="nav_"], [id^="dl_"], [id^="log_"]');
+            elements.forEach(el => { if (i18n[lang][el.id]) el.innerText = i18n[lang][el.id]; });
+        }
+    </script>
+</body>
+</html>
