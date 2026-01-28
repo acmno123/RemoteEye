@@ -175,45 +175,45 @@
         </div>
 
         <h1 id="dl_page_title">下載 RemoteEye</h1>
-        <p class="sub-title">選擇您的作業系統，立即開啟超低延遲遠端之旅</p>
+        <p class="sub-title">選擇您的作業系統，前往 GitHub 取得最新版本</p>
         
         <div class="download-grid">
             <div class="download-card" id="card-win">
                 <div class="icon" style="font-size: 50px; margin-bottom: 15px;">🪟</div>
                 <h3 id="dl_win_title">Windows</h3>
-                <p id="dl_win_desc" style="font-size: 14px; color: var(--text-dim); margin-bottom: 20px;">前往 GitHub Release 下載 .exe</p>
+                <p id="dl_win_desc" style="font-size: 14px; color: var(--text-dim); margin-bottom: 20px;">前往 Release 下載主程式 (.exe)</p>
                 <button class="download-btn" id="dl_win_btn" onclick="handleDownload(this, 'Windows')">立即下載</button>
-                <div class="checksum" onclick="copyText('7f83b2...')">驗證源代碼安全性</div>
+                <div class="checksum" onclick="copyText('7f83b2...')">查看 Release Assets</div>
             </div>
 
             <div class="download-card" id="card-mac">
                 <div class="icon" style="font-size: 50px; margin-bottom: 15px;">🍎</div>
                 <h3 id="dl_mac_title">macOS</h3>
-                <p id="dl_mac_desc" style="font-size: 14px; color: var(--text-dim); margin-bottom: 20px;">前往 GitHub Release 下載 .dmg</p>
+                <p id="dl_mac_desc" style="font-size: 14px; color: var(--text-dim); margin-bottom: 20px;">取得最新的 DMG 安裝包</p>
                 <button class="download-btn" id="dl_mac_btn" onclick="handleDownload(this, 'macOS')">取得 DMG</button>
-                <div class="checksum">Verified by Community</div>
+                <div class="checksum">Verified by acmno123</div>
             </div>
 
             <div class="download-card" id="card-linux">
                 <div class="icon" style="font-size: 50px; margin-bottom: 15px;">🐧</div>
                 <h3 id="dl_linux_title">Linux</h3>
-                <p id="dl_linux_desc" style="font-size: 14px; color: var(--text-dim); margin-bottom: 20px;">前往 GitHub Release 下載 AppImage</p>
+                <p id="dl_linux_desc" style="font-size: 14px; color: var(--text-dim); margin-bottom: 20px;">下載通用的 AppImage</p>
                 <button class="download-btn" id="dl_linux_btn" onclick="handleDownload(this, 'Linux')">取得 AppImage</button>
                 <div class="checksum">Open Source Content</div>
             </div>
         </div>
 
         <div class="changelog">
-            <h2 id="log_title">最新版本資訊 (v1.0.4)</h2>
+            <h2 id="log_title">最新版本資訊 (RemoteEye)</h2>
             <div class="log-item">
                 <div style="display:flex; justify-content: space-between;">
                     <span style="color: var(--text-light); font-weight: bold;">Stable Release</span>
-                    <span style="color: var(--text-dim); font-size: 12px;">2026-01-20</span>
+                    <span style="color: var(--text-dim); font-size: 12px;">GitHub Latest</span>
                 </div>
                 <ul style="margin-left: 20px; color: var(--text-dim); margin-top: 10px; font-size: 14px;">
-                    <li>🚀 核心傳輸協議優化，延遲降低 15%。</li>
+                    <li>🚀 核心傳輸協議優化，延遲更低。</li>
                     <li>🛡️ 增強端到端加密安全等級。</li>
-                    <li>🎨 UI/UX 微調，提升夜間模式對比度。</li>
+                    <li>🎨 全新的 UI/UX 介面設計。</li>
                 </ul>
             </div>
         </div>
@@ -224,11 +224,8 @@
     </footer>
 
     <script>
-        // --- GitHub 設定區域 ---
-        const GITHUB_CONFIG = {
-            user: "你的帳號名稱", // 這裡改成你的 GitHub 帳號
-            repo: "你的儲存庫名稱" // 這裡改成你的專案名稱
-        };
+        // --- 直接指向你的 GitHub Release ---
+        const RELEASE_URL = "https://github.com/acmno123/RemoteEye/releases/tag/RemoteEye";
 
         // 1. 自動偵測系統並標註推薦
         window.onload = () => {
@@ -240,27 +237,24 @@
             animate();
         };
 
-        // 2. 修改為導向 GitHub Releases 的功能
+        // 2. 導向你的 Release 頁面
         function handleDownload(btn, platform) {
             const originalText = btn.innerText;
             btn.classList.add('loading');
             
-            // 構建 Release 頁面網址
-            const releasesUrl = `https://github.com/${GITHUB_CONFIG.user}/${GITHUB_CONFIG.repo}/releases`;
-            
             let progress = 0;
             const timer = setInterval(() => {
-                progress += Math.floor(Math.random() * 25) + 5;
+                progress += Math.floor(Math.random() * 30) + 10;
                 if (progress >= 100) {
                     clearInterval(timer);
-                    btn.innerText = "✅ 正在前往發佈頁...";
+                    btn.innerText = "✅ 正在跳轉至 GitHub...";
 
-                    // 在新分頁開啟 GitHub Release
+                    // 在新分頁開啟你的 Release 連結
                     setTimeout(() => {
-                        window.open(releasesUrl, '_blank');
+                        window.open(RELEASE_URL, '_blank');
                     }, 500);
 
-                    // 清理狀態
+                    // 恢復按鈕狀態
                     setTimeout(() => {
                         btn.classList.remove('loading');
                         btn.innerText = originalText;
@@ -268,7 +262,7 @@
                 } else {
                     btn.innerText = `正在連接 GitHub... ${progress}%`;
                 }
-            }, 150);
+            }, 100);
         }
 
         // 3. 滾動進度條
@@ -308,13 +302,12 @@
         window.onresize = init;
 
         function copyText(txt) {
-            navigator.clipboard.writeText(txt);
-            alert("校驗碼已複製到剪貼簿！");
+            window.open(RELEASE_URL, '_blank');
         }
 
         const i18n = {
-            zh: { nav_home: "首頁", nav_download: "下載", nav_forum: "論壇", dl_page_title: "下載 RemoteEye", log_title: "最新版本資訊 (v1.0.4)" },
-            en: { nav_home: "Home", nav_download: "Download", nav_forum: "Forum", dl_page_title: "Download RemoteEye", log_title: "Latest Release (v1.0.4)" }
+            zh: { nav_home: "首頁", nav_download: "下載", nav_forum: "論壇", dl_page_title: "下載 RemoteEye", log_title: "最新版本資訊 (RemoteEye)" },
+            en: { nav_home: "Home", nav_download: "Download", nav_forum: "Forum", dl_page_title: "Download RemoteEye", log_title: "Latest Release (RemoteEye)" }
         };
 
         function setLang(lang) {
