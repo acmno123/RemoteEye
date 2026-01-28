@@ -11,42 +11,66 @@
         body { 
             margin: 0; background: var(--bg); color: var(--text); 
             font-family: 'Segoe UI', system-ui, sans-serif; text-align: center; 
+            min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
         }
+        
+        /* 背景流光效果 */
         .glow {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 30%, rgba(59, 130, 246, 0.1), transparent 70%);
+            background: radial-gradient(circle at 50% 30%, rgba(59, 130, 246, 0.12), transparent 70%);
             z-index: -1;
         }
-        .container { max-width: 600px; margin: 80px auto; padding: 0 20px; }
+
+        .container { max-width: 650px; margin: 40px auto; padding: 0 20px; }
+        
         .box { 
-            background: var(--card); padding: 40px; border-radius: 30px; 
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); 
+            background: var(--card); padding: 50px 40px; border-radius: 35px; 
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 30px 60px -12px rgba(0,0,0,0.6); 
         }
-        .lang-switcher { text-align: right; margin-bottom: 20px; }
+
+        /* 語言切換選單 */
+        .lang-switcher { text-align: right; margin-bottom: 15px; }
         select { 
-            background: #1e293b; color: white; border: 1px solid #334155; 
-            padding: 8px 12px; border-radius: 10px; cursor: pointer; outline: none;
+            background: #1e293b; color: #94a3b8; border: 1px solid #334155; 
+            padding: 6px 12px; border-radius: 10px; cursor: pointer; outline: none; font-size: 14px;
         }
+
         h1 { 
-            font-size: 2.8rem; margin: 10px 0;
+            font-size: 3rem; margin: 15px 0 5px 0;
             background: linear-gradient(to right, #60a5fa, #34d399);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-weight: 800;
         }
-        .subtitle { color: #94a3b8; font-size: 1.1rem; margin-bottom: 35px; font-weight: 300; }
-        .btn-group { display: flex; flex-direction: column; gap: 15px; }
+        
+        .subtitle { color: #94a3b8; font-size: 1.1rem; margin-bottom: 40px; letter-spacing: 1px; }
+
+        /* 按鈕區塊 */
+        .btn-group { display: flex; flex-direction: column; gap: 18px; }
         .btn { 
-            padding: 18px; border-radius: 15px; font-weight: bold; font-size: 1.1rem;
-            text-decoration: none; color: white; transition: 0.3s; 
-            display: flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 20px; border-radius: 18px; font-weight: 700; font-size: 1.15rem;
+            text-decoration: none; color: white; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            display: flex; align-items: center; justify-content: center; gap: 12px;
         }
-        .btn-setup { background: var(--primary); box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3); }
+        
+        /* 安裝版亮色設計 */
+        .btn-setup { 
+            background: var(--primary); 
+            box-shadow: 0 12px 20px -5px rgba(59, 130, 246, 0.4);
+        }
+        
+        /* 免安裝版綠色邊框設計 */
         .btn-portable { 
-            background: transparent; border: 2px solid var(--accent); color: var(--accent);
+            background: rgba(16, 185, 129, 0.05); 
+            border: 2px solid var(--accent); 
+            color: var(--accent);
         }
-        .btn:hover { transform: translateY(-3px); filter: brightness(1.2); }
+        
+        .btn:hover { transform: translateY(-4px); filter: brightness(1.2); }
         .btn-portable:hover { background: var(--accent); color: white; }
-        .footer { margin-top: 60px; color: #475569; font-size: 0.8rem; letter-spacing: 1px; }
+        
+        .info-text { margin-top: 35px; color: #475569; font-size: 0.9rem; font-family: monospace; }
+        .footer { margin-top: 60px; color: #334155; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -66,7 +90,7 @@
     </div>
 
     <div class="box">
-        <img src="logo.png" width="90" style="border-radius: 22px; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.3);">
+        <img src="logo.png" width="90" style="border-radius: 24px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.4));">
         <h1>RemoteEye Global</h1>
         <p class="subtitle" id="webSub">六國語言 · 嘉進核心專業版 v1.0.6</p>
         
@@ -75,7 +99,7 @@
             <a href="RemoteEye_Portable_v1.0.6.exe" class="btn btn-portable" id="btnPort">📦 下載綠色免安裝版</a>
         </div>
         
-        <p id="webInfo" style="margin-top:30px; color:#64748b; font-size: 0.9rem;">支援系統: Windows 10 / 11 (x64)</p>
+        <p id="webInfo" class="info-text">COMPATIBLE WITH WINDOWS 10 / 11 (X64)</p>
     </div>
 
     <div class="footer">© 2026 REMOTEEYE PROJECT. POWERED BY JIAJIN.</div>
@@ -83,12 +107,12 @@
 
 <script>
     const i18n = {
-        zh: { sub: "六國語言 · 專業版 v1.0.6", setup: "🚀 下載官方安裝版", port: "📦 下載綠色免安裝版", info: "支援系統: Windows 10 / 11 (x64)" },
-        en: { sub: "6 Languages · Pro v1.0.6", setup: "🚀 Download Installer", port: "📦 Download Portable (EXE)", info: "System: Windows 10 / 11 (x64)" },
-        ja: { sub: "6ヶ国語 · Pro v1.0.6", setup: "🚀 インストーラーをダウンロード", port: "📦 ポータブル版をダウンロード", info: "対応OS: Windows 10 / 11" },
-        fr: { sub: "6 Langues · Edition Pro v1.0.6", setup: "🚀 Télécharger l'installateur", port: "📦 Version Portable (EXE)", info: "Système: Windows 10 / 11" },
-        es: { sub: "6 Idiomas · Edición Pro v1.0.6", setup: "🚀 Descargar Instalador", port: "📦 Versión Portátil (EXE)", info: "Sistema: Windows 10 / 11" },
-        ko: { sub: "6개 언어 · 가진 코어 프로 v1.0.6", setup: "🚀 설치 파일 다운로드", port: "📦 무설치판 다운로드", info: "지원 OS: Windows 10 / 11" }
+        zh: { sub: "六國語言 · 嘉進核心專業版 v1.0.6", setup: "🚀 下載官方安裝版", port: "📦 下載綠色免安裝版", info: "COMPATIBLE WITH WINDOWS 10 / 11 (X64)" },
+        en: { sub: "6 Languages · Jiajin Core Pro v1.0.6", setup: "🚀 Download Installer", port: "📦 Download Portable (EXE)", info: "COMPATIBLE WITH WINDOWS 10 / 11 (X64)" },
+        ja: { sub: "6ヶ国語 · 嘉進コア Pro v1.0.6", setup: "🚀 インストーラー版", port: "📦 ポータブル版 (EXE)", info: "WINDOWS 10 / 11 に対応" },
+        fr: { sub: "6 Langues · Edition Pro v1.0.6", setup: "🚀 Télécharger l'installateur", port: "📦 Version Portable (EXE)", info: "SYSTÈME: WINDOWS 10 / 11" },
+        es: { sub: "6 Idiomas · Edición Pro v1.0.6", setup: "🚀 Descargar Instalador", port: "📦 Versión Portátil (EXE)", info: "SISTEMA: WINDOWS 10 / 11" },
+        ko: { sub: "6개 언어 · 가진 코어 프로 v1.0.6", setup: "🚀 설치 파일 다운로드", port: "📦 무설치판 다운로드 (EXE)", info: "지원 OS: WINDOWS 10 / 11" }
     };
 
     function updateLang() {
