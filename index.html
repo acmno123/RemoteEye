@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RemoteEye Global | Official</title>
+    <title>RemoteEye Global | 嘉進官方版</title>
     <style>
         :root { 
             --bg: #020617; --card: #0f172a; --primary: #3b82f6; --accent: #10b981; --text: #f1f5f9; 
@@ -12,38 +12,28 @@
             margin: 0; background: var(--bg); color: var(--text); 
             font-family: 'Segoe UI', system-ui, sans-serif; text-align: center; 
         }
-        
-        /* 背景光暈效果 */
         .glow {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle at 50% 30%, rgba(59, 130, 246, 0.1), transparent 70%);
             z-index: -1;
         }
-
         .container { max-width: 600px; margin: 80px auto; padding: 0 20px; }
-        
         .box { 
             background: var(--card); padding: 40px; border-radius: 30px; 
             border: 1px solid rgba(255,255,255,0.1);
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); 
         }
-
-        /* 語言切換器 */
         .lang-switcher { text-align: right; margin-bottom: 20px; }
         select { 
             background: #1e293b; color: white; border: 1px solid #334155; 
             padding: 8px 12px; border-radius: 10px; cursor: pointer; outline: none;
         }
-
         h1 { 
-            font-size: 2.5rem; margin: 10px 0;
+            font-size: 2.8rem; margin: 10px 0;
             background: linear-gradient(to right, #60a5fa, #34d399);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-        
-        .subtitle { color: #94a3b8; font-size: 1.1rem; margin-bottom: 30px; }
-
-        /* 按鈕設計 */
+        .subtitle { color: #94a3b8; font-size: 1.1rem; margin-bottom: 35px; font-weight: 300; }
         .btn-group { display: flex; flex-direction: column; gap: 15px; }
         .btn { 
             padding: 18px; border-radius: 15px; font-weight: bold; font-size: 1.1rem;
@@ -51,11 +41,12 @@
             display: flex; align-items: center; justify-content: center; gap: 10px;
         }
         .btn-setup { background: var(--primary); box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3); }
-        .btn-portable { background: #1e293b; border: 1px solid #334155; }
-        
+        .btn-portable { 
+            background: transparent; border: 2px solid var(--accent); color: var(--accent);
+        }
         .btn:hover { transform: translateY(-3px); filter: brightness(1.2); }
-        
-        .footer { margin-top: 50px; color: #475569; font-size: 0.8rem; }
+        .btn-portable:hover { background: var(--accent); color: white; }
+        .footer { margin-top: 60px; color: #475569; font-size: 0.8rem; letter-spacing: 1px; }
     </style>
 </head>
 <body>
@@ -75,7 +66,7 @@
     </div>
 
     <div class="box">
-        <img src="logo.png" width="80" style="border-radius: 20px; margin-bottom: 10px;">
+        <img src="logo.png" width="90" style="border-radius: 22px; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.3);">
         <h1>RemoteEye Global</h1>
         <p class="subtitle" id="webSub">六國語言 · 嘉進核心專業版 v1.0.6</p>
         
@@ -84,19 +75,19 @@
             <a href="RemoteEye_Portable_v1.0.6.exe" class="btn btn-portable" id="btnPort">📦 下載綠色免安裝版</a>
         </div>
         
-        <p id="webInfo" style="margin-top:25px; color:#64748b; font-size: 0.9rem;">支援系統: Windows 10 / 11 (x64)</p>
+        <p id="webInfo" style="margin-top:30px; color:#64748b; font-size: 0.9rem;">支援系統: Windows 10 / 11 (x64)</p>
     </div>
 
-    <div class="footer">© 2026 RemoteEye Project. Powered by Jiajin.</div>
+    <div class="footer">© 2026 REMOTEEYE PROJECT. POWERED BY JIAJIN.</div>
 </div>
 
 <script>
     const i18n = {
-        zh: { sub: "六國語言 · 嘉進核心專業版 v1.0.6", setup: "🚀 下載官方安裝版", port: "📦 下載綠色免安裝版", info: "支援系統: Windows 10 / 11 (x64)" },
-        en: { sub: "6 Languages · Jiajin Core Pro v1.0.6", setup: "🚀 Download Installer", port: "📦 Download Portable (Zip)", info: "System: Windows 10 / 11 (x64)" },
-        ja: { sub: "6ヶ国語 · 嘉進コア Pro v1.0.6", setup: "🚀 インストーラーをダウンロード", port: "📦 ポータブル版をダウンロード", info: "対応OS: Windows 10 / 11" },
-        fr: { sub: "6 Langues · Jiajin Core Pro v1.0.6", setup: "🚀 Télécharger l'installateur", port: "📦 Télécharger Portable", info: "Système: Windows 10 / 11" },
-        es: { sub: "6 Idiomas · Jiajin Core Pro v1.0.6", setup: "🚀 Descargar Instalador", port: "📦 Descargar Portátil", info: "Sistema: Windows 10 / 11" },
+        zh: { sub: "六國語言 · 專業版 v1.0.6", setup: "🚀 下載官方安裝版", port: "📦 下載綠色免安裝版", info: "支援系統: Windows 10 / 11 (x64)" },
+        en: { sub: "6 Languages · Pro v1.0.6", setup: "🚀 Download Installer", port: "📦 Download Portable (EXE)", info: "System: Windows 10 / 11 (x64)" },
+        ja: { sub: "6ヶ国語 · Pro v1.0.6", setup: "🚀 インストーラーをダウンロード", port: "📦 ポータブル版をダウンロード", info: "対応OS: Windows 10 / 11" },
+        fr: { sub: "6 Langues · Edition Pro v1.0.6", setup: "🚀 Télécharger l'installateur", port: "📦 Version Portable (EXE)", info: "Système: Windows 10 / 11" },
+        es: { sub: "6 Idiomas · Edición Pro v1.0.6", setup: "🚀 Descargar Instalador", port: "📦 Versión Portátil (EXE)", info: "Sistema: Windows 10 / 11" },
         ko: { sub: "6개 언어 · 가진 코어 프로 v1.0.6", setup: "🚀 설치 파일 다운로드", port: "📦 무설치판 다운로드", info: "지원 OS: Windows 10 / 11" }
     };
 
