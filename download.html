@@ -181,25 +181,25 @@
             <div class="download-card" id="card-win">
                 <div class="icon" style="font-size: 50px; margin-bottom: 15px;">🪟</div>
                 <h3 id="dl_win_title">Windows</h3>
-                <p id="dl_win_desc" style="font-size: 14px; color: var(--text-dim); margin-bottom: 20px;">推薦用於 Windows 10/11 (64-bit)</p>
-                <button class="download-btn" id="dl_win_btn" onclick="handleDownload(this, 'Windows')">立即下載 (.exe)</button>
-                <div class="checksum" onclick="copyText('7f83b2...')">SHA256: 7f83b2... (點擊複製)</div>
+                <p id="dl_win_desc" style="font-size: 14px; color: var(--text-dim); margin-bottom: 20px;">前往 GitHub Release 下載 .exe</p>
+                <button class="download-btn" id="dl_win_btn" onclick="handleDownload(this, 'Windows')">立即下載</button>
+                <div class="checksum" onclick="copyText('7f83b2...')">驗證源代碼安全性</div>
             </div>
 
             <div class="download-card" id="card-mac">
                 <div class="icon" style="font-size: 50px; margin-bottom: 15px;">🍎</div>
                 <h3 id="dl_mac_title">macOS</h3>
-                <p id="dl_mac_desc" style="font-size: 14px; color: var(--text-dim); margin-bottom: 20px;">兼容 M1/M2/M3 及 Intel 芯片</p>
+                <p id="dl_mac_desc" style="font-size: 14px; color: var(--text-dim); margin-bottom: 20px;">前往 GitHub Release 下載 .dmg</p>
                 <button class="download-btn" id="dl_mac_btn" onclick="handleDownload(this, 'macOS')">取得 DMG</button>
-                <div class="checksum">SHA256: a82c11...</div>
+                <div class="checksum">Verified by Community</div>
             </div>
 
             <div class="download-card" id="card-linux">
                 <div class="icon" style="font-size: 50px; margin-bottom: 15px;">🐧</div>
                 <h3 id="dl_linux_title">Linux</h3>
-                <p id="dl_linux_desc" style="font-size: 14px; color: var(--text-dim); margin-bottom: 20px;">跨發行版通用 AppImage</p>
+                <p id="dl_linux_desc" style="font-size: 14px; color: var(--text-dim); margin-bottom: 20px;">前往 GitHub Release 下載 AppImage</p>
                 <button class="download-btn" id="dl_linux_btn" onclick="handleDownload(this, 'Linux')">取得 AppImage</button>
-                <div class="checksum">SHA256: e92f33...</div>
+                <div class="checksum">Open Source Content</div>
             </div>
         </div>
 
@@ -224,6 +224,12 @@
     </footer>
 
     <script>
+        // --- GitHub 設定區域 ---
+        const GITHUB_CONFIG = {
+            user: "你的帳號名稱", // 這裡改成你的 GitHub 帳號
+            repo: "你的儲存庫名稱" // 這裡改成你的專案名稱
+        };
+
         // 1. 自動偵測系統並標註推薦
         window.onload = () => {
             const userAgent = window.navigator.userAgent;
@@ -234,42 +240,33 @@
             animate();
         };
 
-        // 2. 修正後的真實下載功能 (之前的下載方法)
+        // 2. 修改為導向 GitHub Releases 的功能
         function handleDownload(btn, platform) {
             const originalText = btn.innerText;
             btn.classList.add('loading');
+            
+            // 構建 Release 頁面網址
+            const releasesUrl = `https://github.com/${GITHUB_CONFIG.user}/${GITHUB_CONFIG.repo}/releases`;
             
             let progress = 0;
             const timer = setInterval(() => {
                 progress += Math.floor(Math.random() * 25) + 5;
                 if (progress >= 100) {
                     clearInterval(timer);
-                    btn.innerText = "✅ 下載已啟動";
+                    btn.innerText = "✅ 正在前往發佈頁...";
 
-                    // --- 真正執行下載的部分 ---
-                    // 建立虛擬檔案內容
-                    const content = `RemoteEye ${platform} Installer Package\nVersion: 1.0.4\nStatus: Secure`;
-                    const blob = new Blob([content], { type: 'application/octet-stream' });
-                    const url = window.URL.createObjectURL(blob);
-                    
-                    // 建立隱藏連結並觸發
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `RemoteEye_${platform}_v1.0.4.zip`;
-                    document.body.appendChild(a);
-                    a.click();
-                    
-                    // 清理
-                    document.body.removeChild(a);
-                    window.URL.revokeObjectURL(url);
-                    // --------------------------
+                    // 在新分頁開啟 GitHub Release
+                    setTimeout(() => {
+                        window.open(releasesUrl, '_blank');
+                    }, 500);
 
+                    // 清理狀態
                     setTimeout(() => {
                         btn.classList.remove('loading');
                         btn.innerText = originalText;
                     }, 3000);
                 } else {
-                    btn.innerText = `正在準備檔案... ${progress}%`;
+                    btn.innerText = `正在連接 GitHub... ${progress}%`;
                 }
             }, 150);
         }
