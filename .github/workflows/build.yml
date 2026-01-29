@@ -1,48 +1,53 @@
-name: Build Cross-Platform Apps
+name: RemoteEye Multi-Platform Build
 
 on:
   push:
     tags:
-      - 'v*' # 當你推送 v1.0 等標籤時觸發
+      - 'v*' # 當你推送標籤如 v1.0.0 時觸發自動打包
 
 jobs:
   release:
-    runs-on: ${{ matrix.os }}
-
     strategy:
       matrix:
-        # 同時在 Mac 和 Ubuntu 上執行
-        os: [macos-latest, ubuntu-latest]
+        # 同時啟動三台虛擬機：Windows, Mac, Ubuntu(Linux)
+        os: [windows-latest, macos-latest, ubuntu-latest]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
-      - name: 檢出程式碼
-        uses: actions/checkout@v3
+      - name: 檢出專案程式碼
+        uses: actions/checkout@v4
 
-      - name: 安裝 Node.js
-        uses: actions/setup-node@v3
+      - name: 設置 Node.js 環境
+        uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: 'npm'
 
-      - name: 安裝依賴
+      - name: 安裝專案依賴
         run: npm install
 
-      - name: 編譯應用程式
-        # 這裡會根據不同的 OS 執行對應的打包指令
+      - name: 執行多系統編譯
+        # 根據不同的作業系統執行對應的打包指令
         run: |
-          if [ "$RUNNER_OS" == "macOS" ]; then
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            npm run build -- --win
+          elif [ "${{ matrix.os }}" == "macos-latest" ]; then
             npm run build -- --mac dmg
-          elif [ "$RUNNER_OS" == "Linux" ]; then
+          else
             npm run build -- --linux AppImage
           fi
+        shell: bash
 
-      - name: 上傳 Release 檔案
+      - name: 自動發布至 GitHub Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          # 它會自動抓取 dist 資料夾下的 .dmg 或 .AppImage
+          # 自動抓取編譯出來的所有安裝檔
           files: |
+            dist/*.exe
             dist/*.dmg
             dist/*.AppImage
+            dist/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
