@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RemoteEye Global | Next-Gen Remote Solutions</title>
+    <title>RemoteEye Global | 跨越國界的毫秒級連線</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -13,240 +13,109 @@
             --text-light: #ffffff;
             --text-dim: #a0a0a0;
             --card-bg: rgba(255, 255, 255, 0.03);
-            --border-light: rgba(255, 255, 255, 0.1);
-            --nav-bg: rgba(0, 0, 0, 0.8);
+            --border-light: rgba(255, 255, 255, 0.08);
+            --success: #00ff9d;
+            --nav-bg: rgba(0, 0, 0, 0.85);
         }
 
-        body.light-mode {
-            --bg-dark: #f5f5f7;
-            --text-light: #1d1d1f;
-            --text-dim: #6e6e73;
-            --card-bg: #ffffff;
-            --border-light: rgba(0, 0, 0, 0.1);
-            --nav-bg: rgba(255, 255, 255, 0.8);
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--text-light); overflow-x: hidden; cursor: none; }
 
-        /* 科技游標 */
-        body { cursor: none !important; }
-        a, button, .tag, .feature-card, .faq-item, .theme-toggle, .bento-item { cursor: none !important; }
+        /* 延用科技游標樣式 */
+        #custom-cursor { width: 30px; height: 30px; border: 1.5px solid var(--secondary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transform: translate(-50%, -50%); transition: transform 0.1s ease-out; }
+        #cursor-dot { width: 5px; height: 5px; background: var(--primary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10001; transform: translate(-50%, -50%); }
 
-        #custom-cursor {
-            width: 25px; height: 25px; border: 1.5px solid var(--secondary-accent);
-            border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000;
-            transition: transform 0.1s ease-out; transform: translate(-50%, -50%);
-            background: rgba(0, 188, 212, 0.05);
-        }
-        #cursor-dot {
-            width: 4px; height: 4px; background: var(--primary-accent);
-            border-radius: 50%; position: fixed; pointer-events: none; z-index: 10001;
-            transform: translate(-50%, -50%);
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.4s ease, color 0.4s ease; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 0 5%; height: 75px; width: 100%; position: fixed; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-light); }
+        .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
         
-        body {
-            font-family: 'Space Grotesk', sans-serif;
-            background: var(--bg-dark); color: var(--text-light);
-            line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth;
-        }
+        /* Hero Section */
+        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 5%; position: relative; }
+        .hero h1 { font-size: clamp(3rem, 8vw, 6rem); letter-spacing: -3px; line-height: 0.9; margin-bottom: 20px; }
+        .hero p { color: var(--text-dim); max-width: 600px; font-size: 1.1rem; margin-bottom: 40px; }
+        .cta-group { display: flex; gap: 20px; }
+        .btn-primary { background: var(--primary-accent); color: white; padding: 18px 35px; border-radius: 50px; text-decoration: none; font-weight: 700; transition: 0.3s; }
+        .btn-secondary { border: 1px solid var(--border-light); color: white; padding: 18px 35px; border-radius: 50px; text-decoration: none; transition: 0.3s; }
+        .btn-primary:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(108, 92, 231, 0.4); }
 
-        /* 進度條 */
-        .progress-bar-container { position: fixed; top: 0; left: 0; width: 100%; height: 3px; z-index: 9999; }
-        #myBar { height: 100%; width: 0%; background: linear-gradient(to right, var(--secondary-accent), var(--primary-accent)); box-shadow: 0 0 10px var(--secondary-accent); }
+        /* Global Status Panel */
+        .status-panel { max-width: 1100px; width: 90%; background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 30px; padding: 40px; margin-bottom: 100px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .status-item { display: flex; flex-direction: column; gap: 5px; }
+        .status-item span { font-size: 12px; color: var(--text-dim); text-transform: uppercase; }
+        .status-value { font-family: monospace; color: var(--success); font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
+        .dot-blink { width: 8px; height: 8px; background: var(--success); border-radius: 50%; animation: blink 1.5s infinite; }
 
-        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; opacity: 0.5; }
-
-        /* 導航列 */
-        .navbar {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 5%; width: 100%; top: 0; z-index: 1000;
-            background: var(--nav-bg); backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--border-light); position: fixed;
-        }
-        .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; letter-spacing: -1px; }
-        .nav-right { display: flex; align-items: center; gap: 20px; }
-        .nav-links { display: flex; gap: 25px; }
-        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 15px; font-weight: 500; position: relative; }
-        .nav-links a.active { color: var(--text-light); }
-        .nav-links a.dev-link { color: var(--primary-accent); opacity: 0.8; }
-
-        .theme-toggle {
-            background: var(--card-bg); border: 1px solid var(--border-light);
-            color: var(--text-light); padding: 8px; border-radius: 50%;
-            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
-        }
-
-        /* 1. Bento Grid 樣式 */
-        .features-grid-bento {
-            display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: minmax(200px, auto);
-            gap: 20px; padding: 100px 5%; max-width: 1200px; margin: 0 auto;
-        }
-        .bento-item {
-            background: var(--card-bg); border: 1px solid var(--border-light);
-            border-radius: 30px; padding: 40px; backdrop-filter: blur(10px);
-            transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-            display: flex; flex-direction: column; justify-content: flex-end;
-        }
-        .bento-item:hover { border-color: var(--secondary-accent); transform: translateY(-5px); }
-        .bento-large { grid-column: span 2; grid-row: span 2; }
-        .bento-tall { grid-row: span 2; }
-
-        /* 2. 統計數字樣式 */
-        .stats-section { padding: 100px 5%; text-align: center; background: rgba(108, 92, 231, 0.03); }
-        .stat-number {
-            font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700;
-            color: var(--primary-accent); margin-bottom: 10px;
-        }
-
-        /* Hero & Others */
-        .hero-section { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        h1 { font-size: clamp(3rem, 10vw, 5.5rem); background: linear-gradient(90deg, #fff, var(--secondary-accent), var(--primary-accent), #fff); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shine 5s linear infinite; font-weight: 700; }
-        @keyframes shine { to { background-position: 200% center; } }
-
-        .fade-in { opacity: 0; transform: translateY(30px); transition: 1s cubic-bezier(0.2, 0.8, 0.2, 1); }
-        .fade-in.active { opacity: 1; transform: translateY(0); }
-
-        footer { padding: 60px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.2; }
+        
+        footer { padding: 40px; text-align: center; color: var(--text-dim); font-size: 12px; border-top: 1px solid var(--border-light); }
     </style>
 </head>
 <body>
 
     <div id="custom-cursor"></div>
     <div id="cursor-dot"></div>
-    <div class="progress-bar-container"><div id="myBar"></div></div>
     <canvas id="particleCanvas"></canvas>
 
     <nav class="navbar">
         <a href="index.html" class="nav-logo">RemoteEye</a>
-        <div class="nav-right">
-            <div class="nav-links">
-                <a href="index.html" class="active">首頁</a>
-                <a href="download.html">下載</a>
-                <a href="forum.html">論壇</a>
-                <a href="developers.html" class="dev-link">開發者</a>
-            </div>
-            <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+        <div style="display:flex; gap:30px;">
+            <a href="download.html" style="color:var(--text-light); text-decoration:none; font-size:14px; font-weight:700;">下載</a>
+            <a href="forum.html" style="color:var(--text-dim); text-decoration:none; font-size:14px;">論壇</a>
         </div>
     </nav>
 
-    <section class="hero-section">
-        <h1 class="fade-in">次世代遠端體驗</h1>
-        <p class="fade-in" style="color:var(--text-dim); margin: 20px 0 40px; max-width: 600px;">RemoteEye 重新定義了遠端協作，將速度與安全性推向極致。</p>
-        <a href="download.html" style="background:var(--primary-accent); color:white; padding:15px 40px; border-radius:50px; text-decoration:none; font-weight:700;" class="fade-in">立即下載</a>
-    </section>
-
-    <section class="features-grid-bento">
-        <div class="bento-item bento-large fade-in">
-            <h2 style="color: var(--secondary-accent); margin-bottom:15px;">01. 極致低延遲協議</h2>
-            <p>採用自研傳輸技術，在複雜網絡環境下依然能保持 20ms 以下的同步感。</p>
-        </div>
-        <div class="bento-item fade-in">
-            <h3>🛡️ 端到端加密</h3>
-            <p>所有數據均經過軍規 AES-256 加密處理。</p>
-        </div>
-        <div class="bento-item bento-tall fade-in">
-            <h3>🔋 智能能耗優化</h3>
-            <p>針對筆電與移動設備優化，顯著延長電池續航力，讓移動辦公無憂。</p>
-        </div>
-        <div class="bento-item fade-in">
-            <h3>🌍 全球邊緣節點</h3>
-            <p>150+ 節點覆蓋。</p>
-        </div>
-        <div class="bento-item fade-in">
-            <h3>💬 實時團隊協作</h3>
-            <p>支援多用戶同步畫像與語音。</p>
+    <section class="hero">
+        <div style="font-size: 12px; color: var(--secondary-accent); border: 1px solid var(--secondary-accent); padding: 5px 15px; border-radius: 20px; margin-bottom: 20px;">v2.1 Stable Release</div>
+        <h1>FAST. SECURE.<br><span style="color: var(--primary-accent);">REMOTE.</span></h1>
+        <p>為專業開發者與團隊打造，提供極致流暢的遠端桌面體驗。基於 P2P 協議，數據永不經過第三方伺服器。</p>
+        <div class="cta-group">
+            <a href="download.html" class="btn-primary">立即開始</a>
+            <a href="#features" class="btn-secondary">探索功能</a>
         </div>
     </section>
 
-    <section class="stats-section">
-        <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 40px; max-width: 1000px; margin: 0 auto;">
-            <div class="fade-in">
-                <div class="stat-number" data-target="99.9">0</div>
-                <p style="color:var(--text-dim)">服務可用性 %</p>
+    <center>
+        <div class="status-panel">
+            <div class="status-item">
+                <span>全球節點狀態</span>
+                <div class="status-value"><div class="dot-blink"></div>Operational</div>
             </div>
-            <div class="fade-in">
-                <div class="stat-number" data-target="150">0</div>
-                <p style="color:var(--text-dim)">全球部署節點</p>
+            <div class="status-item">
+                <span>平均延遲</span>
+                <div class="status-value" style="color: var(--secondary-accent);">18ms</div>
             </div>
-            <div class="fade-in">
-                <div class="stat-number" data-target="12">0</div>
-                <p style="color:var(--text-dim)">平均延遲 (ms)</p>
+            <div class="status-item">
+                <span>目前在線人數</span>
+                <div class="status-value">1,242</div>
+            </div>
+            <div class="status-item">
+                <span>安全加密模式</span>
+                <div class="status-value">AES-256</div>
             </div>
         </div>
-    </section>
+    </center>
 
-    <footer>
-        <p>© 2026 RemoteEye Technology. <a href="developers.html" style="color:var(--primary-accent); text-decoration:none;">開發者中心</a></p>
-    </footer>
+    <footer>© 2026 RemoteEye Technology Global. </footer>
 
     <script>
         // 游標邏輯
         const cursor = document.getElementById('custom-cursor');
         const dot = document.getElementById('cursor-dot');
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
-            dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';
+        document.addEventListener('mousemove', e => {
+            cursor.style.left = dot.style.left = e.clientX + 'px';
+            cursor.style.top = dot.style.top = e.clientY + 'px';
         });
 
-        // 進度條
-        window.onscroll = () => {
-            let winScroll = document.documentElement.scrollTop;
-            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            document.getElementById("myBar").style.width = (winScroll / height) * 100 + "%";
-        };
-
-        // 數字增長動畫
-        const stats = document.querySelectorAll('.stat-number');
-        const statObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if(entry.isIntersecting) {
-                    const target = +entry.target.getAttribute('data-target');
-                    const updateCount = () => {
-                        const current = +entry.target.innerText;
-                        const inc = target / 60;
-                        if(current < target) {
-                            entry.target.innerText = Math.ceil(current + inc);
-                            setTimeout(updateCount, 20);
-                        } else { entry.target.innerText = target; }
-                    };
-                    updateCount();
-                }
-            });
-        }, { threshold: 0.8 });
-        stats.forEach(s => statObserver.observe(s));
-
-        // 元素淡入觀察者
-        const fadeObserver = new IntersectionObserver(e => e.forEach(entry => {
-            if (entry.isIntersecting) entry.target.classList.add('active');
-        }), { threshold: 0.1 });
-        document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
-
-        // 主題切換
-        function toggleTheme() {
-            document.body.classList.toggle('light-mode');
-            localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
-        }
-        if(localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');
-
-        // 背景粒子 (簡化版)
-        const canvas = document.getElementById('particleCanvas');
-        const ctx = canvas.getContext('2d');
-        let parts = [];
-        function init() {
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            parts = Array.from({length: 50}, () => ({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: Math.random()-0.5, vy: Math.random()-0.5 }));
-        }
+        // 簡單粒子
+        const canvas = document.getElementById('particleCanvas'), ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        let p = Array.from({length: 30}, () => ({x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: 0.2, vy: 0.2}));
         function draw() {
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--secondary-accent');
-            parts.forEach(p => {
-                p.x += p.vx; p.y += p.vy;
-                if(p.x<0 || p.x>canvas.width) p.vx*=-1; if(p.y<0 || p.y>canvas.height) p.vy*=-1;
-                ctx.beginPath(); ctx.arc(p.x, p.y, 1.5, 0, Math.PI*2); ctx.fill();
-            });
+            ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = "#6c5ce7";
+            p.forEach(i => { i.x+=i.vx; i.y+=i.vy; if(i.x>canvas.width) i.x=0; if(i.y>canvas.height) i.y=0; ctx.beginPath(); ctx.arc(i.x,i.y,1,0,7); ctx.fill(); });
             requestAnimationFrame(draw);
         }
-        init(); draw();
+        draw();
     </script>
 </body>
 </html>
