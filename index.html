@@ -26,15 +26,14 @@
             --nav-bg: rgba(255, 255, 255, 0.8);
         }
 
-        /* 科技游標 CSS */
+        /* 科技游標 */
         body { cursor: none !important; }
-        a, button, .tag, .feature-card, .faq-item, .theme-toggle { cursor: none !important; }
+        a, button, .tag, .feature-card, .faq-item, .theme-toggle, .bento-item { cursor: none !important; }
 
         #custom-cursor {
             width: 25px; height: 25px; border: 1.5px solid var(--secondary-accent);
             border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000;
-            transition: transform 0.1s ease-out, width 0.3s, height 0.3s; 
-            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease-out; transform: translate(-50%, -50%);
             background: rgba(0, 188, 212, 0.05);
         }
         #cursor-dot {
@@ -47,20 +46,13 @@
         
         body {
             font-family: 'Space Grotesk', sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-light);
-            line-height: 1.6;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
+            background: var(--bg-dark); color: var(--text-light);
+            line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth;
         }
 
-        /* 1. 頂部進度條 */
+        /* 進度條 */
         .progress-bar-container { position: fixed; top: 0; left: 0; width: 100%; height: 3px; z-index: 9999; }
-        #myBar {
-            height: 100%; width: 0%;
-            background: linear-gradient(to right, var(--secondary-accent), var(--primary-accent));
-            box-shadow: 0 0 10px var(--secondary-accent);
-        }
+        #myBar { height: 100%; width: 0%; background: linear-gradient(to right, var(--secondary-accent), var(--primary-accent)); box-shadow: 0 0 10px var(--secondary-accent); }
 
         #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; opacity: 0.5; }
 
@@ -69,92 +61,58 @@
             display: flex; justify-content: space-between; align-items: center;
             padding: 15px 5%; width: 100%; top: 0; z-index: 1000;
             background: var(--nav-bg); backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--border-light);
-            position: fixed;
+            border-bottom: 1px solid var(--border-light); position: fixed;
         }
         .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; letter-spacing: -1px; }
         .nav-right { display: flex; align-items: center; gap: 20px; }
         .nav-links { display: flex; gap: 25px; }
-        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 15px; font-weight: 500; position: relative; padding: 5px 0; }
-        .nav-links a::after { content: ""; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--secondary-accent); transition: width 0.3s; }
-        .nav-links a:hover::after { width: 100%; }
-        .nav-links a:hover { color: var(--text-light); }
-        
-        /* 特別強調開發者連結 */
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 15px; font-weight: 500; position: relative; }
+        .nav-links a.active { color: var(--text-light); }
         .nav-links a.dev-link { color: var(--primary-accent); opacity: 0.8; }
-        .nav-links a.dev-link:hover { opacity: 1; }
 
         .theme-toggle {
             background: var(--card-bg); border: 1px solid var(--border-light);
             color: var(--text-light); padding: 8px; border-radius: 50%;
-            cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
         }
 
-        /* Hero Section */
-        .hero-section { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding-top: 80px; }
-        
-        h1 { 
-            font-size: clamp(3rem, 10vw, 5.5rem); 
-            background: linear-gradient(90deg, #fff, var(--secondary-accent), var(--primary-accent), #fff);
-            background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
-            animation: shine 5s linear infinite; line-height: 1.1; margin-bottom: 20px; font-weight: 700;
+        /* 1. Bento Grid 樣式 */
+        .features-grid-bento {
+            display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: minmax(200px, auto);
+            gap: 20px; padding: 100px 5%; max-width: 1200px; margin: 0 auto;
         }
+        .bento-item {
+            background: var(--card-bg); border: 1px solid var(--border-light);
+            border-radius: 30px; padding: 40px; backdrop-filter: blur(10px);
+            transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            display: flex; flex-direction: column; justify-content: flex-end;
+        }
+        .bento-item:hover { border-color: var(--secondary-accent); transform: translateY(-5px); }
+        .bento-large { grid-column: span 2; grid-row: span 2; }
+        .bento-tall { grid-row: span 2; }
+
+        /* 2. 統計數字樣式 */
+        .stats-section { padding: 100px 5%; text-align: center; background: rgba(108, 92, 231, 0.03); }
+        .stat-number {
+            font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700;
+            color: var(--primary-accent); margin-bottom: 10px;
+        }
+
+        /* Hero & Others */
+        .hero-section { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        h1 { font-size: clamp(3rem, 10vw, 5.5rem); background: linear-gradient(90deg, #fff, var(--secondary-accent), var(--primary-accent), #fff); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shine 5s linear infinite; font-weight: 700; }
         @keyframes shine { to { background-position: 200% center; } }
 
-        .status-badge {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: rgba(0, 255, 157, 0.1); border: 1px solid rgba(0, 255, 157, 0.3);
-            padding: 6px 18px; border-radius: 50px; color: #00ff9d; font-size: 13px; margin-bottom: 25px;
-        }
-        .status-dot { width: 8px; height: 8px; background: #00ff9d; border-radius: 50%; animation: pulse-green 1.5s infinite; }
-        @keyframes pulse-green { 0% { box-shadow: 0 0 0 0 rgba(0, 255, 157, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(0, 255, 157, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 255, 157, 0); } }
-
-        .hero-subtitle { font-size: 1.2rem; color: var(--text-dim); max-width: 650px; margin-bottom: 45px; }
-
-        .hero-cta {
-            background: var(--primary-accent); color: white; padding: 18px 45px; border-radius: 50px;
-            text-decoration: none; font-weight: 700; transition: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
-        }
-        .hero-cta:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 20px 40px rgba(108, 92, 231, 0.5); }
-
-        /* Features */
-        .features-section { padding: 120px 5%; text-align: center; max-width: 1300px; margin: 0 auto; }
-        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 35px; margin-top: 60px; }
-        .feature-card {
-            background: var(--card-bg); border: 1px solid var(--border-light);
-            border-radius: 32px; padding: 50px; text-align: left;
-            backdrop-filter: blur(10px); position: relative; overflow: hidden;
-            transform-style: preserve-3d; transition: transform 0.1s ease, border-color 0.3s ease;
-        }
-        .feature-card:hover { border-color: var(--secondary-accent); }
-        .feature-card h3 { font-size: 1.5rem; margin-bottom: 15px; }
-        .feature-card p { color: var(--text-dim); }
-
-        /* FAQ */
-        .faq-section { padding: 100px 5%; max-width: 800px; margin: 0 auto; }
-        .faq-item {
-            background: var(--card-bg); margin-bottom: 18px; border-radius: 20px;
-            border: 1px solid var(--border-light); cursor: pointer; transition: 0.3s;
-        }
-        .faq-item:hover { background: rgba(255, 255, 255, 0.08); border-color: var(--primary-accent); }
-        .faq-question { padding: 25px; display: flex; justify-content: space-between; font-weight: 700; font-size: 1.1rem; }
-        .faq-answer { padding: 0 25px; max-height: 0; overflow: hidden; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); color: var(--text-dim); }
-        .faq-item.active .faq-answer { max-height: 200px; padding-bottom: 25px; }
-
-        .fade-in { opacity: 0; transform: translateY(40px); transition: 1s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .fade-in { opacity: 0; transform: translateY(30px); transition: 1s cubic-bezier(0.2, 0.8, 0.2, 1); }
         .fade-in.active { opacity: 1; transform: translateY(0); }
 
-        footer { padding: 60px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); font-size: 0.9rem; }
-        footer a { color: var(--text-dim); text-decoration: none; margin: 0 10px; }
-        footer a:hover { color: var(--primary-accent); text-decoration: underline; }
+        footer { padding: 60px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); }
     </style>
 </head>
 <body>
 
     <div id="custom-cursor"></div>
     <div id="cursor-dot"></div>
-
     <div class="progress-bar-container"><div id="myBar"></div></div>
     <canvas id="particleCanvas"></canvas>
 
@@ -162,7 +120,7 @@
         <a href="index.html" class="nav-logo">RemoteEye</a>
         <div class="nav-right">
             <div class="nav-links">
-                <a href="index.html">首頁</a>
+                <a href="index.html" class="active">首頁</a>
                 <a href="download.html">下載</a>
                 <a href="forum.html">論壇</a>
                 <a href="developers.html" class="dev-link">開發者</a>
@@ -172,76 +130,63 @@
     </nav>
 
     <section class="hero-section">
-        <div class="status-badge fade-in">
-            <div class="status-dot"></div>
-            <span>Global Latency: <span id="ping">15</span>ms</span>
-        </div>
         <h1 class="fade-in">次世代遠端體驗</h1>
-        <p class="hero-subtitle fade-in">RemoteEye 提供無縫、安全且跨平台的協作解決方案，讓距離不再是障礙。</p>
-        <a href="download.html" class="hero-cta fade-in">立即開始</a>
+        <p class="fade-in" style="color:var(--text-dim); margin: 20px 0 40px; max-width: 600px;">RemoteEye 重新定義了遠端協作，將速度與安全性推向極致。</p>
+        <a href="download.html" style="background:var(--primary-accent); color:white; padding:15px 40px; border-radius:50px; text-decoration:none; font-weight:700;" class="fade-in">立即下載</a>
     </section>
 
-    <section class="features-section">
-        <h2 class="fade-in" style="font-size: 3rem; margin-bottom: 10px;">核心優勢</h2>
-        <p class="fade-in" style="color:var(--text-dim)">專為高性能需求設計的遠端架構</p>
-        <div class="features-grid">
-            <div class="feature-card fade-in">
-                <div style="font-size: 45px; margin-bottom: 25px;">⚡</div>
-                <h3>極致效能</h3>
-                <p>採用革命性低延遲協議，支持 4K 60FPS 流暢遠端操作體驗。</p>
-            </div>
-            <div class="feature-card fade-in">
-                <div style="font-size: 45px; margin-bottom: 25px;">🔒</div>
-                <h3>軍規加密</h3>
-                <p>端到端 AES-256 加密與多重身份驗證，確保隱私萬無一失。</p>
-            </div>
-            <div class="feature-card fade-in">
-                <div style="font-size: 45px; margin-bottom: 25px;">🌍</div>
-                <h3>跨平台支援</h3>
-                <p>完美相容 Windows, macOS, Linux 與移動端，設備隨手連結。</p>
-            </div>
+    <section class="features-grid-bento">
+        <div class="bento-item bento-large fade-in">
+            <h2 style="color: var(--secondary-accent); margin-bottom:15px;">01. 極致低延遲協議</h2>
+            <p>採用自研傳輸技術，在複雜網絡環境下依然能保持 20ms 以下的同步感。</p>
+        </div>
+        <div class="bento-item fade-in">
+            <h3>🛡️ 端到端加密</h3>
+            <p>所有數據均經過軍規 AES-256 加密處理。</p>
+        </div>
+        <div class="bento-item bento-tall fade-in">
+            <h3>🔋 智能能耗優化</h3>
+            <p>針對筆電與移動設備優化，顯著延長電池續航力，讓移動辦公無憂。</p>
+        </div>
+        <div class="bento-item fade-in">
+            <h3>🌍 全球邊緣節點</h3>
+            <p>150+ 節點覆蓋。</p>
+        </div>
+        <div class="bento-item fade-in">
+            <h3>💬 實時團隊協作</h3>
+            <p>支援多用戶同步畫像與語音。</p>
         </div>
     </section>
 
-    <section class="faq-section fade-in">
-        <h2 style="text-align: center; margin-bottom: 50px; font-size: 2.5rem;">常見問題</h2>
-        <div class="faq-item" onclick="toggleFaq(this)">
-            <div class="faq-question">RemoteEye 是免費的嗎？ <span>+</span></div>
-            <div class="faq-answer">是的，我們為個人用戶提供永久免費的基礎版本，包含所有核心連線功能。</div>
-        </div>
-        <div class="faq-item" onclick="toggleFaq(this)">
-            <div class="faq-question">支援哪些操作系統？ <span>+</span></div>
-            <div class="faq-answer">原生支援 Windows 10/11, macOS Monterey+ 以及所有主流 Linux 發行版。</div>
+    <section class="stats-section">
+        <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 40px; max-width: 1000px; margin: 0 auto;">
+            <div class="fade-in">
+                <div class="stat-number" data-target="99.9">0</div>
+                <p style="color:var(--text-dim)">服務可用性 %</p>
+            </div>
+            <div class="fade-in">
+                <div class="stat-number" data-target="150">0</div>
+                <p style="color:var(--text-dim)">全球部署節點</p>
+            </div>
+            <div class="fade-in">
+                <div class="stat-number" data-target="12">0</div>
+                <p style="color:var(--text-dim)">平均延遲 (ms)</p>
+            </div>
         </div>
     </section>
 
     <footer>
-        <p>© 2026 RemoteEye Technology. <a href="developers.html">開發者中心</a> | Made with ❤️ for a connected world.</p>
+        <p>© 2026 RemoteEye Technology. <a href="developers.html" style="color:var(--primary-accent); text-decoration:none;">開發者中心</a></p>
     </footer>
 
     <script>
-        // 科技游標控制
+        // 游標邏輯
         const cursor = document.getElementById('custom-cursor');
         const dot = document.getElementById('cursor-dot');
-        
         document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-            dot.style.left = e.clientX + 'px';
-            dot.style.top = e.clientY + 'px';
+            cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
+            dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';
         });
-
-        document.querySelectorAll('a, button, .faq-item, .feature-card').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor.style.transform = 'translate(-50%, -50%) scale(1.5)');
-            el.addEventListener('mouseleave', () => cursor.style.transform = 'translate(-50%, -50%) scale(1)');
-        });
-
-        // 動態模擬延遲儀表
-        setInterval(() => {
-            const pingVal = Math.floor(Math.random() * 5) + 12;
-            const pingEl = document.getElementById('ping');
-            if(pingEl) pingEl.innerText = pingVal;
-        }, 2500);
 
         // 進度條
         window.onscroll = () => {
@@ -250,70 +195,58 @@
             document.getElementById("myBar").style.width = (winScroll / height) * 100 + "%";
         };
 
+        // 數字增長動畫
+        const stats = document.querySelectorAll('.stat-number');
+        const statObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    const target = +entry.target.getAttribute('data-target');
+                    const updateCount = () => {
+                        const current = +entry.target.innerText;
+                        const inc = target / 60;
+                        if(current < target) {
+                            entry.target.innerText = Math.ceil(current + inc);
+                            setTimeout(updateCount, 20);
+                        } else { entry.target.innerText = target; }
+                    };
+                    updateCount();
+                }
+            });
+        }, { threshold: 0.8 });
+        stats.forEach(s => statObserver.observe(s));
+
+        // 元素淡入觀察者
+        const fadeObserver = new IntersectionObserver(e => e.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('active');
+        }), { threshold: 0.1 });
+        document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+
         // 主題切換
         function toggleTheme() {
             document.body.classList.toggle('light-mode');
             localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
         }
-        if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');
+        if(localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');
 
-        // FAQ
-        function toggleFaq(el) {
-            el.classList.toggle('active');
-            el.querySelector('span').innerText = el.classList.contains('active') ? '-' : '+';
-        }
-
-        // 神經網路粒子動畫
+        // 背景粒子 (簡化版)
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
-        let particles = [];
+        let parts = [];
         function init() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            particles = Array.from({length: 80}, () => ({
-                x: Math.random()*canvas.width, y: Math.random()*canvas.height,
-                vx: (Math.random()-0.5)*0.6, vy: (Math.random()-0.5)*0.6, size: 2
-            }));
+            parts = Array.from({length: 50}, () => ({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: Math.random()-0.5, vy: Math.random()-0.5 }));
         }
         function draw() {
             ctx.clearRect(0,0,canvas.width,canvas.height);
-            const color = getComputedStyle(document.body).getPropertyValue('--secondary-accent');
-            ctx.fillStyle = color; ctx.strokeStyle = color;
-            particles.forEach((p, i) => {
+            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--secondary-accent');
+            parts.forEach(p => {
                 p.x += p.vx; p.y += p.vy;
-                if(p.x<0 || p.x>canvas.width) p.vx*=-1;
-                if(p.y<0 || p.y>canvas.height) p.vy*=-1;
-                ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
-                for(let j=i+1; j<particles.length; j++){
-                    let p2 = particles[j];
-                    let dist = Math.hypot(p.x-p2.x, p.y-p2.y);
-                    if(dist < 120){
-                        ctx.globalAlpha = 1 - (dist/120);
-                        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y);
-                        ctx.lineWidth = 0.5; ctx.stroke();
-                    }
-                }
-                ctx.globalAlpha = 1;
+                if(p.x<0 || p.x>canvas.width) p.vx*=-1; if(p.y<0 || p.y>canvas.height) p.vy*=-1;
+                ctx.beginPath(); ctx.arc(p.x, p.y, 1.5, 0, Math.PI*2); ctx.fill();
             });
             requestAnimationFrame(draw);
         }
-        window.onresize = init; init(); draw();
-
-        // 滾動動畫觀察者
-        const observer = new IntersectionObserver(e => e.forEach(entry => {
-            if (entry.isIntersecting) entry.target.classList.add('active');
-        }), { threshold: 0.1 });
-        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-        // 3D 視差效果
-        document.querySelectorAll('.feature-card').forEach(card => {
-            card.addEventListener('mousemove', e => {
-                const rect = card.getBoundingClientRect();
-                const x = (e.clientX - rect.left) / rect.width - 0.5;
-                const y = (e.clientY - rect.top) / rect.height - 0.5;
-                card.style.transform = `perspective(1000px) rotateX(${y * -15}deg) rotateY(${x * 15}deg) translateY(-10px)`;
-            });
-            card.addEventListener('mouseleave', () => card.style.transform = `none`);
-        });
+        init(); draw();
     </script>
 </body>
 </html>
