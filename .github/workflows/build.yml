@@ -3,7 +3,11 @@ name: RemoteEye Build and Release
 on:
   push:
     tags:
-      - 'v*' # 只有當你推標籤（如 v1.0.0）時才會正式發布下載檔
+      - 'v*'
+
+# --- 重點：開啟 Release 寫入權限 ---
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -37,11 +41,10 @@ jobs:
       run: |
         CTK_PATH=$(python -c "import customtkinter; import os; print(customtkinter.__path__[0])")
         SEP=$([[ "${{ matrix.os }}" == "windows-latest" ]] && echo ";" || echo ":")
-        
-        # 執行 PyInstaller 打包
+        # 統一輸出名稱為 RemoteEye
         python -m PyInstaller --noconfirm --onefile --windowed --name "RemoteEye" --add-data "${CTK_PATH}${SEP}customtkinter/" RemoteEye_Global.py
 
-    # --- [Linux 處理] 將執行檔轉為 AppImage ---
+    # --- Linux 轉 AppImage ---
     - name: Package AppImage (Linux)
       if: matrix.os == 'ubuntu-latest'
       run: |
@@ -55,21 +58,20 @@ jobs:
         touch AppDir/icon.png
         ARCH=x86_64 ./appimagetool --appimage-extract-and-run AppDir dist/RemoteEye.AppImage
 
-    # --- [macOS 處理] 將 .app 轉為 .dmg ---
+    # --- macOS 轉 DMG ---
     - name: Create DMG (macOS)
       if: matrix.os == 'macos-latest'
       run: |
-        # 使用簡單的 hdiutil 製作 dmg
         hdiutil create -format UDZO -srcfolder dist/RemoteEye.app dist/RemoteEye.dmg
 
-    # --- [正式發布] 這是關鍵！它會把檔案放到 Releases 頁面，而不是 Artifacts ---
     - name: Upload to Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2  # 使用較新的 v2 版本
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
           dist/RemoteEye.exe
           dist/RemoteEye.dmg
           dist/RemoteEye.AppImage
+          dist/RemoteEye
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
