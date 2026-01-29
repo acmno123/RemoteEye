@@ -36,13 +36,19 @@
         #custom-cursor { width: 25px; height: 25px; border: 1.5px solid var(--secondary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transition: transform 0.1s; transform: translate(-50%, -50%); }
         #cursor-dot { width: 4px; height: 4px; background: var(--primary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10001; transform: translate(-50%, -50%); }
 
-        /* 導航列 */
+        /* 導航列 - 已更新佈局 */
         .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; width: 100%; position: fixed; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border-light); }
         .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
+        
+        /* 右側功能區塊容器 */
+        .nav-right-group { display: flex; align-items: center; gap: 30px; }
         
         .nav-links { display: flex; gap: 20px; align-items: center; }
         .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 14px; transition: 0.3s; }
         .nav-links a:hover, .nav-links a.active { color: var(--secondary-accent); }
+
+        /* 使用者設定分區 */
+        .user-settings { display: flex; align-items: center; gap: 15px; border-left: 1px solid var(--border-light); padding-left: 20px; }
 
         /* 主題切換按鈕 */
         .theme-toggle { background: var(--card-bg); border: 1px solid var(--border-light); color: var(--text-light); padding: 8px; border-radius: 50%; cursor: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
@@ -69,18 +75,19 @@
     <div id="cursor-dot"></div>
 
     <nav class="navbar">
-        <div style="display: flex; align-items: center; gap: 30px;">
-            <a href="index.html" class="nav-logo">RemoteEye</a>
+        <a href="index.html" class="nav-logo">RemoteEye</a>
+        
+        <div class="nav-right-group">
             <div class="nav-links">
                 <a href="index.html">首頁</a>
                 <a href="download.html">下載</a>
                 <a href="forum.html" class="active">論壇</a>
             </div>
-        </div>
-        
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <input type="text" id="global-username" class="custom-input" style="width: 100px; margin: 0; padding: 5px 10px; font-size: 12px;" placeholder="名字" onchange="saveName()">
-            <button class="theme-toggle" onclick="toggleTheme()" title="切換主題">🌓</button>
+            
+            <div class="user-settings">
+                <input type="text" id="global-username" class="custom-input" style="width: 100px; margin: 0; padding: 5px 10px; font-size: 12px;" placeholder="名字" onchange="saveName()">
+                <button class="theme-toggle" onclick="toggleTheme()" title="切換主題">🌓</button>
+            </div>
         </div>
     </nav>
 
