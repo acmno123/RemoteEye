@@ -26,6 +26,23 @@
             --nav-bg: rgba(255, 255, 255, 0.8);
         }
 
+        /* --- [新增] 科技游標 CSS --- */
+        body { cursor: none !important; } /* 隱藏原生滑鼠 */
+        a, button, .tag, .feature-card, .faq-item, .theme-toggle { cursor: none !important; }
+
+        #custom-cursor {
+            width: 25px; height: 25px; border: 1.5px solid var(--secondary-accent);
+            border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000;
+            transition: transform 0.1s ease-out, width 0.3s, height 0.3s; 
+            transform: translate(-50%, -50%);
+            background: rgba(0, 188, 212, 0.05);
+        }
+        #cursor-dot {
+            width: 4px; height: 4px; background: var(--primary-accent);
+            border-radius: 50%; position: fixed; pointer-events: none; z-index: 10001;
+            transform: translate(-50%, -50%);
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.4s ease, color 0.4s ease; }
         
         body {
@@ -38,20 +55,14 @@
         }
 
         /* 1. 頂部進度條 */
-        .progress-bar-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 3px;
-            background: transparent; z-index: 9999;
-        }
+        .progress-bar-container { position: fixed; top: 0; left: 0; width: 100%; height: 3px; z-index: 9999; }
         #myBar {
             height: 100%; width: 0%;
             background: linear-gradient(to right, var(--secondary-accent), var(--primary-accent));
             box-shadow: 0 0 10px var(--secondary-accent);
         }
 
-        #particleCanvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; pointer-events: none; opacity: 0.5;
-        }
+        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; opacity: 0.5; }
 
         /* 導航列 */
         .navbar {
@@ -64,14 +75,8 @@
         .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; letter-spacing: -1px; }
         .nav-right { display: flex; align-items: center; gap: 20px; }
         .nav-links { display: flex; gap: 25px; }
-        .nav-links a { 
-            color: var(--text-dim); text-decoration: none; font-size: 15px; font-weight: 500; 
-            position: relative; padding: 5px 0;
-        }
-        .nav-links a::after {
-            content: ""; position: absolute; bottom: 0; left: 0; width: 0; height: 2px;
-            background: var(--secondary-accent); transition: width 0.3s;
-        }
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 15px; font-weight: 500; position: relative; padding: 5px 0; }
+        .nav-links a::after { content: ""; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--secondary-accent); transition: width 0.3s; }
         .nav-links a:hover::after { width: 100%; }
         .nav-links a:hover { color: var(--text-light); }
         
@@ -79,26 +84,20 @@
             background: var(--card-bg); border: 1px solid var(--border-light);
             color: var(--text-light); padding: 8px; border-radius: 50%;
             cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
-            font-size: 18px;
         }
 
-        /* Hero Section - 流光標題 */
-        .hero-section {
-            height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center; padding-top: 80px;
-        }
+        /* Hero Section */
+        .hero-section { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding-top: 80px; }
         
         h1 { 
             font-size: clamp(3rem, 10vw, 5.5rem); 
             background: linear-gradient(90deg, #fff, var(--secondary-accent), var(--primary-accent), #fff);
-            background-size: 200% auto;
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            animation: shine 5s linear infinite;
-            line-height: 1.1; margin-bottom: 20px; font-weight: 700;
+            background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+            animation: shine 5s linear infinite; line-height: 1.1; margin-bottom: 20px; font-weight: 700;
         }
         @keyframes shine { to { background-position: 200% center; } }
 
+        /* --- [新增] 延遲儀表樣式 --- */
         .status-badge {
             display: inline-flex; align-items: center; gap: 8px;
             background: rgba(0, 255, 157, 0.1); border: 1px solid rgba(0, 255, 157, 0.3);
@@ -116,28 +115,26 @@
         }
         .hero-cta:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 20px 40px rgba(108, 92, 231, 0.5); }
 
-        /* Features - 3D 視差卡片 */
+        /* Features */
         .features-section { padding: 120px 5%; text-align: center; max-width: 1300px; margin: 0 auto; }
         .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 35px; margin-top: 60px; }
         .feature-card {
             background: var(--card-bg); border: 1px solid var(--border-light);
             border-radius: 32px; padding: 50px; text-align: left;
-            backdrop-filter: blur(10px);
-            position: relative; overflow: hidden;
-            transform-style: preserve-3d;
-            transition: transform 0.1s ease, border-color 0.3s ease;
+            backdrop-filter: blur(10px); position: relative; overflow: hidden;
+            transform-style: preserve-3d; transition: transform 0.1s ease, border-color 0.3s ease;
         }
         .feature-card:hover { border-color: var(--secondary-accent); }
         .feature-card h3 { font-size: 1.5rem; margin-bottom: 15px; }
         .feature-card p { color: var(--text-dim); }
 
-        /* FAQ & Footer */
+        /* FAQ */
         .faq-section { padding: 100px 5%; max-width: 800px; margin: 0 auto; }
         .faq-item {
             background: var(--card-bg); margin-bottom: 18px; border-radius: 20px;
             border: 1px solid var(--border-light); cursor: pointer; transition: 0.3s;
         }
-        .faq-item:hover { background: rgba(255, 255, 255, 0.08); }
+        .faq-item:hover { background: rgba(255, 255, 255, 0.08); border-color: var(--primary-accent); }
         .faq-question { padding: 25px; display: flex; justify-content: space-between; font-weight: 700; font-size: 1.1rem; }
         .faq-answer { padding: 0 25px; max-height: 0; overflow: hidden; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); color: var(--text-dim); }
         .faq-item.active .faq-answer { max-height: 200px; padding-bottom: 25px; }
@@ -149,6 +146,9 @@
     </style>
 </head>
 <body>
+
+    <div id="custom-cursor"></div>
+    <div id="cursor-dot"></div>
 
     <div class="progress-bar-container"><div id="myBar"></div></div>
     <canvas id="particleCanvas"></canvas>
@@ -168,7 +168,7 @@
     <section class="hero-section">
         <div class="status-badge fade-in">
             <div class="status-dot"></div>
-            <span>系統運作正常: V1.0.4</span>
+            <span>Global Latency: <span id="ping">15</span>ms</span>
         </div>
         <h1 class="fade-in">次世代遠端體驗</h1>
         <p class="hero-subtitle fade-in">RemoteEye 提供無縫、安全且跨平台的協作解決方案，讓距離不再是障礙。</p>
@@ -214,6 +214,29 @@
     </footer>
 
     <script>
+        // --- [新增] 科技游標控制 ---
+        const cursor = document.getElementById('custom-cursor');
+        const dot = document.getElementById('cursor-dot');
+        
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            dot.style.left = e.clientX + 'px';
+            dot.style.top = e.clientY + 'px';
+        });
+
+        // 游標碰到連結時放大
+        document.querySelectorAll('a, button, .faq-item, .feature-card').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.style.transform = 'translate(-50%, -50%) scale(1.5)');
+            el.addEventListener('mouseleave', () => cursor.style.transform = 'translate(-50%, -50%) scale(1)');
+        });
+
+        // --- [新增] 動態模擬延遲儀表 ---
+        setInterval(() => {
+            const pingVal = Math.floor(Math.random() * 5) + 12;
+            document.getElementById('ping').innerText = pingVal;
+        }, 2500);
+
         // 進度條
         window.onscroll = () => {
             let winScroll = document.documentElement.scrollTop;
