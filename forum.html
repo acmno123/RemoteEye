@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RemoteEye Community | Forum</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>RemoteEye Tech Hub | Forum</title>
+    <link href="[https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Fira+Code:wght@400;500&display=swap](https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Fira+Code:wght@400;500&display=swap)" rel="stylesheet">
     <style>
         :root {
             --bg-dark: #000000;
@@ -14,8 +14,9 @@
             --text-dim: #a0a0a0;
             --card-bg: rgba(255, 255, 255, 0.05);
             --border-light: rgba(255, 255, 255, 0.1);
-            --nav-bg: rgba(0, 0, 0, 0.8);
+            --nav-bg: rgba(0, 0, 0, 0.85);
             --success: #00ff9d;
+            --warning: #ffb86c;
         }
 
         body.light-mode {
@@ -24,45 +25,49 @@
             --text-dim: #6e6e73;
             --card-bg: #ffffff;
             --border-light: rgba(0, 0, 0, 0.1);
-            --nav-bg: rgba(255, 255, 255, 0.8);
+            --nav-bg: rgba(255, 255, 255, 0.85);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.4s ease, color 0.4s ease; }
-        body { cursor: none !important; font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--text-light); overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; }
+        body { cursor: none !important; font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--text-light); overflow-x: hidden; min-height: 100vh; }
         
         #custom-cursor { width: 25px; height: 25px; border: 1.5px solid var(--secondary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transition: transform 0.1s; transform: translate(-50%, -50%); }
         #cursor-dot { width: 4px; height: 4px; background: var(--primary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10001; transform: translate(-50%, -50%); }
 
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; width: 100%; position: fixed; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border-light); }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; width: 100%; position: fixed; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-light); }
         .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
-        .nav-right-group { display: flex; align-items: center; gap: 30px; }
-        .nav-links { display: flex; gap: 20px; align-items: center; }
-        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 14px; }
-        .nav-links a.active { color: var(--secondary-accent); }
-        .theme-toggle { background: var(--card-bg); border: 1px solid var(--border-light); color: var(--text-light); padding: 8px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .user-settings { display: flex; align-items: center; gap: 10px; }
 
-        .forum-container { max-width: 900px; margin: 120px auto 60px; padding: 0 5%; flex-grow: 1; width: 100%; }
+        .forum-container { max-width: 950px; margin: 120px auto 60px; padding: 0 5%; }
         
-        /* --- 勳章與官方樣式 --- */
-        .badge { padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; margin-left: 8px; vertical-align: middle; }
-        .badge-dev { background: linear-gradient(45deg, var(--primary-accent), #a29bfe); color: white; box-shadow: 0 0 10px rgba(108, 92, 231, 0.4); }
-        
-        .post-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 24px; padding: 30px; margin-bottom: 25px; position: relative; backdrop-filter: blur(10px); }
-        
-        .post-card.official-reply { border: 1.5px solid var(--primary-accent); background: rgba(108, 92, 231, 0.05); }
-        .post-card.official-reply::before { content: "OFFICIAL RESPONSE"; position: absolute; top: 12px; right: 20px; font-size: 9px; font-weight: 900; color: var(--primary-accent); letter-spacing: 1px; opacity: 0.6; }
+        /* 狀態標籤樣式 */
+        .status-badge { padding: 4px 12px; border-radius: 50px; font-size: 10px; font-weight: 800; cursor: pointer; border: 1px solid transparent; }
+        .status-pending { background: rgba(160, 160, 160, 0.1); color: var(--text-dim); }
+        .status-working { background: rgba(255, 184, 108, 0.1); color: var(--warning); border-color: var(--warning); animation: pulse 2s infinite; }
+        .status-solved { background: rgba(0, 255, 157, 0.1); color: var(--success); border-color: var(--success); }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
 
-        .custom-input { width: 100%; background: var(--card-bg); border: 1px solid var(--border-light); color: var(--text-light); padding: 12px 20px; border-radius: 12px; outline: none; font-family: inherit; margin-bottom: 10px; }
-        .action-btn { background: var(--primary-accent); color: white; border: none; padding: 10px 25px; border-radius: 50px; font-weight: 600; cursor: none; transition: 0.3s; }
-        
-        .reply-section { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-light); display: none; }
-        .reply-item { font-size: 14px; margin-bottom: 12px; color: var(--text-dim); background: rgba(100,100,100,0.05); padding: 12px; border-radius: 12px; border-left: 3px solid var(--primary-accent); }
-        .reply-item.dev-response { border-left-color: var(--secondary-accent); background: rgba(0, 188, 212, 0.05); }
+        /* 勳章樣式 */
+        .badge { padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; margin-left: 8px; vertical-align: middle; }
+        .badge-dev { background: linear-gradient(45deg, var(--primary-accent), #a29bfe); color: white; box-shadow: 0 0 15px rgba(108, 92, 231, 0.5); }
+        .badge-expert { background: rgba(0, 188, 212, 0.2); color: var(--secondary-accent); border: 1px solid var(--secondary-accent); }
 
-        .modal { display: none; position: fixed; z-index: 2000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
-        .modal-content { background: var(--bg-dark); border: 1px solid var(--primary-accent); width: 90%; max-width: 500px; margin: 100px auto; padding: 40px; border-radius: 30px; }
+        .post-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 24px; padding: 30px; margin-bottom: 25px; position: relative; overflow: hidden; }
+        .post-card.official-reply { border-left: 5px solid var(--primary-accent); background: linear-gradient(90deg, rgba(108, 92, 231, 0.05) 0%, transparent 100%); }
 
-        footer { padding: 40px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); font-size: 14px; }
+        /* 程式碼區塊模擬 */
+        code { font-family: 'Fira Code', monospace; background: #1a1a1a; color: #f8f8f2; padding: 15px; border-radius: 12px; display: block; margin: 15px 0; font-size: 13px; line-height: 1.5; overflow-x: auto; border: 1px solid #333; }
+
+        .custom-input { width: 100%; background: var(--card-bg); border: 1px solid var(--border-light); color: var(--text-light); padding: 12px 20px; border-radius: 12px; outline: none; margin-bottom: 10px; font-family: inherit; }
+        .action-btn { background: var(--primary-accent); color: white; border: none; padding: 10px 25px; border-radius: 50px; font-weight: 600; cursor: none; }
+
+        .reply-item { font-size: 14px; margin-bottom: 12px; background: rgba(100,100,100,0.05); padding: 15px; border-radius: 15px; }
+        .dev-response { border-right: 3px solid var(--primary-accent); }
+
+        .modal { display: none; position: fixed; z-index: 2000; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
+        .modal-content { background: var(--bg-dark); border: 1px solid var(--primary-accent); width: 90%; max-width: 550px; margin: 100px auto; padding: 40px; border-radius: 30px; }
+
+        footer { padding: 40px; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); }
     </style>
 </head>
 <body>
@@ -72,25 +77,18 @@
 
     <nav class="navbar">
         <a href="index.html" class="nav-logo">RemoteEye</a>
-        <div class="nav-right-group">
-            <div class="nav-links">
-                <a href="index.html">首頁</a>
-                <a href="download.html">下載</a>
-                <a href="forum.html" class="active">論壇</a>
-            </div>
-            <div class="user-settings" style="display: flex; align-items: center; gap: 10px;">
-                <input type="text" id="global-username" class="custom-input" style="width: 100px; margin: 0; padding: 5px 10px; font-size: 12px;" placeholder="名字">
-                <button class="action-btn" style="padding: 5px 12px; font-size: 10px; background: var(--secondary-accent);" onclick="verifyDev()">開發者驗證</button>
-                <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
-            </div>
+        <div class="user-settings">
+            <input type="text" id="global-username" class="custom-input" style="width: 100px; margin: 0; padding: 5px 10px; font-size: 12px;" placeholder="名字">
+            <button class="action-btn" style="padding: 5px 12px; font-size: 10px; background: var(--secondary-accent);" onclick="verifyDev()">DEV 驗證</button>
+            <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
         </div>
     </nav>
 
     <main class="forum-container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px;">
             <div>
-                <h1 style="font-size: 2.5rem; letter-spacing: -1px; color: var(--text-light);">技術社群</h1>
-                <p style="color: var(--text-dim);">與開發團隊直接交流</p>
+                <h1 style="font-size: 2.8rem; letter-spacing: -1.5px;">工程師與用戶的橋樑</h1>
+                <p style="color: var(--text-dim);">支援 Markdown 語法與自動狀態追蹤</p>
             </div>
             <button class="action-btn" onclick="openModal()">+ 發起話題</button>
         </div>
@@ -100,92 +98,109 @@
     <div id="postModal" class="modal">
         <div class="modal-content">
             <h2 style="margin-bottom: 20px;">發布話題</h2>
-            <input type="text" id="post-title" class="custom-input" placeholder="話題標題">
-            <textarea id="post-text" class="custom-input" style="height:120px;" placeholder="你想討論什麼？"></textarea>
-            <button class="action-btn" style="width:100%;" onclick="createNewPost()">發布</button>
-            <button onclick="closeModal()" style="width:100%; background:none; border:none; color:var(--text-dim); margin-top:10px; cursor: none;">取消</button>
+            <input type="text" id="post-title" class="custom-input" placeholder="標題 (例如：Bug 回報)">
+            <textarea id="post-text" class="custom-input" style="height:150px;" placeholder="可以使用 ``` 寫程式碼..."></textarea>
+            <button class="action-btn" style="width:100%;" onclick="createNewPost()">確認發布</button>
+            <button onclick="closeModal()" style="width:100%; background:none; border:none; color:var(--text-dim); margin-top:15px; cursor: none;">取消</button>
         </div>
     </div>
 
-    <footer>© 2026 RemoteEye Technology.</footer>
+    <footer>© 2026 RemoteEye Technology. 開發者密鑰：RE_DEV_2026</footer>
 
     <script>
-        // --- 核心開發權限邏輯 ---
+        // --- 核心邏輯 ---
         const DEV_KEY = "RE_DEV_2026";
-        let OFFICIAL_TEAM = ["官方團隊", "系統管理員", "Alex_Dev"];
-        
-        function checkDevStatus() {
-            const isDev = localStorage.getItem('is_re_dev') === 'true';
-            const currentName = localStorage.getItem('re_user') || "訪客";
-            if (isDev && !OFFICIAL_TEAM.includes(currentName)) {
-                OFFICIAL_TEAM.push(currentName);
-            }
-        }
+        let OFFICIAL_TEAM = ["官方團隊", "Alex_Dev"];
+        let posts = JSON.parse(localStorage.getItem('re_posts_v2')) || [
+            { id: 1, title: "如何修復連線超時？", content: "嘗試調整設定檔：\n```json\n{\n  \"timeout\": 5000,\n  \"retry\": true\n}\n```", author: "官方團隊", likes: 45, status: "solved", replies: [] }
+        ];
 
         function verifyDev() {
-            const key = prompt("請輸入開發者驗證密鑰：");
-            if (key === DEV_KEY) {
+            if (prompt("輸入密鑰：") === DEV_KEY) {
                 localStorage.setItem('is_re_dev', 'true');
                 const name = document.getElementById('global-username').value;
                 if (!OFFICIAL_TEAM.includes(name)) OFFICIAL_TEAM.push(name);
-                alert("驗證成功！您已取得開發者勳章。");
                 renderPosts();
-            } else {
-                alert("密鑰錯誤！");
             }
         }
 
-        // --- 資料邏輯 ---
-        let posts = JSON.parse(localStorage.getItem('re_posts')) || [
-            { id: 1, title: "RemoteEye V1.0 正式上線", content: "歡迎大家下載體驗！這是我們歷時兩年的成果。", author: "官方團隊", likes: 25, replies: [{user: "系統管理員", text: "若有連線問題請優先檢查防火牆。"}] }
-        ];
+        // 簡單的 Markdown 程式碼塊渲染
+        function parseContent(text) {
+            return text.replace(/```([\s\S]*?)```/g, '<code>$1</code>').replace(/\n/g, '<br>');
+        }
 
         function renderPosts() {
-            checkDevStatus();
+            const isDev = localStorage.getItem('is_re_dev') === 'true';
+            const currentName = document.getElementById('global-username').value;
+            if (isDev && !OFFICIAL_TEAM.includes(currentName)) OFFICIAL_TEAM.push(currentName);
+
             const list = document.getElementById('post-list');
             list.innerHTML = '';
+            
             posts.forEach(post => {
-                const isOfficialPost = OFFICIAL_TEAM.includes(post.author);
+                const isOfficial = OFFICIAL_TEAM.includes(post.author);
+                const isExpert = post.likes >= 10 && !isOfficial;
+                
                 const postHtml = `
-                    <div class="post-card ${isOfficialPost ? 'official-reply' : ''}">
-                        <h3 style="margin-bottom: 10px;">${post.title}</h3>
-                        <p style="color: var(--text-dim); font-size: 15px;">${post.content}</p>
-                        <div style="margin-top: 15px; font-size: 12px; display: flex; align-items: center;">
-                            <span style="color: ${isOfficialPost ? 'var(--primary-accent)' : 'var(--text-dim)'}; font-weight: bold;">👤 ${post.author}</span>
-                            ${isOfficialPost ? '<span class="badge badge-dev">Official Dev</span>' : ''}
+                    <div class="post-card ${isOfficial ? 'official-reply' : ''}">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span class="status-badge status-${post.status}" onclick="cycleStatus(${post.id})">
+                                ${post.status.toUpperCase()}
+                            </span>
+                            <span style="color:var(--text-dim); font-size:10px;">ID: ${post.id}</span>
                         </div>
-                        <div style="margin-top: 20px; display:flex; gap:20px; border-top: 1px solid var(--border-light); padding-top: 15px;">
-                            <button class="action-btn" style="padding: 5px 15px; background: none; color: var(--text-dim);" onclick="likePost(${post.id})">❤️ ${post.likes}</button>
-                            <button class="action-btn" style="padding: 5px 15px; background: none; color: var(--text-dim);" onclick="toggleReply(${post.id})">💬 ${post.replies.length} 回覆</button>
+                        
+                        <h3 style="margin: 15px 0 10px;">${post.title}</h3>
+                        <div style="font-size: 15px; color: var(--text-dim); line-height: 1.6;">
+                            ${parseContent(post.content)}
                         </div>
+                        
+                        <div style="margin-top: 20px; display: flex; align-items: center;">
+                            <span style="font-weight: 700; color: ${isOfficial ? 'var(--primary-accent)' : 'inherit'}">👤 ${post.author}</span>
+                            ${isOfficial ? '<span class="badge badge-dev">Official Dev</span>' : ''}
+                            ${isExpert ? '<span class="badge badge-expert">Expert</span>' : ''}
+                        </div>
+
+                        <div style="margin-top: 25px; display:flex; gap:20px; border-top: 1px solid var(--border-light); padding-top: 15px;">
+                            <button class="action-btn" style="background:none; color:var(--text-dim);" onclick="likePost(${post.id})">❤️ ${post.likes}</button>
+                            <button class="action-btn" style="background:none; color:var(--text-dim);" onclick="toggleReply(${post.id})">💬 ${post.replies.length} 回覆</button>
+                        </div>
+
                         <div class="reply-section" id="rep-sec-${post.id}">
                             <div id="rep-list-${post.id}">
-                                ${post.replies.map(r => {
-                                    const isOfficialReply = OFFICIAL_TEAM.includes(r.user);
-                                    return `
-                                        <div class="reply-item ${isOfficialReply ? 'dev-response' : ''}">
-                                            <strong>${r.user} ${isOfficialReply ? '<span class="badge badge-dev" style="font-size:8px;">DEV</span>' : ''}:</strong> ${r.text}
-                                        </div>`;
-                                }).join('')}
+                                ${post.replies.map(r => `
+                                    <div class="reply-item ${OFFICIAL_TEAM.includes(r.user) ? 'dev-response' : ''}">
+                                        <strong>${r.user}:</strong> ${parseContent(r.text)}
+                                    </div>
+                                `).join('')}
                             </div>
                             <div style="display:flex; gap:10px; margin-top:15px;">
-                                <input type="text" class="custom-input" style="margin:0; padding:8px;" placeholder="寫下回覆...">
-                                <button class="action-btn" style="padding: 8px 20px;" onclick="addReply(${post.id}, this)">送出</button>
+                                <input type="text" class="custom-input" style="margin:0" placeholder="輸入回覆 (支援程式碼)...">
+                                <button class="action-btn" onclick="addReply(${post.id}, this)">送出</button>
                             </div>
                         </div>
                     </div>`;
                 list.insertAdjacentHTML('beforeend', postHtml);
             });
-            localStorage.setItem('re_posts', JSON.stringify(posts));
+            localStorage.setItem('re_posts_v2', JSON.stringify(posts));
         }
 
-        // --- 基礎互動 ---
+        // 開發者功能：循環切換狀態
+        function cycleStatus(id) {
+            if (localStorage.getItem('is_re_dev') !== 'true') return;
+            const post = posts.find(p => p.id === id);
+            const states = ['pending', 'working', 'solved'];
+            let nextIndex = (states.indexOf(post.status) + 1) % states.length;
+            post.status = states[nextIndex];
+            renderPosts();
+        }
+
         function createNewPost() {
             const title = document.getElementById('post-title').value;
             const text = document.getElementById('post-text').value;
             const author = document.getElementById('global-username').value || "訪客";
             if(!title || !text) return;
-            posts.unshift({ id: Date.now(), title, content: text, author, likes: 0, replies: [] });
+            posts.unshift({ id: Date.now(), title, content: text, author, likes: 0, status: "pending", replies: [] });
             renderPosts(); closeModal();
         }
 
@@ -195,33 +210,27 @@
             if(!input.value) return;
             posts.find(p => p.id === id).replies.push({ user: author, text: input.value });
             renderPosts();
-            document.getElementById(`rep-sec-${id}`).style.display = 'block';
         }
 
+        function likePost(id) { posts.find(p => p.id === id).likes++; renderPosts(); }
         function toggleReply(id) {
             const el = document.getElementById(`rep-sec-${id}`);
             el.style.display = (el.style.display === 'block') ? 'none' : 'block';
         }
-
-        function likePost(id) { posts.find(p => p.id === id).likes++; renderPosts(); }
         function toggleTheme() { document.body.classList.toggle('light-mode'); }
         function openModal() { document.getElementById('postModal').style.display = 'block'; }
         function closeModal() { document.getElementById('postModal').style.display = 'none'; }
 
-        // 游標邏輯
+        // 游標
         const cursor = document.getElementById('custom-cursor'), dot = document.getElementById('cursor-dot');
         document.addEventListener('mousemove', e => {
             cursor.style.left = dot.style.left = e.clientX + 'px';
             cursor.style.top = dot.style.top = e.clientY + 'px';
         });
 
-        // 初始化
         document.getElementById('global-username').value = localStorage.getItem('re_user') || "訪客";
-        document.getElementById('global-username').onchange = (e) => {
-            localStorage.setItem('re_user', e.target.value);
-            renderPosts(); // 名字改變時重新判斷勳章
-        };
-
+        document.getElementById('global-username').onchange = (e) => localStorage.setItem('re_user', e.target.value);
+        
         renderPosts();
     </script>
 </body>
