@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RemoteEye Global | 跨越國界的毫秒級連線</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-dark: #000000;
@@ -19,38 +19,54 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--text-light); overflow-x: hidden; cursor: none; }
+        body { font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--text-light); overflow-x: hidden; cursor: none; scroll-behavior: smooth; }
 
-        /* 延用科技游標樣式 */
-        #custom-cursor { width: 30px; height: 30px; border: 1.5px solid var(--secondary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transform: translate(-50%, -50%); transition: transform 0.1s ease-out; }
+        /* 1. Preloader 啟動動畫樣式 */
+        #preloader { position: fixed; inset: 0; background: #000; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.8s cubic-bezier(0.65, 0, 0.35, 1); }
+        .loader-ring { width: 50px; height: 50px; border: 2px solid var(--border-light); border-top-color: var(--secondary-accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* 游標樣式 */
+        #custom-cursor { width: 30px; height: 30px; border: 1.5px solid var(--secondary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transform: translate(-50%, -50%); transition: transform 0.15s ease-out; }
         #cursor-dot { width: 5px; height: 5px; background: var(--primary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10001; transform: translate(-50%, -50%); }
+        .cursor-active { transform: translate(-50%, -50%) scale(1.5) !important; background: rgba(0, 188, 212, 0.1); }
 
+        /* 導航欄 */
         .navbar { display: flex; justify-content: space-between; align-items: center; padding: 0 5%; height: 75px; width: 100%; position: fixed; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-light); }
         .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
-        
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 14px; margin-left: 25px; transition: 0.3s; }
+        .nav-links a:hover { color: var(--text-light); }
+
         /* Hero Section */
-        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 5%; position: relative; }
-        .hero h1 { font-size: clamp(3rem, 8vw, 6rem); letter-spacing: -3px; line-height: 0.9; margin-bottom: 20px; }
-        .hero p { color: var(--text-dim); max-width: 600px; font-size: 1.1rem; margin-bottom: 40px; }
+        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 5%; }
+        .hero h1 { font-size: clamp(3rem, 8vw, 6rem); letter-spacing: -3px; line-height: 0.9; margin-bottom: 25px; }
+        .hero p { color: var(--text-dim); max-width: 650px; font-size: 1.1rem; line-height: 1.6; margin-bottom: 40px; }
         .cta-group { display: flex; gap: 20px; }
         .btn-primary { background: var(--primary-accent); color: white; padding: 18px 35px; border-radius: 50px; text-decoration: none; font-weight: 700; transition: 0.3s; }
         .btn-secondary { border: 1px solid var(--border-light); color: white; padding: 18px 35px; border-radius: 50px; text-decoration: none; transition: 0.3s; }
-        .btn-primary:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(108, 92, 231, 0.4); }
 
-        /* Global Status Panel */
-        .status-panel { max-width: 1100px; width: 90%; background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 30px; padding: 40px; margin-bottom: 100px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-        .status-item { display: flex; flex-direction: column; gap: 5px; }
-        .status-item span { font-size: 12px; color: var(--text-dim); text-transform: uppercase; }
-        .status-value { font-family: monospace; color: var(--success); font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
-        .dot-blink { width: 8px; height: 8px; background: var(--success); border-radius: 50%; animation: blink 1.5s infinite; }
+        /* 功能區塊 - 玻璃擬態 */
+        #features { padding: 100px 5%; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .glass-card { background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid var(--border-light); border-radius: 32px; padding: 40px; transition: 0.4s ease; }
+        .glass-card:hover { transform: translateY(-10px); border-color: var(--primary-accent); background: rgba(255,255,255,0.05); }
+        .glass-card h3 { margin: 15px 0; color: var(--secondary-accent); }
+        .glass-card code { font-family: 'Fira Code', monospace; font-size: 12px; color: #666; display: block; margin-top: 15px; }
 
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        /* 實驗室區塊 */
+        .lab-section { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; padding: 80px 5%; max-width: 1200px; margin: 0 auto; }
+        #latency-area { height: 300px; background: #080808; border-radius: 20px; border: 1px solid #111; position: relative; cursor: crosshair; overflow: hidden; }
+        .terminal { background: #050505; border-radius: 20px; border: 1px solid #111; padding: 20px; font-family: 'Fira Code', monospace; font-size: 12px; height: 300px; overflow: hidden; }
+
         #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.2; }
-        
-        footer { padding: 40px; text-align: center; color: var(--text-dim); font-size: 12px; border-top: 1px solid var(--border-light); }
+        footer { padding: 60px; text-align: center; color: var(--text-dim); font-size: 12px; border-top: 1px solid var(--border-light); }
     </style>
 </head>
 <body>
+
+    <div id="preloader">
+        <div class="loader-ring"></div>
+        <p style="margin-top: 20px; font-family: 'Fira Code', monospace; font-size: 10px; letter-spacing: 3px; color: var(--secondary-accent);">INITIALIZING SECURE TUNNEL...</p>
+    </div>
 
     <div id="custom-cursor"></div>
     <div id="cursor-dot"></div>
@@ -58,64 +74,144 @@
 
     <nav class="navbar">
         <a href="index.html" class="nav-logo">RemoteEye</a>
-        <div style="display:flex; gap:30px;">
-            <a href="download.html" style="color:var(--text-light); text-decoration:none; font-size:14px; font-weight:700;">下載</a>
-            <a href="forum.html" style="color:var(--text-dim); text-decoration:none; font-size:14px;">論壇</a>
+        <div class="nav-links">
+            <a href="download.html">下載中心</a>
+            <a href="forum.html">技術論壇</a>
+            <a href="developers.html">開發者貢獻</a>
         </div>
     </nav>
 
     <section class="hero">
-        <div style="font-size: 12px; color: var(--secondary-accent); border: 1px solid var(--secondary-accent); padding: 5px 15px; border-radius: 20px; margin-bottom: 20px;">v2.1 Stable Release</div>
-        <h1>FAST. SECURE.<br><span style="color: var(--primary-accent);">REMOTE.</span></h1>
-        <p>為專業開發者與團隊打造，提供極致流暢的遠端桌面體驗。基於 P2P 協議，數據永不經過第三方伺服器。</p>
+        <div style="font-size: 11px; color: var(--success); border: 1px solid var(--success); padding: 4px 12px; border-radius: 20px; margin-bottom: 25px;">ONLINE: 1,429 GLOBAL NODES</div>
+        <h1>ULTRALOW<br><span style="color: var(--primary-accent);">LATENCY.</span></h1>
+        <p>為下一代協作而生。RemoteEye 基於加密 P2P 隧道技術，將延遲降至物理極限，數據僅在您的裝置間流動。</p>
         <div class="cta-group">
-            <a href="download.html" class="btn-primary">立即開始</a>
-            <a href="#features" class="btn-secondary">探索功能</a>
+            <a href="download.html" class="btn-primary hover-target">立即獲取引擎</a>
+            <a href="#features" class="btn-secondary hover-target">技術白皮書</a>
         </div>
     </section>
 
-    <center>
-        <div class="status-panel">
-            <div class="status-item">
-                <span>全球節點狀態</span>
-                <div class="status-value"><div class="dot-blink"></div>Operational</div>
-            </div>
-            <div class="status-item">
-                <span>平均延遲</span>
-                <div class="status-value" style="color: var(--secondary-accent);">18ms</div>
-            </div>
-            <div class="status-item">
-                <span>目前在線人數</span>
-                <div class="status-value">1,242</div>
-            </div>
-            <div class="status-item">
-                <span>安全加密模式</span>
-                <div class="status-value">AES-256</div>
+    <div class="lab-section">
+        <div id="latency-area" class="hover-target">
+            <div style="padding: 15px; font-size: 12px; color: #444;">互動實驗室：傳輸同步模擬</div>
+            <div id="local-node" style="width: 10px; height: 10px; background: #fff; border-radius: 50%; position: absolute; opacity: 0.3;"></div>
+            <div id="remote-node" style="width: 10px; height: 10px; background: var(--secondary-accent); border-radius: 50%; position: absolute; box-shadow: 0 0 15px var(--secondary-accent);"></div>
+            <div style="position: absolute; bottom: 15px; right: 20px; font-family: 'Fira Code', monospace; text-align: right;">
+                <span style="color: var(--success);">ESTABLISHED</span><br>
+                Ping: <span id="ping-val" style="color: var(--text-light);">12</span>ms
             </div>
         </div>
-    </center>
+        <div class="terminal">
+            <div style="display:flex; gap:5px; margin-bottom:15px;"><div style="width:8px;height:8px;background:#ff5f56;border-radius:50%"></div><div style="width:8px;height:8px;background:#ffbd2e;border-radius:50%"></div><div style="width:8px;height:8px;background:#27c93f;border-radius:50%"></div></div>
+            <div id="log-content" style="color: #666; line-height: 1.8;"></div>
+        </div>
+    </div>
+
+    <section id="features">
+        <div class="glass-card">
+            <div style="font-size: 30px;">🚀</div>
+            <h3>P2P Direct Connect</h3>
+            <p style="color: var(--text-dim); font-size: 14px;">繞過中轉伺服器，直接在兩端建立加密通道。</p>
+            <code>> NAT_Traversal: Enabled<br>> Hole_Punching: Success</code>
+        </div>
+        <div class="glass-card">
+            <div style="font-size: 30px;">🔒</div>
+            <h3>Zero-Knowledge</h3>
+            <p style="color: var(--text-dim); font-size: 14px;">端到端加密，即便是我方也無法窺視您的數據內容。</p>
+            <code>> Encryption: AES-256-GCM<br>> Key_Exchange: ECDH_P384</code>
+        </div>
+        <div class="glass-card">
+            <div style="font-size: 30px;">⚡</div>
+            <h3>Frame-Turbo 2.0</h3>
+            <p style="color: var(--text-dim); font-size: 14px;">專為弱網環境優化的影像動態補償算法。</p>
+            <code>> Codec: H.265 / AV1<br>> Latency_Target: < 20ms</code>
+        </div>
+    </section>
+
+    <section style="text-align: center; padding: 60px 0 100px;">
+        <div class="hover-target" style="display: inline-flex; align-items: center; gap: 12px; background: #0a0a0a; border: 1px solid #222; padding: 12px 25px; border-radius: 50px;">
+            <span style="font-size: 18px;">⭐</span>
+            <span style="font-size: 14px; font-weight: 500;">GitHub Stars: <span id="star-count" style="color:var(--success)">--</span></span>
+            <a href="https://github.com/acmno123/RemoteEye" target="_blank" style="color: var(--primary-accent); text-decoration: none; font-size: 12px; margin-left: 10px;">源碼庫 →</a>
+        </div>
+    </section>
 
     <footer>© 2026 RemoteEye Technology Global. </footer>
 
     <script>
-        // 游標邏輯
+        // 1. Preloader 邏輯
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loader = document.getElementById('preloader');
+                loader.style.opacity = '0';
+                setTimeout(() => loader.remove(), 800);
+            }, 1200);
+        });
+
+        // 2. 游標邏輯
         const cursor = document.getElementById('custom-cursor');
         const dot = document.getElementById('cursor-dot');
         document.addEventListener('mousemove', e => {
             cursor.style.left = dot.style.left = e.clientX + 'px';
             cursor.style.top = dot.style.top = e.clientY + 'px';
         });
+        document.querySelectorAll('.hover-target, a, button, .glass-card').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('cursor-active'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-active'));
+        });
 
-        // 簡單粒子
+        // 3. 延遲模擬
+        const area = document.getElementById('latency-area');
+        const local = document.getElementById('local-node');
+        const remote = document.getElementById('remote-node');
+        const pingVal = document.getElementById('ping-val');
+        area.addEventListener('mousemove', e => {
+            const r = area.getBoundingClientRect();
+            const x = e.clientX - r.left, y = e.clientY - r.top;
+            local.style.left = x + 'px'; local.style.top = y + 'px';
+            setTimeout(() => {
+                remote.style.left = x + 'px'; remote.style.top = y + 'px';
+                pingVal.innerText = Math.floor(Math.random() * 5) + 12;
+            }, 60);
+        });
+
+        // 4. 動態 Log
+        const logs = [
+            "[INFO] Secure Tunnel Established.",
+            "[NETWORK] P2P node matching success.",
+            "[SECURE] AES-256 Handshake verified.",
+            "[GLOBAL] Node connected: Tokyo (HND-1)",
+            "[INFO] Optimized via Frame-Turbo 2.0",
+            "[SYSTEM] Memory usage: 42MB"
+        ];
+        const logBox = document.getElementById('log-content');
+        setInterval(() => {
+            const p = document.createElement('div');
+            p.innerHTML = `<span style="color:var(--success)">></span> ${logs[Math.floor(Math.random()*logs.length)]}`;
+            logBox.prepend(p);
+            if(logBox.children.length > 8) logBox.lastChild.remove();
+        }, 2000);
+
+        // 5. GitHub Stars
+        async function fetchStars() {
+            try {
+                const res = await fetch('https://api.github.com/repos/acmno123/RemoteEye');
+                const data = await res.json();
+                document.getElementById('star-count').innerText = data.stargazers_count || '1.2k';
+            } catch { document.getElementById('star-count').innerText = '1.2k'; }
+        }
+        fetchStars();
+
+        // 粒子背景
         const canvas = document.getElementById('particleCanvas'), ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        let p = Array.from({length: 30}, () => ({x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: 0.2, vy: 0.2}));
-        function draw() {
+        let particles = Array.from({length: 40}, () => ({x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: 0.3, vy: 0.3}));
+        function animate() {
             ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = "#6c5ce7";
-            p.forEach(i => { i.x+=i.vx; i.y+=i.vy; if(i.x>canvas.width) i.x=0; if(i.y>canvas.height) i.y=0; ctx.beginPath(); ctx.arc(i.x,i.y,1,0,7); ctx.fill(); });
-            requestAnimationFrame(draw);
+            particles.forEach(p => { p.x+=p.vx; p.y+=p.vy; if(p.x>canvas.width)p.x=0; if(p.y>canvas.height)p.y=0; ctx.beginPath(); ctx.arc(p.x,p.y,1,0,7); ctx.fill(); });
+            requestAnimationFrame(animate);
         }
-        draw();
+        animate();
     </script>
 </body>
 </html>
