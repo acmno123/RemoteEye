@@ -15,11 +15,10 @@
             --card-bg: rgba(255, 255, 255, 0.05);
             --border-light: rgba(255, 255, 255, 0.1);
             --success: #00ff9d;
-            --warning: #ff9f43;
             --nav-bg: rgba(0, 0, 0, 0.8);
         }
 
-        /* 淺色模式變數 */
+        /* 淺色模式同步 (與 index/forum 一致) */
         body.light-mode {
             --bg-dark: #f5f5f7;
             --text-light: #1d1d1f;
@@ -30,6 +29,7 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.3s ease, color 0.3s ease; }
+        
         body {
             font-family: 'Space Grotesk', sans-serif;
             background: var(--bg-dark);
@@ -39,15 +39,14 @@
             display: flex; flex-direction: column; min-height: 100vh;
         }
 
-        .progress-bar-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 3px;
-            background: transparent; z-index: 9999;
-        }
+        /* 1. 進度條 */
+        .progress-bar-container { position: fixed; top: 0; left: 0; width: 100%; height: 3px; z-index: 9999; }
         #myBar { height: 100%; width: 0%; background: linear-gradient(to right, var(--secondary-accent), var(--primary-accent)); }
 
+        /* 2. 粒子畫布 */
         #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; opacity: 0.4; }
 
-        /* 導航列 */
+        /* 3. 導航列 (修復了 href 連結) */
         .navbar {
             display: flex; justify-content: space-between; align-items: center;
             padding: 20px 5%; width: 100%; top: 0; z-index: 1000;
@@ -67,57 +66,40 @@
             cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
         }
 
-        /* 下載內容 */
-        .download-section {
-            flex-grow: 1; display: flex; flex-direction: column; align-items: center;
-            padding: 150px 5% 50px; text-align: center;
-        }
-
+        /* 下載主體區 */
+        .download-section { flex-grow: 1; display: flex; flex-direction: column; align-items: center; padding: 150px 5% 50px; text-align: center; }
+        
         .live-counter-box {
             background: rgba(108, 92, 231, 0.1); border: 1px solid var(--primary-accent);
             padding: 10px 20px; border-radius: 50px; margin-bottom: 30px;
             font-size: 14px; color: var(--primary-accent); animation: pulse 2s infinite;
         }
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(108, 92, 231, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0); }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(108, 92, 231, 0); } 100% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0); } }
+
+        h1 { font-size: clamp(2.5rem, 8vw, 4rem); background: linear-gradient(45deg, var(--secondary-accent), var(--primary-accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+        .sub-title { color: var(--text-dim); margin-bottom: 50px; }
+
+        .download-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; max-width: 1000px; width: 100%; margin-bottom: 60px; }
+        .download-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 24px; padding: 40px; transition: 0.3s; }
+        .download-card:hover { transform: translateY(-10px); border-color: var(--primary-accent); }
+        
+        .download-btn {
+            background: var(--primary-accent); color: white; padding: 15px; border-radius: 50px;
+            text-decoration: none; font-weight: 700; display: block; margin-top: 20px; border: none; cursor: pointer; width: 100%;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
         }
 
-        h1 { font-size: clamp(2.5rem, 8vw, 4.5rem); background: linear-gradient(45deg, var(--secondary-accent), var(--primary-accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .sub-title { color: var(--text-dim); margin-bottom: 40px; }
-
-        .download-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; max-width: 1000px; width: 100%; margin-bottom: 50px; }
-        .download-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 24px; padding: 40px; position: relative; overflow: hidden; }
-        .download-card.recommended { border: 2px solid var(--secondary-accent); }
-        .download-btn { background: var(--primary-accent); color: white; padding: 15px; border-radius: 50px; text-decoration: none; font-weight: 700; display: block; margin-bottom: 15px; border: none; cursor: pointer; width: 100%; }
-
-        /* 技術派：系統需求表格 */
-        .specs-container {
-            max-width: 1000px; width: 100%; background: var(--card-bg); border: 1px solid var(--border-light);
-            border-radius: 24px; padding: 40px; margin-bottom: 60px; text-align: left;
-        }
+        /* 系統需求與社群 */
+        .specs-container { max-width: 1000px; width: 100%; background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 24px; padding: 40px; margin-bottom: 60px; text-align: left; }
         .specs-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .specs-table th, .specs-table td { padding: 15px; border-bottom: 1px solid var(--border-light); text-align: left; }
-        .specs-table th { color: var(--secondary-accent); font-size: 14px; text-transform: uppercase; }
+        .specs-table th, .specs-table td { padding: 15px; border-bottom: 1px solid var(--border-light); text-align: left; color: var(--text-light); }
+        .specs-table th { color: var(--secondary-accent); font-size: 14px; }
 
-        /* 手機預告與問卷 (保留之前功能) */
-        .mobile-preview { background: linear-gradient(135deg, rgba(108, 92, 231, 0.1), rgba(0, 188, 212, 0.1)); border: 1px dashed var(--primary-accent); border-radius: 24px; padding: 40px; max-width: 1000px; width: 100%; margin-bottom: 60px; position: relative; }
-        .poll-section { background: var(--card-bg); border-radius: 24px; padding: 40px; max-width: 800px; width: 100%; margin-bottom: 60px; border: 1px solid var(--border-light); }
-        .poll-btn { background: transparent; border: 1px solid var(--primary-accent); color: var(--primary-accent); padding: 8px 18px; border-radius: 50px; cursor: pointer; margin: 5px; }
-
-        /* 功能派：社群區塊 */
-        .community-section {
-            display: flex; gap: 20px; max-width: 1000px; width: 100%; margin-bottom: 60px;
-        }
-        .community-card {
-            flex: 1; background: var(--card-bg); border: 1px solid var(--border-light); padding: 30px; border-radius: 20px; text-decoration: none; color: inherit;
-        }
+        .community-section { display: flex; gap: 20px; max-width: 1000px; width: 100%; margin-bottom: 60px; }
+        .community-card { flex: 1; background: var(--card-bg); border: 1px solid var(--border-light); padding: 30px; border-radius: 20px; text-decoration: none; color: inherit; transition: 0.3s; }
         .community-card:hover { border-color: var(--primary-accent); transform: translateY(-5px); }
 
-        .changelog { max-width: 800px; width: 100%; text-align: left; margin-bottom: 80px; }
-        
-        footer { padding: 50px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); }
+        footer { padding: 50px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); width: 100%; }
     </style>
 </head>
 <body>
@@ -126,14 +108,15 @@
     <canvas id="particleCanvas"></canvas>
 
     <nav class="navbar">
-        <a href="#" class="nav-logo">RemoteEye</a>
+        <a href="index.html" class="nav-logo">RemoteEye</a>
         <div class="nav-right">
             <div class="nav-links">
-                <a href="#">首頁</a>
-                <a href="#">論壇</a>
+                <a href="index.html">首頁</a>
+                <a href="download.html" style="color: var(--secondary-accent);">下載</a>
+                <a href="forum.html">論壇</a>
             </div>
             <button class="theme-toggle" onclick="toggleTheme()" title="切換主題">🌓</button>
-            <select class="lang-select" onchange="setLang(this.value)" style="background:transparent; color:var(--text-light); border:1px solid var(--border-light); border-radius:5px;">
+            <select class="lang-select" style="background:transparent; color:var(--text-light); border:1px solid var(--border-light); border-radius:5px; padding: 2px 5px;">
                 <option value="zh">ZH</option>
                 <option value="en">EN</option>
             </select>
@@ -146,79 +129,45 @@
         <p class="sub-title">選擇您的作業系統，即刻開啟遠端協作</p>
         
         <div class="download-grid">
-            <div class="download-card" id="card-win">
+            <div class="download-card">
                 <div style="font-size: 40px;">🪟</div>
-                <h3>Windows</h3>
+                <h3 style="margin-top:10px;">Windows</h3>
                 <p style="font-size: 12px; color: var(--text-dim); margin: 15px 0;">支援 Win 10/11 (64-bit)</p>
                 <button class="download-btn" onclick="handleDownload(this, 'Windows')">立即下載</button>
             </div>
-            <div class="download-card" id="card-mac">
+            <div class="download-card">
                 <div style="font-size: 40px;">🍎</div>
-                <h3>macOS</h3>
+                <h3 style="margin-top:10px;">macOS</h3>
                 <p style="font-size: 12px; color: var(--text-dim); margin: 15px 0;">支援 Intel & Apple Silicon</p>
                 <button class="download-btn" onclick="handleDownload(this, 'macOS')">取得 DMG</button>
             </div>
-            <div class="download-card" id="card-linux">
+            <div class="download-card">
                 <div style="font-size: 40px;">🐧</div>
-                <h3>Linux</h3>
+                <h3 style="margin-top:10px;">Linux</h3>
                 <p style="font-size: 12px; color: var(--text-dim); margin: 15px 0;">支援 Ubuntu / Debian</p>
                 <button class="download-btn" onclick="handleDownload(this, 'Linux')">取得 AppImage</button>
             </div>
         </div>
 
         <div class="specs-container">
-            <h3 style="color: var(--primary-accent);">💻 系統需求 (System Requirements)</h3>
+            <h3 style="color: var(--primary-accent);">💻 系統需求</h3>
             <table class="specs-table">
-                <tr>
-                    <th>組件</th>
-                    <th>最低需求</th>
-                    <th>建議配備</th>
-                </tr>
-                <tr>
-                    <td>處理器</td>
-                    <td>Dual-core 1.8GHz</td>
-                    <td>Quad-core 2.5GHz+</td>
-                </tr>
-                <tr>
-                    <td>記憶體</td>
-                    <td>2 GB RAM</td>
-                    <td>8 GB RAM</td>
-                </tr>
-                <tr>
-                    <td>網路速度</td>
-                    <td>5 Mbps 下載</td>
-                    <td>20 Mbps+ (光纖優先)</td>
-                </tr>
+                <tr><th>組件</th><th>最低需求</th><th>建議配備</th></tr>
+                <tr><td>處理器</td><td>Dual-core 1.8GHz</td><td>Quad-core 2.5GHz+</td></tr>
+                <tr><td>記憶體</td><td>2 GB RAM</td><td>8 GB RAM</td></tr>
+                <tr><td>網路速度</td><td>5 Mbps 下載</td><td>20 Mbps+</td></tr>
             </table>
         </div>
 
         <div class="community-section">
-            <a href="https://github.com/acmno123/RemoteEye" class="community-card">
+            <a href="https://github.com/acmno123/RemoteEye" target="_blank" class="community-card">
                 <h4>🐙 GitHub 專案</h4>
-                <p style="font-size: 12px; color: var(--text-dim);">回報 Bug、貢獻代碼或給個 Star</p>
+                <p style="font-size: 12px; color: var(--text-dim);">回報 Bug 或給個 Star</p>
             </a>
-            <a href="#" class="community-card">
-                <h4>💬 Discord 社群</h4>
-                <p style="font-size: 12px; color: var(--text-dim);">與全球用戶交流使用心得</p>
+            <a href="forum.html" class="community-card">
+                <h4>💬 技術論壇</h4>
+                <p style="font-size: 12px; color: var(--text-dim);">與全球用戶交流心得</p>
             </a>
-        </div>
-
-        <div class="mobile-preview">
-            <h3 style="color: var(--secondary-accent);">📱 RemoteEye Mobile 即將推出</h3>
-            <p style="color: var(--text-dim); font-size: 14px;">我們正在開發手機版，讓您隨時隨地掌控全局。</p>
-            <div class="poll-section" style="margin: 20px auto 0; background: rgba(0,0,0,0.2);">
-                <p style="font-size: 14px; margin-bottom: 10px;">最期待的功能？</p>
-                <button class="poll-btn" onclick="castVote(this)">遊戲搖桿</button>
-                <button class="poll-btn" onclick="castVote(this)">文件互傳</button>
-                <button class="poll-btn" onclick="castVote(this)">多螢幕切換</button>
-            </div>
-        </div>
-
-        <div class="changelog">
-            <h2 style="color: var(--secondary-accent); margin-bottom: 20px;">最新更新</h2>
-            <div style="border-left: 2px solid var(--primary-accent); padding-left: 20px;">
-                <p>v2.4.0 - 核心協議優化，大幅提升 4K 串流穩定性。</p>
-            </div>
         </div>
     </section>
 
@@ -229,55 +178,56 @@
     <script>
         const RELEASE_URL = "https://github.com/acmno123/RemoteEye/releases";
 
-        // 視覺派：主題切換
+        // 主題切換 (全站同步邏輯)
         function toggleTheme() {
             document.body.classList.toggle('light-mode');
             const isLight = document.body.classList.contains('light-mode');
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
         }
 
-        // 下載處理
-        function handleDownload(btn, p) {
-            btn.innerText = "連接中...";
+        // 初始化主題
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-mode');
+        }
+
+        // 下載跳轉處理
+        function handleDownload(btn, platform) {
+            const originalText = btn.innerText;
+            btn.innerText = "正在準備...";
             setTimeout(() => {
                 window.open(RELEASE_URL, '_blank');
-                btn.innerText = "立即下載";
+                btn.innerText = originalText;
             }, 800);
         }
 
-        // 問卷
-        function castVote(btn) {
-            btn.style.background = "var(--success)";
-            btn.style.color = "#000";
-            btn.innerText = "已投票";
-        }
+        // 滾動進度條
+        window.onscroll = () => {
+            let winScroll = document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            document.getElementById("myBar").style.width = (winScroll / height) * 100 + "%";
+        };
 
-        // 粒子背景 (簡約版)
+        // 粒子動畫
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
         function init() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             particles = [];
-            for(let i=0; i<30; i++) particles.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: Math.random()-0.5, vy: Math.random()-0.5});
+            for(let i=0; i<40; i++) particles.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: Math.random()-0.5, vy: Math.random()-0.5});
         }
         function animate() {
             ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = document.body.classList.contains('light-mode') ? '#6c5ce722' : '#6c5ce7';
+            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--primary-accent');
             particles.forEach(p => {
                 p.x += p.vx; p.y += p.vy;
                 if(p.x<0 || p.x>canvas.width) p.vx *= -1;
                 if(p.y<0 || p.y>canvas.height) p.vy *= -1;
-                ctx.beginPath(); ctx.arc(p.x, p.y, 1.5, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(p.x, p.y, 1.2, 0, Math.PI*2); ctx.fill();
             });
             requestAnimationFrame(animate);
         }
-        window.onscroll = () => {
-            let winScroll = document.documentElement.scrollTop;
-            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            document.getElementById("myBar").style.width = (winScroll / height) * 100 + "%";
-        };
-        init(); animate();
+        window.onresize = init; init(); animate();
     </script>
 </body>
 </html>
