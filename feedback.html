@@ -15,21 +15,20 @@
             --card-bg: rgba(255, 255, 255, 0.03);
             --border-light: rgba(255, 255, 255, 0.08);
             --success: #00ff9d;
-            --nav-bg: rgba(0, 0, 0, 0.85);
+            --nav-bg: rgba(0, 0, 0, 0.9);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--text-light); cursor: none; overflow: hidden; }
 
-        /* 導航欄 (全站統一) */
+        /* 導航欄 (與其他頁面保持統一) */
         .navbar { display: flex; justify-content: space-between; align-items: center; padding: 0 5%; height: 75px; width: 100%; position: fixed; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-light); }
         .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
-        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 14px; margin-left: 25px; transition: 0.3s; }
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 13px; margin-left: 25px; transition: 0.3s; }
         .nav-links a:hover { color: var(--text-light); }
 
         /* 回饋中心布局 */
         .feedback-wrapper { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 5%; }
-        
         .feedback-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 32px; padding: 50px; width: 100%; max-width: 600px; backdrop-filter: blur(10px); position: relative; }
         
         .terminal-header { display: flex; gap: 8px; margin-bottom: 30px; }
@@ -44,10 +43,10 @@
         .submit-btn { background: var(--primary-accent); color: white; border: none; padding: 18px; border-radius: 50px; width: 100%; font-weight: 700; cursor: pointer; transition: 0.3s; font-size: 16px; margin-top: 20px; }
         .submit-btn:hover { box-shadow: 0 0 20px rgba(108, 92, 231, 0.4); transform: scale(1.02); }
 
-        /* 傳送動畫 */
+        /* 傳送動畫層 */
         #sending-overlay { display: none; position: fixed; inset: 0; background: #000; z-index: 2000; flex-direction: column; align-items: center; justify-content: center; font-family: 'Fira Code', monospace; }
-        .progress-bar { width: 200px; height: 2px; background: #111; margin-top: 20px; position: relative; overflow: hidden; }
-        .progress-fill { width: 0%; height: 100%; background: var(--secondary-accent); position: absolute; transition: 2s; }
+        .progress-bar { width: 250px; height: 2px; background: #111; margin-top: 20px; position: relative; overflow: hidden; }
+        .progress-fill { width: 0%; height: 100%; background: var(--secondary-accent); position: absolute; transition: 2s cubic-bezier(0.4, 0, 0.2, 1); }
 
         /* 游標 */
         #custom-cursor { width: 30px; height: 30px; border: 1.5px solid var(--secondary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transform: translate(-50%, -50%); transition: transform 0.1s; }
@@ -66,6 +65,7 @@
             <a href="download.html">下載中心</a>
             <a href="forum.html">技術論壇</a>
             <a href="developers.html">開發者貢獻</a>
+            <a href="feedback.html" style="color: var(--text-light);">意見回饋</a>
         </div>
     </nav>
 
@@ -77,30 +77,32 @@
                 <div class="dot" style="background: #27c93f;"></div>
             </div>
             <h2 style="margin-bottom: 10px;">傳送反饋封包</h2>
-            <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 30px;">您的意見將直接加密傳送至核心開發團隊。</p>
+            <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 30px;">您的數據將經過 TLS 1.3 加密傳送至核心節點。</p>
             
             <form id="feedbackForm">
                 <div class="input-group">
-                    <label>> 使用者識別 (Email / ID)</label>
-                    <input type="text" id="user_id" placeholder="Anonymous_Node_01" required>
+                    <label>> NODE_IDENTIFIER</label>
+                    <input type="text" id="user_id" placeholder="例如: User_77" required>
                 </div>
                 <div class="input-group">
-                    <label>> 反饋內容 (Message Content)</label>
-                    <textarea id="message" rows="5" placeholder="請輸入您的建議或問題描述..." required></textarea>
+                    <label>> DATA_PAYLOAD (您的反饋)</label>
+                    <textarea id="message" rows="5" placeholder="輸入建議或問題回報..." required></textarea>
                 </div>
-                <button type="submit" class="submit-btn">封裝並傳送 →</button>
+                <button type="submit" class="submit-btn">封裝並傳送 PROTOCOL →</button>
             </form>
         </div>
     </div>
 
     <div id="sending-overlay">
-        <div style="color: var(--secondary-accent);">UPLOADING_DATA_PACKET...</div>
-        <div id="terminal-log" style="font-size: 10px; color: #444; margin-top: 10px;">> Initializing Tunnel...</div>
-        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div style="color: var(--secondary-accent); font-size: 18px; letter-spacing: 2px;">UPLOADING_DATA_PACKET...</div>
+        <div id="terminal-log" style="font-size: 11px; color: #555; margin-top: 15px; text-align: center;">> Initializing Secure Tunnel...</div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
     </div>
 
     <script>
-        // 游標邏輯
+        // 1. 游標邏輯
         const cursor = document.getElementById('custom-cursor');
         const dot = document.getElementById('cursor-dot');
         document.addEventListener('mousemove', e => {
@@ -108,36 +110,44 @@
             cursor.style.top = dot.style.top = e.clientY + 'px';
         });
 
-        // 表單提交邏輯
+        // 2. 表單提交動畫邏輯
         const form = document.getElementById('feedbackForm');
         const overlay = document.getElementById('sending-overlay');
-        const progress = document.getElementById('progressFill');
+        const progressFill = document.getElementById('progressFill');
         const log = document.getElementById('terminal-log');
 
-        // ！！！ 這裡填寫你的 Google 表單連結 ！！！
-        const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSd87313wWqTvsPIvBVqZ5iznxgx5QH7uUg0tkq996iXwjATpQ/viewform?usp=header";
+        // 這裡可以填入你的 Google 表單連結
+        const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSd87313wWqTvsPIvBVqZ5iznxgx5QH7uUg0tkq996iXwjATpQ/viewform";
 
         form.onsubmit = (e) => {
             e.preventDefault();
             
-            // 顯示動畫
+            // 顯示全螢幕動畫
             overlay.style.display = 'flex';
+            
+            // 階段性動畫流程
             setTimeout(() => {
-                progress.style.width = '100%';
-                log.innerText = "> Encrypting data with AES-256...";
+                progressFill.style.width = '40%';
+                log.innerText = "> Performing AES-256 Handshake...";
                 
                 setTimeout(() => {
-                    log.innerText = "> Establishing P2P link to Google_Server...";
+                    progressFill.style.width = '80%';
+                    log.innerText = "> Data Encapsulation Complete. Relaying to Google_Node...";
                     
                     setTimeout(() => {
-                        // 正式跳轉到 Google 表單
-                        window.location.href = GOOGLE_FORM_URL;
+                        progressFill.style.width = '100%';
+                        log.innerText = "> Redirecting to Submission Gateway...";
+                        
+                        // 動畫跑完後跳轉
+                        setTimeout(() => {
+                            window.location.href = GOOGLE_FORM_URL;
+                        }, 800);
                     }, 1000);
                 }, 1000);
-            }, 100);
+            }, 500);
         };
 
-        // 磁吸
+        // 3. 磁吸效果 (滑鼠移到按鈕上游標會放大)
         document.querySelectorAll('input, textarea, button, a').forEach(el => {
             el.addEventListener('mouseenter', () => cursor.style.transform = 'translate(-50%, -50%) scale(1.5)');
             el.addEventListener('mouseleave', () => cursor.style.transform = 'translate(-50%, -50%) scale(1)');

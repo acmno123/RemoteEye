@@ -16,12 +16,13 @@
             --border-light: rgba(255, 255, 255, 0.08);
             --success: #00ff9d;
             --nav-bg: rgba(0, 0, 0, 0.85);
+            --code-bg: #050505;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--text-light); cursor: none; }
+        body { font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--text-light); cursor: none; overflow-x: hidden; }
 
-        /* 導航欄 (統一全站五大分頁) */
+        /* 導航欄 */
         .navbar { display: flex; justify-content: space-between; align-items: center; padding: 0 5%; height: 75px; width: 100%; position: fixed; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-light); }
         .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
         .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 13px; margin-left: 20px; transition: 0.3s; }
@@ -29,22 +30,36 @@
         .nav-links a.active { border-bottom: 2px solid var(--primary-accent); padding-bottom: 5px; }
 
         /* Header Section */
-        .dev-header { padding: 180px 5% 60px; text-align: center; }
-        .dev-header h1 { font-size: clamp(2.5rem, 6vw, 4rem); margin-bottom: 20px; }
-        .dev-header p { color: var(--text-dim); max-width: 700px; margin: 0 auto 40px; }
+        .dev-header { padding: 160px 5% 40px; text-align: center; }
+        .dev-header h1 { font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 20px; letter-spacing: -1px; }
 
-        /* Tech Stack Grid */
-        .tech-stack { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 20px; max-width: 900px; margin: 0 auto 100px; }
+        /* 代碼預覽牆 (新增) */
+        .code-wall-container { width: 100%; height: 300px; background: var(--code-bg); border-y: 1px solid var(--border-light); margin: 40px 0; position: relative; overflow: hidden; display: flex; align-items: center; }
+        .code-track { display: flex; gap: 40px; animation: scrollCode 60s linear infinite; white-space: nowrap; }
+        .code-block { font-family: 'Fira Code', monospace; font-size: 13px; line-height: 1.6; color: #888; background: rgba(255,255,255,0.02); padding: 25px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); }
+        .keyword { color: #c678dd; }
+        .func { color: #61afef; }
+        .string { color: #98c379; }
+        .comment { color: #5c6370; font-style: italic; }
+
+        @keyframes scrollCode { 
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Tech Stack */
+        .tech-stack { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; max-width: 900px; margin: 40px auto 100px; }
         .tech-item { background: var(--card-bg); border: 1px solid var(--border-light); padding: 20px; border-radius: 15px; text-align: center; transition: 0.3s; }
-        .tech-item:hover { border-color: var(--secondary-accent); transform: translateY(-5px); }
-        .tech-item span { font-family: 'Fira Code', monospace; font-size: 12px; color: var(--secondary-accent); }
+        .tech-item:hover { border-color: var(--secondary-accent); transform: translateY(-5px); background: rgba(0, 188, 212, 0.05); }
+        .tech-item span { font-family: 'Fira Code', monospace; font-size: 12px; color: var(--secondary-accent); font-weight: bold; }
 
         /* Contributors Wall */
-        .contributors-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 30px; max-width: 1000px; margin: 0 auto 100px; }
-        .contributor-card { text-align: center; }
-        .contributor-card img { width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--border-light); margin-bottom: 15px; transition: 0.3s; }
-        .contributor-card:hover img { border-color: var(--primary-accent); transform: scale(1.1); }
-        .contributor-name { font-weight: 700; font-size: 14px; display: block; }
+        .contributors-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 40px; max-width: 1000px; margin: 0 auto 100px; }
+        .contributor-card { text-align: center; opacity: 0.8; transition: 0.3s; }
+        .contributor-card:hover { opacity: 1; }
+        .contributor-card img { width: 70px; height: 70px; border-radius: 50%; border: 2px solid var(--border-light); margin-bottom: 15px; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .contributor-card:hover img { border-color: var(--primary-accent); transform: scale(1.15) rotate(5deg); box-shadow: 0 0 20px rgba(108, 92, 231, 0.3); }
+        .contributor-name { font-weight: 700; font-size: 14px; display: block; color: var(--text-light); }
         .contributor-role { font-size: 11px; color: var(--text-dim); }
 
         /* Preloader & Cursor */
@@ -52,7 +67,7 @@
         #custom-cursor { width: 30px; height: 30px; border: 1.5px solid var(--secondary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transform: translate(-50%, -50%); transition: transform 0.1s; }
         #cursor-dot { width: 5px; height: 5px; background: var(--primary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10001; transform: translate(-50%, -50%); }
 
-        footer { padding: 40px; text-align: center; color: var(--text-dim); font-size: 12px; border-top: 1px solid var(--border-light); }
+        footer { padding: 60px 40px; text-align: center; color: var(--text-dim); font-size: 12px; border-top: 1px solid var(--border-light); }
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
@@ -74,39 +89,40 @@
     </nav>
 
     <header class="dev-header">
-        <h1>BUILDING THE <span style="color:var(--primary-accent)">FUTURE.</span></h1>
-        <p>RemoteEye 是一個由全球開發者驅動的開源項目。我們致力於打破地理限制，創造最純粹的連線體驗。歡迎加入我們的 GitHub 社群。</p>
-        
-        <div class="tech-stack">
-            <div class="tech-item"><span>RUST</span><br><small>Core Engine</small></div>
-            <div class="tech-item"><span>WEBRTC</span><br><small>P2P Tunnel</small></div>
-            <div class="tech-item"><span>WASM</span><br><small>Frontend Opt</small></div>
-            <div class="tech-item"><span>TAURI</span><br><small>GUI Framework</small></div>
-            <div class="tech-item"><span>AES-256</span><br><small>Encryption</small></div>
-        </div>
+        <h1>BUILDING THE <span style="color:var(--primary-accent)">SOURCE.</span></h1>
+        <p>RemoteEye 是由全球開發者驅動的開源核心。我們不只是在建立連線，我們在重新定義數位空間的距離。</p>
     </header>
 
-    <section style="padding: 0 5%;">
-        <h2 style="text-align:center; margin-bottom: 50px; font-size: 20px; letter-spacing: 2px;">CORE CONTRIBUTORS</h2>
-        <div class="contributors-grid" id="contributor-wall">
+    <div class="code-wall-container">
+        <div class="code-track" id="codeTrack">
             </div>
+    </div>
+
+    <div class="tech-stack">
+        <div class="tech-item"><span>RUST</span><br><small>Core Engine</small></div>
+        <div class="tech-item"><span>WEBRTC</span><br><small>P2P Tunnel</small></div>
+        <div class="tech-item"><span>WASM</span><br><small>Frontend Opt</small></div>
+        <div class="tech-item"><span>TAURI</span><br><small>GUI Framework</small></div>
+        <div class="tech-item"><span>AES-256</span><br><small>Encryption</small></div>
+    </div>
+
+    <section style="padding: 0 5%;">
+        <h2 style="text-align:center; margin-bottom: 50px; font-size: 14px; letter-spacing: 4px; color: var(--secondary-accent);">CORE_CONTRIBUTORS</h2>
+        <div class="contributors-grid" id="contributor-wall"></div>
     </section>
 
-    <section style="max-width: 800px; margin: 0 auto 100px; padding: 40px; background: var(--card-bg); border-radius: 30px; border: 1px solid var(--border-light);">
-        <h3 style="margin-bottom: 20px;">如何貢獻？</h3>
-        <ul style="color: var(--text-dim); line-height: 2; font-size: 14px; padding-left: 20px;">
-            <li>提交 Issue：回報 Bug 或提出新功能建議。</li>
-            <li>Pull Request：修復代碼問題或優化影像傳輸算法。</li>
-            <li>翻譯計畫：幫助我們將 RemoteEye 推向更多語系。</li>
-            <li>文檔編寫：完善技術白皮書。</li>
-        </ul>
-        <a href="https://github.com/acmno123/RemoteEye" target="_blank" style="display:inline-block; margin-top:30px; color:var(--success); text-decoration:none; font-weight:700;">前往 GitHub 專案 →</a>
+    <section style="max-width: 800px; margin: 0 auto 100px; padding: 50px; background: var(--card-bg); border-radius: 40px; border: 1px solid var(--border-light); text-align: center;">
+        <h3 style="margin-bottom: 20px;">Ready to push code?</h3>
+        <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 30px;">加入 GitHub 組織，獲取開發者認證。每一行代碼都在改變 RemoteEye 的演進方向。</p>
+        <a href="https://github.com/acmno123/RemoteEye" target="_blank" class="tech-item" style="display:inline-block; text-decoration:none; padding: 15px 40px; border-radius: 50px; background: var(--primary-accent); color: white; border: none;">
+            GITHUB REPOSITORY →
+        </a>
     </section>
 
     <footer>© 2026 RemoteEye Technology Global. </footer>
 
     <script>
-        // 游標邏輯
+        // 游標與 Preloader (同前)
         const cursor = document.getElementById('custom-cursor');
         const dot = document.getElementById('cursor-dot');
         document.addEventListener('mousemove', e => {
@@ -114,7 +130,6 @@
             cursor.style.top = dot.style.top = e.clientY + 'px';
         });
 
-        // Preloader 移除
         window.onload = () => { 
             const preloader = document.getElementById('preloader');
             if(preloader) {
@@ -123,13 +138,31 @@
             }
         };
 
-        // 模擬貢獻者數據
+        // 1. 生成代碼預覽牆內容
+        const codeSnippets = [
+            `<span class="comment">// 建立 P2P 安全隧道</span>\n<span class="keyword">async fn</span> <span class="func">establish_tunnel</span>() {\n  <span class="keyword">let</span> peer = Peer::<span class="func">new</span>(CONFIG);\n  peer.<span class="func">connect</span>().<span class="keyword">await</span>?;\n}`,
+            `<span class="comment"># AES 加密封包</span>\n<span class="keyword">def</span> <span class="func">encrypt</span>(payload):\n    iv = os.<span class="func">urandom</span>(16)\n    cipher = AES.<span class="func">new</span>(KEY, AES.MODE_GCM)\n    <span class="keyword">return</span> cipher.<span class="func">encrypt</span>(payload)`,
+            `<span class="comment">// 前端 WASM 優化</span>\n<span class="keyword">export function</span> <span class="func">renderFrame</span>(data) {\n  <span class="keyword">const</span> buffer = <span class="keyword">new</span> <span class="func">Uint8Array</span>(data);\n  <span class="func">process_pixels</span>(buffer);\n}`,
+            `<span class="comment">// 核心節點握手協議</span>\n<span class="keyword">if</span> (node.is_active()) {\n  <span class="keyword">const</span> <span class="func">token</span> = <span class="keyword">await</span> auth.<span class="func">verify</span>();\n  <span class="func">log</span>(<span class="string">"Access Granted"</span>);\n}`
+        ];
+
+        const track = document.getElementById('codeTrack');
+        // 重複兩次以實現無縫滾動
+        const fullContent = [...codeSnippets, ...codeSnippets];
+        fullContent.forEach(code => {
+            const div = document.createElement('div');
+            div.className = 'code-block';
+            div.innerHTML = `<pre>${code}</pre>`;
+            track.appendChild(div);
+        });
+
+        // 2. 模擬貢獻者數據
         const mockContributors = [
             { name: "Acmno123", role: "Project Lead", avatar: "https://github.com/acmno123.png" },
-            { name: "Dev_Core", role: "Rust Engineer", avatar: "https://i.pravatar.cc/150?u=1" },
-            { name: "PixelArt", role: "UI/UX Designer", avatar: "https://i.pravatar.cc/150?u=2" },
-            { name: "NetWizard", role: "P2P Specialist", avatar: "https://i.pravatar.cc/150?u=3" },
-            { name: "SafeMode", role: "Security Audit", avatar: "https://i.pravatar.cc/150?u=4" }
+            { name: "Rust_Dev", role: "Core Engine", avatar: "https://i.pravatar.cc/150?u=11" },
+            { name: "UI_Wizard", role: "Interface Design", avatar: "https://i.pravatar.cc/150?u=22" },
+            { name: "Net_Spec", role: "Network Architect", avatar: "https://i.pravatar.cc/150?u=33" },
+            { name: "Sec_Analyst", role: "Security Guru", avatar: "https://i.pravatar.cc/150?u=44" }
         ];
 
         const wall = document.getElementById('contributor-wall');
@@ -143,8 +176,8 @@
             `;
         });
 
-        // 磁吸效果
-        document.querySelectorAll('.tech-item, .contributor-card, a').forEach(el => {
+        // 3. 磁吸效果
+        document.querySelectorAll('.tech-item, .contributor-card, a, .code-block').forEach(el => {
             el.addEventListener('mouseenter', () => cursor.style.transform = 'translate(-50%, -50%) scale(1.5)');
             el.addEventListener('mouseleave', () => cursor.style.transform = 'translate(-50%, -50%) scale(1)');
         });
