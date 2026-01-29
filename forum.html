@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RemoteEye | 技術論壇 (Cloud)</title>
+    <title>RemoteEye | 技術論壇 (Live)</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
@@ -38,7 +38,7 @@
         .editor-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-light); padding: 12px 20px; border-radius: 12px; color: white; font-family: 'Space Grotesk'; outline: none; margin-bottom: 15px; transition: 0.3s; }
         .editor-input:focus { border-color: var(--secondary-accent); }
         .editor-btn { background: var(--primary-accent); color: white; border: none; padding: 12px 30px; border-radius: 50px; cursor: pointer; font-weight: 700; transition: 0.3s; }
-        .editor-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(108, 92, 231, 0.4); }
+        .editor-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
         /* 帖子列表 */
         .post-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 20px; padding: 25px; margin-bottom: 20px; transition: 0.4s; position: relative; animation: slideIn 0.5s ease-out; }
@@ -76,8 +76,8 @@
     <div class="forum-container">
         <main>
             <div style="margin-bottom: 50px;">
-                <h1 style="font-size: 2.5rem; margin-bottom: 10px;">CLOUD <span style="color: var(--secondary-accent);">NODE</span></h1>
-                <p style="color: var(--text-dim);">全球同步的開發者議題中心。</p>
+                <h1 style="font-size: 2.5rem; margin-bottom: 10px;">LIVE <span style="color: var(--secondary-accent);">NODE</span></h1>
+                <p style="color: var(--text-dim);">已連線至全球即時數據庫。</p>
             </div>
 
             <section class="post-editor">
@@ -90,26 +90,26 @@
             </section>
 
             <div id="post-list">
-                <div style="text-align: center; padding: 50px; color: var(--text-dim);">正在連線至核心伺服器...</div>
+                <div style="text-align: center; padding: 50px; color: var(--text-dim);">同步中...</div>
             </div>
         </main>
 
         <aside class="sidebar">
             <div class="sidebar-widget">
                 <div style="font-size: 14px; color: var(--secondary-accent); margin-bottom: 15px;">雲端狀態</div>
-                <div style="font-size: 13px; color: var(--text-dim);">存取狀態: <span id="sync-status" style="color: var(--success);">Synchronizing...</span></div>
-                <div style="font-size: 13px; color: var(--text-dim); margin-top: 10px;">管理員權限: <span id="admin-status">未驗證</span></div>
+                <div style="font-size: 13px; color: var(--text-dim);">通訊埠: <span id="sync-status" style="color: var(--success);">ESTABLISHED</span></div>
+                <div style="font-size: 13px; color: var(--text-dim); margin-top: 10px;">管理員權限: <span id="admin-status">未授權</span></div>
             </div>
         </aside>
     </div>
 
     <script>
-        // --- 核心配置：請替換成你的 Supabase 憑證 ---
+        // --- 核心配置 ---
         const SUPABASE_URL = 'https://kbsamlpdfqdikwpilill.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtic2FtbHBkZnFkaWt3cGlsaWxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk2NzY4MTYsImV4cCI6MjA4NTI1MjgxNn0.JTJXBjiymJokrrkZj_iyvbSZMrdc99xhBsivRQ6lxuY';
         const ADMIN_SECRET = "eye2026"; 
 
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // 游標邏輯
         const cursor = document.getElementById('custom-cursor');
@@ -119,36 +119,35 @@
             cursor.style.top = dot.style.top = e.clientY + 'px';
         });
 
-        // 從 Supabase 抓取資料
         async function fetchPosts() {
             document.getElementById('sync-status').innerText = "Syncing...";
-            const { data, error } = await supabase
+            const { data, error } = await supabaseClient
                 .from('posts')
                 .select('*')
                 .order('created_at', { ascending: false });
 
             if (error) {
                 console.error('Fetch Error:', error);
-                document.getElementById('post-list').innerHTML = '<div style="color:red">無法存取雲端節點，請檢查 API 配置。</div>';
+                document.getElementById('post-list').innerHTML = '<div style="color:#ff7675">連線失敗: 驗證未通過或欄位錯誤。</div>';
                 return;
             }
             renderPosts(data);
-            document.getElementById('sync-status').innerText = "Encrypted Connection";
+            document.getElementById('sync-status').innerText = "Connected";
         }
 
-        // 渲染畫面
         function renderPosts(postData) {
             const postList = document.getElementById('post-list');
             postList.innerHTML = '';
             
-            if (postData.length === 0) {
-                postList.innerHTML = '<div style="text-align:center; color:var(--text-dim); padding:40px;">目前尚無數據議題。</div>';
+            if (!postData || postData.length === 0) {
+                postList.innerHTML = '<div style="text-align:center; color:var(--text-dim); padding:40px;">緩衝區為空。</div>';
                 return;
             }
 
             postData.forEach(post => {
-                const adminTag = post.is_admin ? '<span class="status-badge" style="border-color: var(--success); color: var(--success);">核心管理 [ADMIN]</span>' : '';
-                const authorStyle = post.is_admin ? 'style="color: var(--success); font-weight: bold;"' : '';
+                const isAdmin = (post.is_admin == 1); // 這裡改用數字 1 判斷
+                const adminTag = isAdmin ? '<span class="status-badge" style="border-color: var(--success); color: var(--success);">核心管理 [ADMIN]</span>' : '';
+                const authorStyle = isAdmin ? 'style="color: var(--success); font-weight: bold;"' : '';
                 const date = new Date(post.created_at).toLocaleDateString();
                 
                 postList.innerHTML += `
@@ -165,45 +164,42 @@
             });
         }
 
-        // 發送新貼文至 Supabase
         async function addNewPost() {
             const titleInput = document.getElementById('post-title');
             const authorInput = document.getElementById('post-author');
             const keyInput = document.getElementById('admin-key');
             const btn = document.getElementById('submit-btn');
 
-            if (!titleInput.value) return alert("請輸入議題標題");
+            if (!titleInput.value) return alert("請輸入標題");
 
             btn.disabled = true;
-            btn.innerText = "傳輸中...";
+            btn.innerText = "加密傳輸中...";
 
-            const isAdmin = (keyInput.value === ADMIN_SECRET);
+            const isAdminStatus = (keyInput.value === ADMIN_SECRET) ? 1 : 0; // 傳送 1 或 0
 
-            const { error } = await supabase
+            const { error } = await supabaseClient
                 .from('posts')
                 .insert([
                     { 
                         title: titleInput.value, 
                         author: authorInput.value || "匿名節點", 
-                        is_admin: isAdmin,
-                        category: isAdmin ? "核心公告" : "社群議題"
+                        is_admin: isAdminStatus, 
+                        category: (isAdminStatus === 1) ? "核心公告" : "社群議題"
                     }
                 ]);
 
             if (error) {
-                alert("數據傳輸中斷: " + error.message);
+                alert("錯誤: " + error.message);
             } else {
-                if(isAdmin) document.getElementById('admin-status').innerText = "已驗證 [ROOT]";
+                if(isAdminStatus === 1) document.getElementById('admin-status').innerText = "已授權 [ROOT]";
                 titleInput.value = '';
                 keyInput.value = '';
-                await fetchPosts(); // 重新整理列表
+                await fetchPosts();
             }
-            
             btn.disabled = false;
             btn.innerText = "發送數據封包";
         }
 
-        // 初始化加載
         fetchPosts();
 
         // 磁吸效果
