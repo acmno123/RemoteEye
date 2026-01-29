@@ -21,11 +21,12 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--text-light); cursor: none; }
 
-        /* 導航欄 (統一全站) */
+        /* 導航欄 (統一全站五大分頁) */
         .navbar { display: flex; justify-content: space-between; align-items: center; padding: 0 5%; height: 75px; width: 100%; position: fixed; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-light); }
         .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
-        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 14px; margin-left: 25px; transition: 0.3s; }
-        .nav-links a.active { color: var(--text-light); border-bottom: 2px solid var(--primary-accent); padding-bottom: 5px; }
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 13px; margin-left: 20px; transition: 0.3s; }
+        .nav-links a:hover, .nav-links a.active { color: var(--text-light); }
+        .nav-links a.active { border-bottom: 2px solid var(--primary-accent); padding-bottom: 5px; }
 
         /* Header Section */
         .dev-header { padding: 180px 5% 60px; text-align: center; }
@@ -52,6 +53,7 @@
         #cursor-dot { width: 5px; height: 5px; background: var(--primary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10001; transform: translate(-50%, -50%); }
 
         footer { padding: 40px; text-align: center; color: var(--text-dim); font-size: 12px; border-top: 1px solid var(--border-light); }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -67,6 +69,7 @@
             <a href="download.html">下載中心</a>
             <a href="forum.html">技術論壇</a>
             <a href="developers.html" class="active">開發者貢獻</a>
+            <a href="feedback.html">意見回饋</a>
         </div>
     </nav>
 
@@ -111,10 +114,16 @@
             cursor.style.top = dot.style.top = e.clientY + 'px';
         });
 
-        // Preloader
-        window.onload = () => { document.getElementById('preloader').style.opacity = '0'; setTimeout(()=>document.getElementById('preloader').remove(), 500); };
+        // Preloader 移除
+        window.onload = () => { 
+            const preloader = document.getElementById('preloader');
+            if(preloader) {
+                preloader.style.opacity = '0'; 
+                setTimeout(()=>preloader.remove(), 500); 
+            }
+        };
 
-        // 模擬抓取 GitHub 貢獻者 (這裡你可以換成真實的 API)
+        // 模擬貢獻者數據
         const mockContributors = [
             { name: "Acmno123", role: "Project Lead", avatar: "https://github.com/acmno123.png" },
             { name: "Dev_Core", role: "Rust Engineer", avatar: "https://i.pravatar.cc/150?u=1" },
@@ -133,7 +142,12 @@
                 </div>
             `;
         });
+
+        // 磁吸效果
+        document.querySelectorAll('.tech-item, .contributor-card, a').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.style.transform = 'translate(-50%, -50%) scale(1.5)');
+            el.addEventListener('mouseleave', () => cursor.style.transform = 'translate(-50%, -50%) scale(1)');
+        });
     </script>
-    <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
 </body>
 </html>

@@ -32,10 +32,10 @@
         #cursor-dot { width: 5px; height: 5px; background: var(--primary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10001; transform: translate(-50%, -50%); }
         .cursor-active { transform: translate(-50%, -50%) scale(1.5) !important; background: rgba(0, 188, 212, 0.1); }
 
-        /* 導航欄 */
+        /* 導航欄 - 統一規格 */
         .navbar { display: flex; justify-content: space-between; align-items: center; padding: 0 5%; height: 75px; width: 100%; position: fixed; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-light); }
         .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
-        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 14px; margin-left: 25px; transition: 0.3s; }
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 13px; margin-left: 20px; transition: 0.3s; }
         .nav-links a:hover, .nav-links a.active { color: var(--text-light); }
 
         /* 內容 */
@@ -69,6 +69,7 @@
             <a href="download.html" class="active">下載中心</a>
             <a href="forum.html">技術論壇</a>
             <a href="developers.html">開發者貢獻</a>
+            <a href="feedback.html">意見回饋</a>
         </div>
     </nav>
 
@@ -141,10 +142,9 @@
         }
         fetchVersion();
 
-        // 4. 下載邏輯修正
+        // 4. 下載邏輯
         function openGuide(os) {
             const repo = "acmno123/RemoteEye";
-            // 請確認你 GitHub Release 上的檔案名稱，這裡填寫正確的對應
             const fileNames = {
                 windows: "RemoteEye.exe", 
                 macos: "RemoteEye.dmg",
