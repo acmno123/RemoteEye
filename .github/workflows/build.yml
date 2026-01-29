@@ -3,7 +3,7 @@ name: RemoteEye Build and Release
 on:
   push:
     tags:
-      - 'v*' # 當你推送標籤如 v1.0.0 時才啟動，避免浪費資源
+      - 'v*' # 只有當你推標籤（如 v1.0.0）時才會正式發布下載檔
 
 jobs:
   build:
@@ -38,40 +38,38 @@ jobs:
         CTK_PATH=$(python -c "import customtkinter; import os; print(customtkinter.__path__[0])")
         SEP=$([[ "${{ matrix.os }}" == "windows-latest" ]] && echo ";" || echo ":")
         
-        # 產出單一執行檔
-        python -m PyInstaller --noconfirm --onefile --windowed --add-data "${CTK_PATH}${SEP}customtkinter/" RemoteEye_Global.py
+        # 執行 PyInstaller 打包
+        python -m PyInstaller --noconfirm --onefile --windowed --name "RemoteEye" --add-data "${CTK_PATH}${SEP}customtkinter/" RemoteEye_Global.py
 
-    # --- [新增] Linux 轉 AppImage 邏輯 ---
-    - name: Package AppImage (Linux only)
+    # --- [Linux 處理] 將執行檔轉為 AppImage ---
+    - name: Package AppImage (Linux)
       if: matrix.os == 'ubuntu-latest'
       run: |
-        wget https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage
-        chmod +x appimagetool-x86_64.AppImage
-        # 建立簡單的 AppDir 結構並打包 (簡化流程)
+        wget -O appimagetool https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage
+        chmod +x appimagetool
         mkdir -p AppDir/usr/bin
-        cp dist/RemoteEye_Global AppDir/usr/bin/
-        echo -e '#!/bin/sh\nexec ./usr/bin/RemoteEye_Global "$@"' > AppDir/AppRun
+        cp dist/RemoteEye AppDir/usr/bin/
+        echo -e '#!/bin/sh\nexec ./usr/bin/RemoteEye "$@"' > AppDir/AppRun
         chmod +x AppDir/AppRun
-        echo "[Desktop Entry]\nName=RemoteEye\nExec=RemoteEye_Global\nIcon=icon\nType=Application\nCategories=Utility;" > AppDir/remoteeye.desktop
+        echo -e "[Desktop Entry]\nName=RemoteEye\nExec=RemoteEye\nIcon=icon\nType=Application\nCategories=Utility;" > AppDir/remoteeye.desktop
         touch AppDir/icon.png
-        ARCH=x86_64 ./appimagetool-x86_64.AppImage AppDir dist/RemoteEye_Global.AppImage
+        ARCH=x86_64 ./appimagetool --appimage-extract-and-run AppDir dist/RemoteEye.AppImage
 
-    # --- [新增] macOS 轉 DMG 邏輯 ---
-    - name: Create DMG (macOS only)
+    # --- [macOS 處理] 將 .app 轉為 .dmg ---
+    - name: Create DMG (macOS)
       if: matrix.os == 'macos-latest'
       run: |
-        npm install -g create-dmg
-        create-dmg dist/RemoteEye_Global.app dist/ || true
-        # 重新命名以確保檔名正確
-        mv dist/*.dmg dist/RemoteEye_Global.dmg
+        # 使用簡單的 hdiutil 製作 dmg
+        hdiutil create -format UDZO -srcfolder dist/RemoteEye.app dist/RemoteEye.dmg
 
-    - name: Release to GitHub
+    # --- [正式發布] 這是關鍵！它會把檔案放到 Releases 頁面，而不是 Artifacts ---
+    - name: Upload to Release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
-          dist/*.exe
-          dist/*.dmg
-          dist/*.AppImage
+          dist/RemoteEye.exe
+          dist/RemoteEye.dmg
+          dist/RemoteEye.AppImage
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
