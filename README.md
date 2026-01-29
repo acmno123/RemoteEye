@@ -1,42 +1,87 @@
-# 👁️ RemoteEye Global v1.0.6 (Jiajin Official)
+👁️ RemoteEye Global
 
-![Version](https://img.shields.io/badge/version-1.0.6-blue)
-![Platform](https://img.shields.io/badge/platform-Windows-lightgrey)
-![License](https://img.shields.io/badge/license-MIT-green)
+    Next-Gen Remote Collaboration Community & Platform > 次世代遠端協作社群與平台
 
-**RemoteEye Global** 是一款輕量、極速且跨越國界的遠端協作工具。提供最直覺、免設定的遠端支援體驗。
+🌐 Language / 語言
 
-## 🌟 功能亮點
+    English
 
-* **🌍 全球多國語系**：內建繁中、英、日、法、西、韓六國語言，自動適應。
-* **⚡ 極速影像傳輸**：優化數據壓縮演算，實現低延遲的桌面流暢體驗。
-* **📂 遠端檔案推送**：支援一鍵傳送檔案至受控端桌面，簡化技術支援流程。
-* **📦 雙版本提供**：
-    * **安裝版**：提供完整的系統整合與桌面捷徑。
-    * **綠色免安裝版**：單一執行檔，點開即用，適合隨身碟緊急救援。
-* **🛡️ 安全性**：無密碼快速連線設計（適合內部信任網路或快速技術協助）。
+    中文版
 
-## 🚀 快速開始
+<a name="english-version"></a>
+🇬🇧 English Version
+🚀 Overview
 
-### 下載連結
-您可以前往我們的 [GitHub Pages 官方網站](https://acmno123.github.io/RemoteEye/) 下載最新版本。
+RemoteEye Global is a high-performance remote collaboration platform designed for developers and remote teams. This repository contains the web frontend, featuring a futuristic glassmorphism design, interactive particle backgrounds, and a persistent community forum.
+✨ Key Features
 
-### 使用方法
-1.  **受控端 (Agent)**：點擊「接受協助」，將顯示的 IP 地址告知對方。
-2.  **控制端 (Controller)**：點擊「協助他人」，輸入對方的 IP 地址後點擊「立即連線」。
+    Futuristic UI/UX: Smooth cursor tracking, 3D parallax cards, and neural network particle animations.
 
-## 🛠️ 技術架構
+    Full Navigation: Seamless switching between Home, Download, and Forum pages.
 
-本專案基於 Python 開發，使用了以下核心庫：
-* `CustomTkinter`: 現代化的 GUI 介面設計。
-* `mss`: 高性能螢幕截圖。
-* `zlib`: 高效率數據壓縮傳輸。
-* `pyautogui`: 遠端輸入控制指令。
+    Interactive Forum: * No Login Required: Post and reply instantly.
 
-## 📦 打包說明
+        Data Persistence: Posts, replies, and likes are saved locally via localStorage.
 
-如果您想自行編譯，請參考以下指令：
+        Dynamic Identity: Custom usernames that persist across sessions.
 
-**製作免安裝綠色版：**
-```bash
-python -m PyInstaller --noconsole --onefile --admin --collect-all customtkinter --add-data "logo.png;." --icon="logo.ico" --name "RemoteEye_Portable_v1.0.6" RemoteEye_Global.py
+        Like & Delete: Full social interaction capabilities.
+
+    Smart Theme Toggle: Switch between Cyber Dark and Apple-style Light modes.
+
+🛠️ Tech Stack
+
+    HTML5 / CSS3: Custom grid layouts and glassmorphism effects.
+
+    JavaScript (Vanilla): For dynamic DOM manipulation, 3D effects, and local storage logic.
+
+    Google Fonts: "Space Grotesk" for a modern tech vibe.
+
+<a name="中文版本"></a>
+🇹🇼 中文版本
+🚀 專案概述
+
+RemoteEye Global 是一個專為開發者與遠端團隊打造的高效能協作平台。本倉庫包含其官方網站前端，採用極具未來感的「毛玻璃」設計語法、動態粒子背景以及具備資料持久化的技術論壇。
+✨ 核心功能
+
+    未來感視覺體驗： 科技感游標追蹤、3D 視差卡片以及神經網絡粒子動畫。
+
+    完整導航系統： 首頁、下載頁、論壇頁之間無縫切換。
+
+    互動式論壇：
+
+        無需登入： 立即發布話題與回覆討論。
+
+        資料持久化： 透過 localStorage 留存所有貼文、回覆與按讚紀錄。
+
+        自定義身份： 支援自訂使用者名稱，重新開啟網頁亦能記住身份。
+
+        管理功能： 支援即時按讚與刪除個人貼文。
+
+    智慧主題切換： 一鍵切換 極客深色 (Cyber Dark) 與 簡約淺色 (Light Mode) 模式。
+
+🛠️ 技術棧
+
+    HTML5 / CSS3: 自定義網格佈局與毛玻璃 (Glassmorphism) 特效。
+
+    JavaScript (原生): 處理動態 DOM 操作、3D 視差效果以及本地存儲邏輯。
+
+    Google Fonts: 使用 "Space Grotesk" 字體營造現代科技感。
+
+📸 Screenshots / 畫面截圖
+📦 Installation / 安裝說明
+
+    Clone the repository / 複製倉庫
+    Bash
+
+    git clone https://github.com/your-username/RemoteEye-Global.git
+
+    Open the project / 開啟專案 Simply open index.html in your favorite browser.
+
+    只需在瀏覽器中開啟 index.html 即可運行。
+
+📄 License / 授權
+
+Distributed under the MIT License. See LICENSE for more information.
+
+本專案採用 MIT 授權條款。
