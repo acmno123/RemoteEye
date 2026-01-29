@@ -27,104 +27,121 @@
             --nav-bg: rgba(255, 255, 255, 0.8);
         }
 
-        /* --- 游標與基本設定 --- */
-        body { cursor: none !important; font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--text-light); line-height: 1.6; overflow-x: hidden; display: flex; flex-direction: column; min-height: 100vh; }
         * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.4s ease, color 0.4s ease; }
-        #custom-cursor { width: 25px; height: 25px; border: 1.5px solid var(--secondary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transform: translate(-50%, -50%); transition: transform 0.1s ease-out; }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            cursor: none !important;
+            overflow-x: hidden;
+            display: flex; flex-direction: column; min-height: 100vh;
+        }
+
+        /* 科技游標 */
+        #custom-cursor { width: 25px; height: 25px; border: 1.5px solid var(--secondary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transform: translate(-50%, -50%); transition: transform 0.1s; }
         #cursor-dot { width: 4px; height: 4px; background: var(--primary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10001; transform: translate(-50%, -50%); }
 
+        /* 進度條與粒子 */
+        .progress-bar-container { position: fixed; top: 0; left: 0; width: 100%; height: 3px; z-index: 9999; }
+        #myBar { height: 100%; width: 0%; background: linear-gradient(to right, var(--secondary-accent), var(--primary-accent)); }
+        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; opacity: 0.5; }
+
         /* 導航列 */
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; width: 100%; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border-light); position: fixed; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; width: 100%; position: fixed; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border-light); }
         .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
+        .nav-right { display: flex; align-items: center; gap: 20px; }
         .nav-links { display: flex; gap: 25px; }
         .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 15px; }
-        .nav-links a.active { color: var(--secondary-accent); }
+        .theme-toggle { background: var(--card-bg); border: 1px solid var(--border-light); color: var(--text-light); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: none; }
 
-        /* 下載頁面佈局 */
+        /* 下載區塊 */
         .download-section { flex-grow: 1; display: flex; flex-direction: column; align-items: center; padding: 150px 5% 50px; text-align: center; }
-        .download-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1100px; width: 100%; margin-bottom: 50px; }
+        .download-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1100px; width: 100%; margin-bottom: 60px; }
         
         .download-card { 
             background: var(--card-bg); border: 1px solid var(--border-light); 
-            border-radius: 32px; padding: 40px; backdrop-filter: blur(10px);
-            position: relative; transition: 0.3s;
+            border-radius: 32px; padding: 40px; backdrop-filter: blur(10px); transition: 0.3s;
         }
-        .recommended-badge { color: var(--success); font-size: 11px; font-weight: 700; display: block; margin-bottom: 10px; letter-spacing: 1px; }
+        .recommended-badge { color: var(--success); font-size: 11px; font-weight: 700; display: block; margin-bottom: 10px; }
 
         .download-btn {
             background: var(--primary-accent); color: white; padding: 16px; border-radius: 50px;
-            text-decoration: none; font-weight: 700; display: block; margin-top: 25px; border: none; width: 100%;
-            cursor: none; transition: 0.3s;
+            text-decoration: none; font-weight: 700; display: block; margin-top: 25px; border: none; width: 100%; cursor: none;
         }
 
-        /* --- 安裝指引彈窗 (New) --- */
-        .guide-overlay {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-            z-index: 3000; backdrop-filter: blur(20px); align-items: center; justify-content: center;
+        /* 系統需求表格 */
+        .specs-container { 
+            max-width: 900px; width: 100%; background: var(--card-bg); 
+            border: 1px solid var(--border-light); border-radius: 24px; padding: 30px; margin-bottom: 60px; text-align: left;
         }
-        .guide-modal {
-            background: var(--bg-dark); border: 1px solid var(--primary-accent);
-            width: 90%; max-width: 600px; border-radius: 40px; padding: 50px; position: relative;
-            box-shadow: 0 0 50px rgba(108, 92, 231, 0.2);
-        }
-        .step-item { display: flex; gap: 20px; margin-bottom: 25px; text-align: left; align-items: flex-start; }
-        .step-num { 
-            background: var(--primary-accent); color: white; width: 28px; height: 28px; 
-            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
-            flex-shrink: 0; font-weight: 700; font-size: 14px;
-        }
-        .checksum-box { 
-            background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; 
-            margin-top: 30px; font-family: monospace; font-size: 11px; color: var(--text-dim);
-            word-break: break-all; border: 1px dashed var(--border-light);
-        }
+        .specs-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .specs-table th, .specs-table td { padding: 15px; border-bottom: 1px solid var(--border-light); color: var(--text-light); }
+        .specs-table th { color: var(--secondary-accent); text-align: left; font-size: 13px; }
 
-        .close-btn { position: absolute; top: 25px; right: 30px; background: none; border: none; color: var(--text-dim); font-size: 24px; cursor: none; }
-        
-        footer { padding: 40px; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); font-size: 14px; }
+        /* 彈窗樣式 */
+        .guide-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 3000; backdrop-filter: blur(15px); align-items: center; justify-content: center; }
+        .guide-modal { background: var(--bg-dark); border: 1px solid var(--primary-accent); width: 90%; max-width: 550px; border-radius: 35px; padding: 40px; position: relative; }
+        .step-item { display: flex; gap: 15px; margin-bottom: 20px; text-align: left; }
+        .step-num { background: var(--primary-accent); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px; }
+
+        footer { padding: 40px; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); }
     </style>
 </head>
 <body>
 
     <div id="custom-cursor"></div>
     <div id="cursor-dot"></div>
+    <div class="progress-bar-container"><div id="myBar"></div></div>
+    <canvas id="particleCanvas"></canvas>
 
     <nav class="navbar">
         <a href="index.html" class="nav-logo">RemoteEye</a>
-        <div class="nav-links">
-            <a href="index.html">首頁</a>
-            <a href="download.html" class="active">下載</a>
-            <a href="forum.html">論壇</a>
-            <a href="developers.html">開發者</a>
+        <div class="nav-right">
+            <div class="nav-links">
+                <a href="index.html">首頁</a>
+                <a href="download.html" style="color:var(--secondary-accent)">下載</a>
+                <a href="forum.html">論壇</a>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
         </div>
     </nav>
 
     <section class="download-section">
-        <h1 style="font-size: 3rem; margin-bottom: 10px;">取得 RemoteEye</h1>
-        <p style="color: var(--text-dim); margin-bottom: 50px;">選擇適合您的平台的穩定版本</p>
+        <h1 style="font-size: 3.5rem; margin-bottom: 10px;">取得 RemoteEye</h1>
+        <p style="color: var(--text-dim); margin-bottom: 50px;">跨越物理距離，重塑數位協作</p>
         
         <div class="download-grid">
             <div class="download-card" id="os-windows">
-                <div style="font-size: 45px; margin-bottom: 15px;">🪟</div>
+                <div style="font-size: 45px; margin-bottom: 10px;">🪟</div>
                 <h3>Windows</h3>
                 <button class="download-btn" onclick="openGuide('windows')">立即下載 .exe</button>
             </div>
             <div class="download-card" id="os-mac">
-                <div style="font-size: 45px; margin-bottom: 15px;">🍎</div>
+                <div style="font-size: 45px; margin-bottom: 10px;">🍎</div>
                 <h3>macOS</h3>
                 <button class="download-btn" onclick="openGuide('macos')">取得 .dmg</button>
             </div>
             <div class="download-card" id="os-linux">
-                <div style="font-size: 45px; margin-bottom: 15px;">🐧</div>
+                <div style="font-size: 45px; margin-bottom: 10px;">🐧</div>
                 <h3>Linux</h3>
                 <button class="download-btn" onclick="openGuide('linux')">下載 .AppImage</button>
             </div>
         </div>
+
+        <div class="specs-container">
+            <h3 style="color:var(--primary-accent)">💻 系統運作建議</h3>
+            <table class="specs-table">
+                <tr><th>組件</th><th>最低需求</th><th>建議配備</th></tr>
+                <tr><td>處理器</td><td>Dual-core 1.8GHz</td><td>Quad-core 2.5GHz+</td></tr>
+                <tr><td>記憶體</td><td>2 GB RAM</td><td>8 GB RAM</td></tr>
+                <tr><td>網路</td><td>5 Mbps</td><td>20 Mbps+</td></tr>
+            </table>
+        </div>
     </section>
 
-    <div id="guideOverlay" class="guide-overlay" onclick="closeGuide(event)">
+    <div id="guideOverlay" class="guide-overlay" onclick="closeGuide()">
         <div class="guide-modal" onclick="event.stopPropagation()">
-            <button class="close-btn" onclick="closeGuide()">✕</button>
             <div id="guideContent"></div>
         </div>
     </div>
@@ -132,70 +149,37 @@
     <footer>© 2026 RemoteEye Technology.</footer>
 
     <script>
+        // 核心指引數據
         const guideData = {
-            windows: {
-                title: "Windows 安裝指引",
-                steps: [
-                    "啟動下載的 `RemoteEye_Setup.exe`。",
-                    "若彈出 SmartScreen 警告，請選擇「仍要執行」。",
-                    "完成後，從開始功能表或桌面圖示啟動程序。"
-                ],
-                sha: "F2CA1BB6C7E907D06DAFE..."
-            },
-            macos: {
-                title: "macOS 安裝指引",
-                steps: [
-                    "開啟下載的 `RemoteEye.dmg` 映像檔。",
-                    "將 RemoteEye 圖示拖曳至右側的 **Applications** 資料夾。",
-                    "若提示「開發者未驗證」，請至系統設定的「隱私權」手動允許。"
-                ],
-                sha: "E3B12CC7D8F018A12BCDE..."
-            },
-            linux: {
-                title: "Linux 安裝指引",
-                steps: [
-                    "在檔案上點擊右鍵 > 內容 > 權限，勾選「允許執行」。",
-                    "或在終端機輸入：`chmod +x RemoteEye.AppImage`。",
-                    "雙擊該檔案即可在任何發行版上直接運行。"
-                ],
-                sha: "D1F99AA8B7C6E5D4A3B21..."
-            }
+            windows: { title: "Windows 指引", steps: ["執行 .exe 安裝檔", "若有警告請點「仍要執行」", "完成後從桌面啟動"], sha: "F2CA1BB6..." },
+            macos: { title: "macOS 指引", steps: ["開啟 .dmg 檔案", "將圖示拖入 Applications", "在安全設定中允許執行"], sha: "E3B12CC7..." },
+            linux: { title: "Linux 指引", steps: ["chmod +x 賦予權限", "直接執行 AppImage", "支援所有主流發行版"], sha: "D1F99AA8..." }
         };
 
         function openGuide(os) {
             const data = guideData[os];
-            const content = document.getElementById('guideContent');
-            content.innerHTML = `
-                <h2 style="color:var(--secondary-accent); margin-bottom:30px;">${data.title}</h2>
-                ${data.steps.map((s, i) => `
-                    <div class="step-item">
-                        <div class="step-num">${i + 1}</div>
-                        <p style="font-size:15px;">${s}</p>
-                    </div>
-                `).join('')}
-                <div class="checksum-box">
-                    <strong>SHA-256:</strong><br>${data.sha}
-                </div>
-                <button class="download-btn" style="margin-top:40px;" onclick="startDownload('${os}')">開始下載</button>
+            document.getElementById('guideContent').innerHTML = `
+                <h2 style="color:var(--secondary-accent); margin-bottom:25px;">${data.title}</h2>
+                ${data.steps.map((s, i) => `<div class="step-item"><div class="step-num">${i+1}</div><p>${s}</p></div>`).join('')}
+                <p style="font-size:10px; color:var(--text-dim); margin-top:20px; word-break:break-all;">SHA-256: ${data.sha}</p>
+                <button class="download-btn" onclick="alert('下載已開始...')">確認並下載</button>
             `;
             document.getElementById('guideOverlay').style.display = 'flex';
         }
 
         function closeGuide() { document.getElementById('guideOverlay').style.display = 'none'; }
-        
-        function startDownload(os) {
-            alert(`正在為您準備 ${os} 安裝檔...`);
-            closeGuide();
-        }
 
-        // --- 核心邏輯：OS 自動偵測 ---
+        // 深淺色切換
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+        }
+        if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');
+
+        // OS 偵測
         window.onload = () => {
             const ua = window.navigator.userAgent.toLowerCase();
-            let id = "";
-            if (ua.includes('win')) id = "os-windows";
-            else if (ua.includes('mac')) id = "os-mac";
-            else if (ua.includes('linux')) id = "os-linux";
-            
+            let id = ua.includes('win') ? "os-windows" : ua.includes('mac') ? "os-mac" : ua.includes('linux') ? "os-linux" : "";
             if (id) {
                 const card = document.getElementById(id);
                 card.style.borderColor = "var(--success)";
@@ -203,12 +187,40 @@
             }
         };
 
-        // 游標邏輯
+        // 粒子背景邏輯
+        const canvas = document.getElementById('particleCanvas'), ctx = canvas.getContext('2d');
+        let particles = [];
+        function init() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            particles = Array.from({length: 60}, () => ({
+                x: Math.random()*canvas.width, y: Math.random()*canvas.height,
+                vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5
+            }));
+        }
+        function draw() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--secondary-accent');
+            particles.forEach(p => {
+                p.x += p.vx; p.y += p.vy;
+                if(p.x<0 || p.x>canvas.width) p.vx*=-1;
+                if(p.y<0 || p.y>canvas.height) p.vy*=-1;
+                ctx.beginPath(); ctx.arc(p.x, p.y, 1.5, 0, Math.PI*2); ctx.fill();
+            });
+            requestAnimationFrame(draw);
+        }
+        window.onresize = init; init(); draw();
+
+        // 游標與進度條
         const cursor = document.getElementById('custom-cursor'), dot = document.getElementById('cursor-dot');
         document.addEventListener('mousemove', e => {
             cursor.style.left = dot.style.left = e.clientX + 'px';
             cursor.style.top = dot.style.top = e.clientY + 'px';
         });
+        window.onscroll = () => {
+            let winScroll = document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            document.getElementById("myBar").style.width = (winScroll / height) * 100 + "%";
+        };
     </script>
 </body>
 </html>
