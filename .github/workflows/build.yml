@@ -1,53 +1,55 @@
-name: RemoteEye Multi-Platform Build
+name: Multi-Platform Build
 
 on:
   push:
-    tags:
-      - 'v*' # 當你推送標籤如 v1.0.0 時觸發自動打包
+    branches: [ main ]
 
 jobs:
-  release:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # 同時啟動三台虛擬機：Windows, Mac, Ubuntu(Linux)
         os: [windows-latest, macos-latest, ubuntu-latest]
 
-    runs-on: ${{ matrix.os }}
-
     steps:
-      - name: 檢出專案程式碼
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: 設置 Node.js 環境
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-          cache: 'npm'
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
 
-      - name: 安裝專案依賴
-        run: npm install
+    - name: Install Linux Dependencies
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3-tk tk-dev libx11-dev libxext-dev libxinerama-dev libxrandr-dev libxcursor-dev
 
-      - name: 執行多系統編譯
-        # 根據不同的作業系統執行對應的打包指令
-        run: |
-          if [ "${{ matrix.os }}" == "windows-latest" ]; then
-            npm run build -- --win
-          elif [ "${{ matrix.os }}" == "macos-latest" ]; then
-            npm run build -- --mac dmg
-          else
-            npm run build -- --linux AppImage
-          fi
-        shell: bash
+    - name: Install Python Libraries
+      run: |
+        python -m pip install --upgrade pip
+        pip install customtkinter mss pillow pyautogui pyinstaller
 
-      - name: 自動發布至 GitHub Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          # 自動抓取編譯出來的所有安裝檔
-          files: |
-            dist/*.exe
-            dist/*.dmg
-            dist/*.AppImage
-            dist/*.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build Executable
+      shell: bash  # 強制所有系統使用 bash 語法，避免 PowerShell 衝突
+      run: |
+        # 跨平台獲取 customtkinter 路徑
+        CTK_PATH=$(python -c "import customtkinter; import os; print(customtkinter.__path__[0])")
+        
+        # 根據作業系統決定分隔符 (Windows 用 ; 其他用 :)
+        if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+          SEP=";"
+        else
+          SEP=":"
+        fi
+        
+        # 執行 PyInstaller
+        python -m PyInstaller --noconfirm --onefile --windowed --add-data "${CTK_PATH}${SEP}customtkinter/" RemoteEye_Global.py
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: RemoteEye-${{ matrix.os }}
+        path: dist/*
