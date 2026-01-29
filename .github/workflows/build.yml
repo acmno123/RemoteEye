@@ -32,11 +32,21 @@ jobs:
         python -m pip install --upgrade pip
         pip install customtkinter mss pillow pyautogui pyinstaller
 
-    - name: Build EXE
+    - name: Build Executable
+      shell: bash  # 強制所有系統使用 bash 語法，避免 PowerShell 衝突
       run: |
-        # 動態獲取 ctk 路徑 (跨平台寫法)
-        $ctk = python -c "import customtkinter; import os; print(customtkinter.__path__[0])"
-        python -m PyInstaller --onefile --windowed --add-data "${ctk}${${{ matrix.os == 'windows-latest' && ';' || ':' }}}customtkinter/" RemoteEye_Global.py
+        # 跨平台獲取 customtkinter 路徑
+        CTK_PATH=$(python -c "import customtkinter; import os; print(customtkinter.__path__[0])")
+        
+        # 根據作業系統決定分隔符 (Windows 用 ; 其他用 :)
+        if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+          SEP=";"
+        else
+          SEP=":"
+        fi
+        
+        # 執行 PyInstaller
+        python -m PyInstaller --noconfirm --onefile --windowed --add-data "${CTK_PATH}${SEP}customtkinter/" RemoteEye_Global.py
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
