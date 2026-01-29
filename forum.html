@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RemoteEye Global | Community Forum</title>
+    <title>RemoteEye Community | Open Forum</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -15,202 +15,87 @@
             --card-bg: rgba(255, 255, 255, 0.03);
             --border-light: rgba(255, 255, 255, 0.1);
             --nav-bg: rgba(0, 0, 0, 0.8);
-            --success-green: #00ff9d;
         }
 
-        body.light-mode {
-            --bg-dark: #f5f5f7;
-            --text-light: #1d1d1f;
-            --text-dim: #6e6e73;
-            --card-bg: #ffffff;
-            --border-light: rgba(0, 0, 0, 0.1);
-            --nav-bg: rgba(255, 255, 255, 0.8);
-        }
-
-        /* --- [同步] 科技游標 CSS --- */
-        body { cursor: none !important; }
-        a, button, .post-card, .tag, .theme-toggle { cursor: none !important; }
-
-        #custom-cursor {
-            width: 25px; height: 25px; border: 1.5px solid var(--secondary-accent);
-            border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000;
-            transition: transform 0.1s ease-out, width 0.3s, height 0.3s; 
-            transform: translate(-50%, -50%);
-            background: rgba(0, 188, 212, 0.05);
-        }
-        #cursor-dot {
-            width: 4px; height: 4px; background: var(--primary-accent);
-            border-radius: 50%; position: fixed; pointer-events: none; z-index: 10001;
-            transform: translate(-50%, -50%);
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.4s ease, color 0.4s ease; }
-        
-        body {
-            font-family: 'Space Grotesk', sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-light);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* 全局組件 */
-        .progress-bar-container { position: fixed; top: 0; left: 0; width: 100%; height: 3px; z-index: 9999; }
-        #myBar { height: 100%; width: 0%; background: linear-gradient(to right, var(--secondary-accent), var(--primary-accent)); box-shadow: 0 0 10px var(--secondary-accent); }
-        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.5; pointer-events: none; }
+        /* 科技游標 */
+        body { cursor: none !important; font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--text-light); overflow-x: hidden; }
+        #custom-cursor { width: 25px; height: 25px; border: 1.5px solid var(--secondary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transition: transform 0.1s; transform: translate(-50%, -50%); }
+        #cursor-dot { width: 4px; height: 4px; background: var(--primary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10001; transform: translate(-50%, -50%); }
 
         /* 導航列 */
-        .navbar {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 5%; width: 100%; top: 0; z-index: 1000;
-            background: var(--nav-bg); backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--border-light);
-            position: fixed;
-        }
-        .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; letter-spacing: -1px; }
-        .nav-links { display: flex; gap: 25px; }
-        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 15px; font-weight: 500; position: relative; padding: 5px 0; }
-        .nav-links a::after { content: ""; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--secondary-accent); transition: width 0.3s; }
-        .nav-links a:hover::after { width: 100%; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; width: 100%; position: fixed; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border-light); }
+        .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
         
-        .theme-toggle {
-            background: var(--card-bg); border: 1px solid var(--border-light);
-            color: var(--text-light); padding: 8px; border-radius: 50%;
-            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
-        }
-
-        /* 論壇內容區 */
-        .forum-container { max-width: 1000px; margin: 150px auto 50px; padding: 0 5%; }
+        .forum-container { max-width: 900px; margin: 120px auto; padding: 0 5%; }
         
-        .forum-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 50px; }
-        .forum-header h1 { 
-            font-size: 3rem; background: linear-gradient(90deg, #fff, var(--secondary-accent), var(--primary-accent), #fff);
-            background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
-            animation: shine 5s linear infinite; font-weight: 700;
-        }
-        @keyframes shine { to { background-position: 200% center; } }
-
-        .new-post-btn {
-            background: var(--primary-accent); color: white; padding: 14px 28px; 
-            border-radius: 50px; font-weight: 700; border: none; transition: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
-        }
-        .new-post-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(108, 92, 231, 0.5); }
-
-        /* 標籤樣式 */
-        .tags-container { display: flex; gap: 12px; margin-bottom: 40px; overflow-x: auto; padding-bottom: 10px; }
-        .tag {
-            background: var(--card-bg); border: 1px solid var(--border-light);
-            padding: 8px 20px; border-radius: 50px; font-size: 14px; color: var(--text-dim);
-            white-space: nowrap; backdrop-filter: blur(5px); transition: 0.3s;
-        }
-        .tag:hover, .tag.active { border-color: var(--secondary-accent); color: var(--secondary-accent); background: rgba(0, 188, 212, 0.1); }
-
         /* 貼文卡片 */
-        .post-card {
-            background: var(--card-bg); border: 1px solid var(--border-light);
-            border-radius: 24px; padding: 30px; margin-bottom: 25px;
-            display: flex; justify-content: space-between; align-items: center; 
-            transition: transform 0.1s ease, border-color 0.3s ease, opacity 0.4s ease;
-            backdrop-filter: blur(10px); transform-style: preserve-3d;
+        .post-card { 
+            background: var(--card-bg); border: 1px solid var(--border-light); 
+            border-radius: 24px; padding: 30px; margin-bottom: 25px; 
+            transition: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            backdrop-filter: blur(10px);
         }
-        .post-card.hidden { display: none; opacity: 0; }
-        .post-card:hover { border-color: var(--primary-accent); }
+        .post-card:hover { border-color: var(--primary-accent); transform: translateY(-5px); }
+
+        /* 回覆區樣式 */
+        .reply-toggle-btn { background: none; border: none; color: var(--secondary-accent); font-size: 14px; margin-top: 15px; cursor: none; display: flex; align-items: center; gap: 5px; }
+        .reply-section { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-light); display: none; }
+        .reply-item { font-size: 14px; margin-bottom: 12px; color: var(--text-dim); background: rgba(255,255,255,0.02); padding: 12px; border-radius: 12px; border-left: 3px solid var(--primary-accent); }
+        .reply-input-group { display: flex; gap: 10px; margin-top: 15px; }
         
-        .post-info h3 { font-size: 1.3rem; margin-bottom: 10px; color: var(--text-light); }
-        .post-meta { font-size: 13px; color: var(--text-dim); display: flex; gap: 20px; }
-        .post-status { display: inline-block; padding: 2px 10px; border-radius: 5px; background: rgba(0, 255, 157, 0.1); color: var(--success-green); font-weight: bold; font-size: 11px; margin-bottom: 8px; }
+        /* 輸入框樣式 */
+        .custom-input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--border-light); color: white; padding: 12px 20px; border-radius: 50px; outline: none; font-family: inherit; }
+        .custom-input:focus { border-color: var(--secondary-accent); }
+        .action-btn { background: var(--primary-accent); color: white; border: none; padding: 10px 25px; border-radius: 50px; font-weight: 600; cursor: none; transition: 0.3s; }
+        .action-btn:hover { opacity: 0.8; box-shadow: 0 0 15px var(--primary-accent); }
 
-        .post-stats { display: flex; gap: 25px; }
-        .stat-item { text-align: center; min-width: 60px; }
-        .stat-num { display: block; font-weight: 700; color: var(--text-light); font-size: 1.1rem; }
-        .stat-label { font-size: 12px; color: var(--text-dim); }
-
-        /* Modal 彈窗 */
-        .modal {
-            display: none; position: fixed; z-index: 2000; top: 0; left: 0; 
-            width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px);
-        }
-        .modal-content {
-            background: var(--bg-dark); border: 1px solid var(--primary-accent);
-            width: 90%; max-width: 550px; margin: 8% auto; padding: 50px; border-radius: 32px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-        }
-        .modal-content input, .modal-content textarea {
-            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-light);
-            color: var(--text-light); padding: 15px; margin-top: 20px; border-radius: 15px; outline: none; font-family: inherit;
-        }
-
-        .fade-in { opacity: 0; transform: translateY(30px); transition: 1s cubic-bezier(0.2, 0.8, 0.2, 1); }
-        .fade-in.active { opacity: 1; transform: translateY(0); }
-
-        footer { padding: 60px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); }
+        /* 發文彈窗 */
+        .modal { display: none; position: fixed; z-index: 2000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); }
+        .modal-content { background: #0a0a0a; border: 1px solid var(--primary-accent); width: 90%; max-width: 500px; margin: 100px auto; padding: 40px; border-radius: 30px; }
+        
+        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.3; pointer-events: none; }
     </style>
 </head>
 <body>
 
     <div id="custom-cursor"></div>
     <div id="cursor-dot"></div>
-
-    <div class="progress-bar-container"><div id="myBar"></div></div>
     <canvas id="particleCanvas"></canvas>
 
     <nav class="navbar">
         <a href="index.html" class="nav-logo">RemoteEye</a>
-        <div class="nav-right">
-            <div class="nav-links">
-                <a href="index.html">首頁</a>
-                <a href="download.html">下載</a>
-                <a href="forum.html" style="color: var(--secondary-accent);">論壇</a>
-            </div>
-            <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+        <div class="nav-links">
+            <a href="index.html" style="color: var(--text-dim); text-decoration: none;">首頁</a>
+            <a href="forum.html" style="color: var(--secondary-accent); text-decoration: none; margin-left: 20px;">論壇</a>
         </div>
     </nav>
 
     <main class="forum-container">
-        <div class="forum-header fade-in">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
             <div>
-                <h1>技術社群</h1>
-                <p style="color: var(--text-dim); font-size: 1.1rem;">與全球開發者討論遠端協作的未來</p>
+                <h1 style="font-size: 2.5rem; letter-spacing: -1px;">社群討論</h1>
+                <p style="color: var(--text-dim);">無需登入，立即分享你的觀點</p>
             </div>
-            <button class="new-post-btn" onclick="openModal()">+ 發布新話題</button>
-        </div>
-
-        <div class="tags-container fade-in">
-            <div class="tag active" onclick="filterPosts('all', this)">全部內容</div>
-            <div class="tag" onclick="filterPosts('announcement', this)"># 系統公告</div>
-            <div class="tag" onclick="filterPosts('tech', this)"># 技術探討</div>
-            <div class="tag" onclick="filterPosts('suggestion', this)"># 功能建議</div>
+            <button class="action-btn" onclick="openModal()">+ 發起新討論</button>
         </div>
 
         <div id="post-list">
-            <div class="post-card fade-in" data-category="announcement">
-                <div class="post-info">
-                    <span class="post-status">● 官方公告</span>
-                    <h3>RemoteEye V1.0.4 正式發布：優化了 4K 串流延遲</h3>
-                    <div class="post-meta">
-                        <span>👤 管理員 @Admin</span>
-                        <span>🕒 2 小時前</span>
+            <div class="post-card">
+                <div class="post-content">
+                    <span style="color: var(--secondary-accent); font-size: 12px; font-weight: bold;">#技術建議</span>
+                    <h3 style="margin: 10px 0;">有沒有計畫開發網頁版的遠端控制端？</h3>
+                    <p style="color: var(--text-dim); font-size: 15px;">如果可以直接透過 Chrome 瀏覽器連線到公司電腦，會方便很多。</p>
+                    <div style="margin-top: 15px; font-size: 12px; color: var(--primary-accent);">👤 匿名訪客 #882 • 3 小時前</div>
+                </div>
+                <button class="reply-toggle-btn" onclick="toggleReply(this)">💬 查看回覆 (1)</button>
+                <div class="reply-section">
+                    <div class="reply-list">
+                        <div class="reply-item"><strong>開發者小組:</strong> 這是我們 Roadmap 上的重點功能，預計會在 Q3 進入 Beta 測試！</div>
                     </div>
-                </div>
-                <div class="post-stats">
-                    <div class="stat-item"><span class="stat-num">1.2k</span><span class="stat-label">瀏覽</span></div>
-                    <div class="stat-item"><span class="stat-num">48</span><span class="stat-label">回覆</span></div>
-                </div>
-            </div>
-
-            <div class="post-card fade-in" data-category="tech">
-                <div class="post-info">
-                    <span class="post-status" style="background:rgba(108, 92, 231, 0.1); color:var(--primary-accent)">● 技術探討</span>
-                    <h3>如何在 Linux Ubuntu 22.04 上安裝 RemoteEye？</h3>
-                    <div class="post-meta">
-                        <span>👤 嘉進 @GiaJin</span>
-                        <span>🕒 昨天</span>
+                    <div class="reply-input-group">
+                        <input type="text" class="custom-input" placeholder="寫下你的想法...">
+                        <button class="action-btn" style="padding: 8px 20px;" onclick="submitReply(this)">回覆</button>
                     </div>
-                </div>
-                <div class="post-stats">
-                    <div class="stat-item"><span class="stat-num">850</span><span class="stat-label">瀏覽</span></div>
-                    <div class="stat-item"><span class="stat-num">12</span><span class="stat-label">回覆</span></div>
                 </div>
             </div>
         </div>
@@ -218,125 +103,116 @@
 
     <div id="postModal" class="modal">
         <div class="modal-content">
-            <h2 style="color: var(--secondary-accent); font-weight: 700;">發起新討論</h2>
-            <p style="color: var(--text-dim); font-size: 14px;">請遵守社群規範，保持友善交流。</p>
-            <input type="text" placeholder="話題標題">
-            <textarea rows="6" placeholder="分享你的想法、問題或建議..."></textarea>
-            <div style="display: flex; gap: 15px; margin-top: 30px;">
-                <button class="new-post-btn" style="flex:1" onclick="closeModal()">送出貼文</button>
-                <button class="new-post-btn" style="flex:1; background: var(--card-bg); color: var(--text-light); box-shadow: none;" onclick="closeModal()">取消</button>
-            </div>
+            <h2 style="color: var(--secondary-accent);">發布新話題</h2>
+            <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 20px;">分享你的問題或建議給全世界的開發者。</p>
+            <input type="text" id="post-title" class="custom-input" style="width:100%; margin-bottom:15px;" placeholder="話題標題">
+            <textarea id="post-text" class="custom-input" style="width:100%; height:120px; border-radius:20px; margin-bottom:15px;" placeholder="詳細內容..."></textarea>
+            <button class="action-btn" style="width:100%;" onclick="createNewPost()">立即發布</button>
+            <button onclick="closeModal()" style="width:100%; background:none; border:none; color:var(--text-dim); margin-top:15px; cursor:none;">取消</button>
         </div>
     </div>
 
-    <footer>
-        <p>© 2026 RemoteEye Technology. 讓遠端連結無處不在。</p>
-    </footer>
-
     <script>
-        // --- [同步] 科技游標控制 ---
+        // 游標邏輯
         const cursor = document.getElementById('custom-cursor');
         const dot = document.getElementById('cursor-dot');
-        
         document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-            dot.style.left = e.clientX + 'px';
-            dot.style.top = e.clientY + 'px';
+            cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
+            dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';
         });
 
-        // 游標互動
-        document.querySelectorAll('a, button, .post-card, .tag').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor.style.transform = 'translate(-50%, -50%) scale(1.5)');
-            el.addEventListener('mouseleave', () => cursor.style.transform = 'translate(-50%, -50%) scale(1)');
-        });
-
-        // --- 動態過濾功能 ---
-        function filterPosts(category, btn) {
-            // 切換按鈕樣式
-            document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
-            btn.classList.add('active');
-
-            // 切換卡片顯示
-            const cards = document.querySelectorAll('.post-card');
-            cards.forEach(card => {
-                if (category === 'all' || card.dataset.category === category) {
-                    card.style.display = 'flex';
-                    setTimeout(() => card.style.opacity = '1', 10);
-                } else {
-                    card.style.opacity = '0';
-                    setTimeout(() => card.style.display = 'none', 400);
-                }
-            });
-        }
-
-        // 基本 UI 控制
-        window.onscroll = () => {
-            let winScroll = document.documentElement.scrollTop;
-            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            document.getElementById("myBar").style.width = (winScroll / height) * 100 + "%";
-        };
-
-        function toggleTheme() {
-            document.body.classList.toggle('light-mode');
-            localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
-        }
-        if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');
-
+        // 彈窗控制
         function openModal() { document.getElementById('postModal').style.display = 'block'; }
         function closeModal() { document.getElementById('postModal').style.display = 'none'; }
 
-        // 粒子動畫 (全站同步)
+        // 自動生成隨機 ID
+        function generateId() { return Math.floor(Math.random() * 9000) + 1000; }
+
+        // 1. 發布新話題
+        function createNewPost() {
+            const title = document.getElementById('post-title').value;
+            const text = document.getElementById('post-text').value;
+            if(!title || !text) return alert("請填寫標題與內容");
+
+            const postHtml = `
+                <div class="post-card" style="animation: fadeIn 0.5s ease forwards;">
+                    <div class="post-content">
+                        <span style="color: var(--secondary-accent); font-size: 12px; font-weight: bold;">#新話題</span>
+                        <h3 style="margin: 10px 0;">${title}</h3>
+                        <p style="color: var(--text-dim); font-size: 15px;">${text}</p>
+                        <div style="margin-top: 15px; font-size: 12px; color: var(--primary-accent);">👤 匿名訪客 #${generateId()} • 剛剛</div>
+                    </div>
+                    <button class="reply-toggle-btn" onclick="toggleReply(this)">💬 查看回覆 (0)</button>
+                    <div class="reply-section">
+                        <div class="reply-list"></div>
+                        <div class="reply-input-group">
+                            <input type="text" class="custom-input" placeholder="寫下你的想法...">
+                            <button class="action-btn" style="padding: 8px 20px;" onclick="submitReply(this)">回覆</button>
+                        </div>
+                    </div>
+                </div>`;
+            
+            document.getElementById('post-list').insertAdjacentHTML('afterbegin', postHtml);
+            closeModal();
+            // 清空輸入
+            document.getElementById('post-title').value = '';
+            document.getElementById('post-text').value = '';
+        }
+
+        // 2. 切換回覆區顯示
+        function toggleReply(btn) {
+            const section = btn.nextElementSibling;
+            const isVisible = section.style.display === 'block';
+            section.style.display = isVisible ? 'none' : 'block';
+            btn.innerText = isVisible ? `💬 查看回覆 (${section.querySelectorAll('.reply-item').length})` : '收起回覆';
+        }
+
+        // 3. 提交回覆
+        function submitReply(btn) {
+            const input = btn.previousElementSibling;
+            if(!input.value) return;
+
+            const replyList = btn.closest('.reply-section').querySelector('.reply-list');
+            const newReply = `
+                <div class="reply-item">
+                    <strong>匿名開發者 #${generateId()}:</strong> ${input.value}
+                </div>`;
+            
+            replyList.insertAdjacentHTML('beforeend', newReply);
+            input.value = '';
+            
+            // 更新按鈕數量顯示
+            const toggleBtn = btn.closest('.post-card').querySelector('.reply-toggle-btn');
+            toggleBtn.innerText = '收起回覆';
+        }
+
+        // 背景粒子動畫
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
         function init() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            particles = Array.from({length: 80}, () => ({
+            particles = Array.from({length: 50}, () => ({
                 x: Math.random()*canvas.width, y: Math.random()*canvas.height,
-                vx: (Math.random()-0.5)*0.6, vy: (Math.random()-0.5)*0.6, size: 2
+                vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5
             }));
         }
         function draw() {
             ctx.clearRect(0,0,canvas.width,canvas.height);
-            const color = getComputedStyle(document.body).getPropertyValue('--secondary-accent');
-            ctx.fillStyle = color; ctx.strokeStyle = color;
-            particles.forEach((p, i) => {
+            ctx.fillStyle = "#00bcd4";
+            particles.forEach(p => {
                 p.x += p.vx; p.y += p.vy;
                 if(p.x<0 || p.x>canvas.width) p.vx*=-1;
                 if(p.y<0 || p.y>canvas.height) p.vy*=-1;
-                ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
-                for(let j=i+1; j<particles.length; j++){
-                    let p2 = particles[j];
-                    let dist = Math.hypot(p.x-p2.x, p.y-p2.y);
-                    if(dist < 120){
-                        ctx.globalAlpha = 1 - (dist/120);
-                        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y);
-                        ctx.lineWidth = 0.5; ctx.stroke();
-                    }
-                }
-                ctx.globalAlpha = 1;
+                ctx.beginPath(); ctx.arc(p.x, p.y, 1.5, 0, Math.PI*2); ctx.fill();
             });
             requestAnimationFrame(draw);
         }
         window.onresize = init; init(); draw();
-
-        // 滾動觀察
-        const observer = new IntersectionObserver(e => e.forEach(entry => {
-            if (entry.isIntersecting) entry.target.classList.add('active');
-        }), { threshold: 0.1 });
-        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-        // 3D 視差
-        document.querySelectorAll('.post-card').forEach(card => {
-            card.addEventListener('mousemove', e => {
-                const rect = card.getBoundingClientRect();
-                const x = (e.clientX - rect.left) / rect.width - 0.5;
-                const y = (e.clientY - rect.top) / rect.height - 0.5;
-                card.style.transform = `perspective(1000px) rotateX(${y * -10}deg) rotateY(${x * 10}deg) scale(1.02)`;
-            });
-            card.addEventListener('mouseleave', () => card.style.transform = `none`);
-        });
     </script>
+
+    <style>
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
 </body>
 </html>
