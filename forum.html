@@ -49,7 +49,6 @@
         
         .post-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 24px; padding: 30px; margin-bottom: 25px; position: relative; backdrop-filter: blur(10px); }
         
-        /* 官方回覆特別標記 */
         .post-card.official-reply { border: 1.5px solid var(--primary-accent); background: rgba(108, 92, 231, 0.05); }
         .post-card.official-reply::before { content: "OFFICIAL RESPONSE"; position: absolute; top: 12px; right: 20px; font-size: 9px; font-weight: 900; color: var(--primary-accent); letter-spacing: 1px; opacity: 0.6; }
 
@@ -79,8 +78,9 @@
                 <a href="download.html">下載</a>
                 <a href="forum.html" class="active">論壇</a>
             </div>
-            <div class="user-settings">
+            <div class="user-settings" style="display: flex; align-items: center; gap: 10px;">
                 <input type="text" id="global-username" class="custom-input" style="width: 100px; margin: 0; padding: 5px 10px; font-size: 12px;" placeholder="名字">
+                <button class="action-btn" style="padding: 5px 12px; font-size: 10px; background: var(--secondary-accent);" onclick="verifyDev()">開發者驗證</button>
                 <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
             </div>
         </div>
@@ -90,7 +90,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
             <div>
                 <h1 style="font-size: 2.5rem; letter-spacing: -1px; color: var(--text-light);">技術社群</h1>
-                <p style="color: var(--text-dim);">與開發者交流，讓 RemoteEye 變得更好</p>
+                <p style="color: var(--text-dim);">與開發團隊直接交流</p>
             </div>
             <button class="action-btn" onclick="openModal()">+ 發起話題</button>
         </div>
@@ -110,14 +110,38 @@
     <footer>© 2026 RemoteEye Technology.</footer>
 
     <script>
-        // --- 官方人員名單 ---
-        const OFFICIAL_TEAM = ["官方團隊", "系統管理員", "Alex_Dev", "RemoteEye_Staff"];
+        // --- 核心開發權限邏輯 ---
+        const DEV_KEY = "RE_DEV_2026";
+        let OFFICIAL_TEAM = ["官方團隊", "系統管理員", "Alex_Dev"];
+        
+        function checkDevStatus() {
+            const isDev = localStorage.getItem('is_re_dev') === 'true';
+            const currentName = localStorage.getItem('re_user') || "訪客";
+            if (isDev && !OFFICIAL_TEAM.includes(currentName)) {
+                OFFICIAL_TEAM.push(currentName);
+            }
+        }
 
+        function verifyDev() {
+            const key = prompt("請輸入開發者驗證密鑰：");
+            if (key === DEV_KEY) {
+                localStorage.setItem('is_re_dev', 'true');
+                const name = document.getElementById('global-username').value;
+                if (!OFFICIAL_TEAM.includes(name)) OFFICIAL_TEAM.push(name);
+                alert("驗證成功！您已取得開發者勳章。");
+                renderPosts();
+            } else {
+                alert("密鑰錯誤！");
+            }
+        }
+
+        // --- 資料邏輯 ---
         let posts = JSON.parse(localStorage.getItem('re_posts')) || [
             { id: 1, title: "RemoteEye V1.0 正式上線", content: "歡迎大家下載體驗！這是我們歷時兩年的成果。", author: "官方團隊", likes: 25, replies: [{user: "系統管理員", text: "若有連線問題請優先檢查防火牆。"}] }
         ];
 
         function renderPosts() {
+            checkDevStatus();
             const list = document.getElementById('post-list');
             list.innerHTML = '';
             posts.forEach(post => {
@@ -126,17 +150,14 @@
                     <div class="post-card ${isOfficialPost ? 'official-reply' : ''}">
                         <h3 style="margin-bottom: 10px;">${post.title}</h3>
                         <p style="color: var(--text-dim); font-size: 15px;">${post.content}</p>
-                        
                         <div style="margin-top: 15px; font-size: 12px; display: flex; align-items: center;">
-                            <span style="color: var(--primary-accent); font-weight: bold;">👤 ${post.author}</span>
-                            ${isOfficialPost ? '<span class="badge badge-dev">Official</span>' : ''}
+                            <span style="color: ${isOfficialPost ? 'var(--primary-accent)' : 'var(--text-dim)'}; font-weight: bold;">👤 ${post.author}</span>
+                            ${isOfficialPost ? '<span class="badge badge-dev">Official Dev</span>' : ''}
                         </div>
-
                         <div style="margin-top: 20px; display:flex; gap:20px; border-top: 1px solid var(--border-light); padding-top: 15px;">
                             <button class="action-btn" style="padding: 5px 15px; background: none; color: var(--text-dim);" onclick="likePost(${post.id})">❤️ ${post.likes}</button>
                             <button class="action-btn" style="padding: 5px 15px; background: none; color: var(--text-dim);" onclick="toggleReply(${post.id})">💬 ${post.replies.length} 回覆</button>
                         </div>
-
                         <div class="reply-section" id="rep-sec-${post.id}">
                             <div id="rep-list-${post.id}">
                                 ${post.replies.map(r => {
@@ -144,8 +165,7 @@
                                     return `
                                         <div class="reply-item ${isOfficialReply ? 'dev-response' : ''}">
                                             <strong>${r.user} ${isOfficialReply ? '<span class="badge badge-dev" style="font-size:8px;">DEV</span>' : ''}:</strong> ${r.text}
-                                        </div>
-                                    `;
+                                        </div>`;
                                 }).join('')}
                             </div>
                             <div style="display:flex; gap:10px; margin-top:15px;">
@@ -159,7 +179,7 @@
             localStorage.setItem('re_posts', JSON.stringify(posts));
         }
 
-        // --- 功能邏輯 ---
+        // --- 基礎互動 ---
         function createNewPost() {
             const title = document.getElementById('post-title').value;
             const text = document.getElementById('post-text').value;
@@ -195,8 +215,12 @@
             cursor.style.top = dot.style.top = e.clientY + 'px';
         });
 
+        // 初始化
         document.getElementById('global-username').value = localStorage.getItem('re_user') || "訪客";
-        document.getElementById('global-username').onchange = (e) => localStorage.setItem('re_user', e.target.value);
+        document.getElementById('global-username').onchange = (e) => {
+            localStorage.setItem('re_user', e.target.value);
+            renderPosts(); // 名字改變時重新判斷勳章
+        };
 
         renderPosts();
     </script>
