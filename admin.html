@@ -10,6 +10,7 @@
         :root {
             --bg-dark: #050505;
             --accent: #00ff9d;
+            --error: #ff5f56;
             --border: rgba(0, 255, 157, 0.2);
             --text-dim: #666;
         }
@@ -18,8 +19,55 @@
             background: var(--bg-dark); 
             color: var(--accent); 
             font-family: 'Fira Code', monospace; 
-            padding: 40px; 
             margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* 門禁介面 */
+        #auth-gate { 
+            width: 100%; 
+            max-width: 400px; 
+            padding: 40px; 
+            border: 1px solid var(--border); 
+            background: rgba(0, 255, 157, 0.02); 
+            text-align: center;
+        }
+
+        input { 
+            width: 100%; 
+            background: #000; 
+            border: 1px solid #333; 
+            padding: 12px; 
+            color: var(--accent); 
+            margin-bottom: 15px; 
+            outline: none; 
+            box-sizing: border-box; 
+            font-family: inherit;
+        }
+
+        input:focus { border-color: var(--accent); }
+
+        button.login-btn { 
+            width: 100%; 
+            background: var(--accent); 
+            color: #000; 
+            border: none; 
+            padding: 12px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-family: inherit;
+        }
+
+        /* 監控面板 (預設隱藏) */
+        #admin-panel { 
+            display: none; 
+            width: 90%; 
+            max-width: 1000px; 
+            padding: 40px; 
+            align-self: flex-start;
         }
 
         .header { 
@@ -31,10 +79,7 @@
             align-items: center;
         }
 
-        .log-container {
-            display: grid;
-            gap: 15px;
-        }
+        .log-container { display: grid; gap: 15px; }
 
         .log-entry {
             background: rgba(0, 255, 157, 0.03);
@@ -42,52 +87,47 @@
             padding: 20px;
             border-radius: 8px;
             position: relative;
-            transition: 0.3s;
-        }
-
-        .log-entry:hover {
-            border-color: var(--accent);
-            background: rgba(0, 255, 157, 0.08);
         }
 
         .timestamp { color: var(--text-dim); font-size: 12px; margin-bottom: 8px; }
         .node-id { font-weight: bold; color: #fff; margin-bottom: 10px; }
         .payload { line-height: 1.6; word-break: break-all; }
         
-        .status-badge {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 10px;
-            border: 1px solid var(--accent);
-            padding: 2px 8px;
-            text-transform: uppercase;
+        .logout-btn { 
+            background: transparent; 
+            border: 1px solid var(--error); 
+            color: var(--error); 
+            padding: 5px 10px; 
+            cursor: pointer; 
+            font-size: 12px;
         }
-
-        .refresh-btn {
-            background: transparent;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            padding: 8px 15px;
-            cursor: pointer;
-            font-family: inherit;
-        }
-
-        .refresh-btn:hover { background: var(--accent); color: #000; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div>
-            <h1 style="margin: 0; font-size: 20px;">[ REMOTE_EYE_ADMIN_TERMINAL ]</h1>
-            <p style="font-size: 12px; color: var(--text-dim);">ACCESS_LEVEL: ALPHA_ROOT</p>
-        </div>
-        <button class="refresh-btn" onclick="fetchLogs()">RESCAN_DATABASE</button>
+    <div id="auth-gate">
+        <h2 style="margin-top: 0;">[ ACCESS_LOCKED ]</h2>
+        <p style="font-size: 12px; color: var(--text-dim); margin-bottom: 25px;">需要管理員憑證以存取加密節點</p>
+        <input type="email" id="email" placeholder="ADMIN_EMAIL">
+        <input type="password" id="password" placeholder="SECURITY_KEY">
+        <button class="login-btn" onclick="login()">解鎖終端 →</button>
+        <p id="auth-msg" style="font-size: 10px; color: var(--error); margin-top: 15px;"></p>
     </div>
 
-    <div id="log-list" class="log-container">
-        <div class="log-entry">> INITIALIZING_STREAM...</div>
+    <div id="admin-panel">
+        <div class="header">
+            <div>
+                <h1 style="margin: 0; font-size: 20px;">[ REMOTE_EYE_ADMIN_TERMINAL ]</h1>
+                <p style="font-size: 12px; color: var(--text-dim);">STATUS: AUTHORIZED_ENCRYPTED_STREAM</p>
+            </div>
+            <div>
+                <button class="logout-btn" onclick="logout()" style="margin-right: 10px;">LOGOUT</button>
+                <button onclick="fetchLogs()" style="background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 5px 10px; cursor: pointer;">RESCAN</button>
+            </div>
+        </div>
+
+        <div id="log-list" class="log-container">
+            </div>
     </div>
 
     <script>
@@ -95,35 +135,61 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtic2FtbHBkZnFkaWt3cGlsaWxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk2NzY4MTYsImV4cCI6MjA4NTI1MjgxNn0.JTJXBjiymJokrrkZj_iyvbSZMrdc99xhBsivRQ6lxuY';
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        async function fetchLogs() {
-            const logList = document.getElementById('log-list');
-            
-            try {
-                const { data, error } = await db
-                    .from('feedback')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                logList.innerHTML = data.map(log => `
-                    <div class="log-entry">
-                        <div class="status-badge">Encrypted</div>
-                        <div class="timestamp">${new Date(log.created_at).toLocaleString()}</div>
-                        <div class="node-id">SOURCE_NODE: ${log.name}</div>
-                        <div class="payload">> ${log.message}</div>
-                    </div>
-                `).join('');
-
-            } catch (err) {
-                logList.innerHTML = `<div style="color: #ff5f56;">CRITICAL_ERROR: ${err.message}</div>`;
+        // 1. 檢查使用者狀態
+        async function checkSession() {
+            const { data: { user } } = await db.auth.getUser();
+            if (user) {
+                document.getElementById('auth-gate').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                document.body.style.alignItems = 'flex-start'; // 列表模式靠上對齊
+                fetchLogs();
             }
         }
 
-        // 初始加載
-        fetchLogs();
-        // 每 30 秒自動刷新
-        setInterval(fetchLogs, 30000);
+        // 2. 登入邏輯
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const msg = document.getElementById('auth-msg');
+
+            const { error } = await db.auth.signInWithPassword({ email, password });
+
+            if (error) {
+                msg.innerText = "> 錯誤: " + error.message;
+            } else {
+                window.location.reload(); 
+            }
+        }
+
+        // 3. 登出
+        async function logout() {
+            await db.auth.signOut();
+            window.location.reload();
+        }
+
+        // 4. 抓取數據
+        async function fetchLogs() {
+            const logList = document.getElementById('log-list');
+            const { data, error } = await db
+                .from('feedback')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                logList.innerHTML = `<div style="color: var(--error);">讀取失敗: ${error.message}</div>`;
+                return;
+            }
+
+            logList.innerHTML = data.map(log => `
+                <div class="log-entry">
+                    <div class="timestamp">${new Date(log.created_at).toLocaleString()}</div>
+                    <div class="node-id">NODE: ${log.name}</div>
+                    <div class="payload">> ${log.message}</div>
+                </div>
+            `).join('');
+        }
+
+        checkSession();
     </script>
 </body>
 </html>
