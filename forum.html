@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RemoteEye | 技術論壇 (Admin Protocol)</title>
+    <title>RemoteEye | 技術論壇 (Root Node)</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
@@ -23,20 +23,24 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--text-light); cursor: none; overflow-x: hidden; }
 
+        /* 導航 */
         .navbar { display: flex; justify-content: space-between; align-items: center; padding: 0 5%; height: 75px; width: 100%; position: fixed; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-light); }
         .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
         #auth-trigger { color: var(--success); border: 1px solid var(--success); padding: 5px 15px; border-radius: 50px; cursor: pointer; font-size: 13px; }
 
         .forum-container { display: grid; grid-template-columns: 1fr 320px; gap: 40px; max-width: 1300px; margin: 150px auto 100px; padding: 0 5%; }
 
+        /* 編輯器 */
         .post-editor { background: var(--card-bg); border: 1px solid var(--border-light); padding: 30px; border-radius: 24px; margin-bottom: 40px; }
-        .editor-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-light); padding: 12px 20px; border-radius: 12px; color: white; outline: none; margin-bottom: 15px; }
+        .editor-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-light); padding: 12px 20px; border-radius: 12px; color: white; font-family: 'Space Grotesk'; outline: none; margin-bottom: 15px; transition: 0.3s; }
+        .editor-input:focus { border-color: var(--primary-accent); background: rgba(255,255,255,0.08); }
         .editor-btn { background: var(--primary-accent); color: white; border: none; padding: 12px 30px; border-radius: 50px; cursor: pointer; font-weight: 700; transition: 0.3s; }
 
-        /* 貼文卡片與刪除鍵 */
-        .post-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 20px; padding: 25px; margin-bottom: 20px; transition: 0.3s; }
-        .post-card:hover { border-color: var(--primary-accent); }
-        .delete-btn { color: var(--danger); cursor: pointer; font-size: 11px; opacity: 0.4; transition: 0.3s; margin-left: auto; letter-spacing: 1px; }
+        /* 貼文卡片 */
+        .post-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 20px; padding: 25px; margin-bottom: 20px; transition: 0.3s; position: relative; }
+        .post-card.admin-glow { border: 1px solid var(--success); box-shadow: 0 0 15px rgba(0, 255, 157, 0.1); }
+        .post-content { color: var(--text-dim); font-size: 14px; line-height: 1.6; margin: 15px 0; white-space: pre-wrap; }
+        .delete-btn { color: var(--danger); cursor: pointer; font-size: 11px; opacity: 0.4; transition: 0.3s; }
         .delete-btn:hover { opacity: 1; text-shadow: 0 0 10px var(--danger); }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; backdrop-filter: blur(10px); }
@@ -54,47 +58,38 @@
 
     <div id="auth-modal" class="modal">
         <div class="modal-content">
-            <h2 style="margin-bottom: 20px; color: var(--secondary-accent);">NODE ACCESS</h2>
-            <input type="email" id="auth-email" class="editor-input" placeholder="系統郵件 (Email)">
-            <input type="password" id="auth-password" class="editor-input" placeholder="存取密鑰 (Password)">
-            <button onclick="handleAuth('login')" class="editor-btn" style="width: 100%; margin-bottom: 10px;">授權登入</button>
-            <button onclick="handleAuth('signup')" class="editor-btn" style="width: 100%; background: transparent; border: 1px solid var(--text-dim);">註冊新節點</button>
-            <p onclick="closeModal()" style="margin-top: 15px; cursor: pointer; color: var(--text-dim); font-size: 12px;">取消訪問</p>
+            <h2 style="margin-bottom: 20px; color: var(--secondary-accent);">SECURE LOGIN</h2>
+            <input type="email" id="auth-email" class="editor-input" placeholder="Email">
+            <input type="password" id="auth-password" class="editor-input" placeholder="Password">
+            <button onclick="handleAuth('login')" class="editor-btn" style="width: 100%; margin-bottom: 10px;">進入節點</button>
+            <button onclick="handleAuth('signup')" class="editor-btn" style="width: 100%; background: transparent; border: 1px solid var(--text-dim);">註冊新身分</button>
+            <p onclick="closeModal()" style="margin-top: 15px; cursor: pointer; color: var(--text-dim); font-size: 12px;">取消</p>
         </div>
     </div>
 
     <nav class="navbar">
-        <a href="index.html" class="nav-logo">RemoteEye</a>
-        <div style="display: flex; align-items: center;">
-            <a href="index.html" style="color: var(--text-dim); text-decoration: none; font-size: 13px; margin-right: 20px;">首頁</a>
-            <a id="auth-trigger" onclick="openModal()">連線節點</a>
-        </div>
+        <a href="#" class="nav-logo">RemoteEye</a>
+        <a id="auth-trigger" onclick="openModal()">連線節點</a>
     </nav>
 
     <div class="forum-container">
         <main>
-            <div style="margin-bottom: 50px;">
-                <h1 style="font-size: 2.5rem; margin-bottom: 10px;">ADMIN <span style="color: var(--secondary-accent);">PROTOCOL</span></h1>
-                <p style="color: var(--text-dim);">正在監視雲端數據流... 管理員具備抹除權限。</p>
-            </div>
+            <h1 style="font-size: 2.5rem; margin-bottom: 30px;">ROOT <span style="color: var(--secondary-accent);">NODE</span></h1>
 
             <section class="post-editor">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <input type="text" id="post-author" class="editor-input" placeholder="尚未驗證" disabled>
-                    <input type="password" id="admin-key" class="editor-input" placeholder="管理員金鑰 (選填)">
-                </div>
-                <input type="text" id="post-title" class="editor-input" placeholder="在此輸入議題標題...">
-                <button id="submit-btn" onclick="addNewPost()" class="editor-btn">發送數據封包</button>
+                <input type="text" id="post-author" class="editor-input" value="GUEST" disabled>
+                <input type="text" id="post-title" class="editor-input" placeholder="數據標題...">
+                <textarea id="post-content" class="editor-input" style="height: 100px; resize: none;" placeholder="輸入封包內容..."></textarea>
+                <button onclick="addNewPost()" class="editor-btn">發送封包</button>
             </section>
 
             <div id="post-list"></div>
         </main>
 
         <aside class="sidebar">
-            <div class="sidebar-widget">
-                <div style="font-size: 14px; color: var(--secondary-accent); margin-bottom: 15px;">節點狀態</div>
-                <div id="user-display" style="font-size: 13px; color: var(--text-dim);">當前狀態: <span style="color: #ff7675;">UNAUTHORIZED</span></div>
-                <div style="font-size: 13px; color: var(--text-dim); margin-top: 10px;">資料抹除: <span id="admin-status" style="color: var(--success);">READY</span></div>
+            <div style="background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid var(--border-light);">
+                <div style="font-size: 12px; color: var(--secondary-accent); margin-bottom: 10px;">目前存取等級</div>
+                <div id="user-display" style="font-size: 16px; font-weight: bold; color: var(--danger);">LEVEL: GUEST</div>
             </div>
         </aside>
     </div>
@@ -102,7 +97,9 @@
     <script>
         const SUPABASE_URL = 'https://kbsamlpdfqdikwpilill.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtic2FtbHBkZnFkaWt3cGlsaWxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk2NzY4MTYsImV4cCI6MjA4NTI1MjgxNn0.JTJXBjiymJokrrkZj_iyvbSZMrdc99xhBsivRQ6lxuY';
-        const ADMIN_SECRET = "eye2026"; 
+        
+        // --- 核心設定：在這裡填入你在 Supabase 註冊的管理員 Email ---
+        const ADMIN_EMAIL = "admin@remote.com"; 
 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -115,17 +112,21 @@
             const { error } = (type === 'signup') 
                 ? await supabaseClient.auth.signUp({ email, password })
                 : await supabaseClient.auth.signInWithPassword({ email, password });
-
-            if(error) alert("錯誤: " + error.message);
-            else location.reload();
+            if(error) alert(error.message); else location.reload();
         }
 
         async function checkUser() {
             const { data: { user } } = await supabaseClient.auth.getUser();
             if(user) {
-                const username = user.email.split('@')[0];
-                document.getElementById('post-author').value = username;
-                document.getElementById('user-display').innerHTML = `當前狀態: <span style="color: var(--success);">${username}</span>`;
+                // 檢查是否為管理員
+                const isAdmin = (user.email === ADMIN_EMAIL);
+                const name = isAdmin ? "SYSTEM_ADMIN" : user.email.split('@')[0];
+                
+                document.getElementById('post-author').value = name;
+                document.getElementById('user-display').innerHTML = isAdmin ? 
+                    `<span style="color:var(--success)">LEVEL: ROOT</span>` : 
+                    `<span style="color:var(--secondary-accent)">LEVEL: USER (${name})</span>`;
+                
                 const btn = document.getElementById('auth-trigger');
                 btn.innerText = "中斷連線";
                 btn.onclick = async () => { await supabaseClient.auth.signOut(); location.reload(); };
@@ -140,65 +141,60 @@
         function renderPosts(postData) {
             const postList = document.getElementById('post-list');
             postList.innerHTML = postData.map(post => {
-                const isAdmin = (post.is_admin == 1);
+                const isAdminPost = (post.is_admin == 1);
                 return `
-                    <div class="post-card">
-                        <div style="display: flex; align-items: flex-start;">
+                    <div class="post-card ${isAdminPost ? 'admin-glow' : ''}">
+                        <div style="display: flex; justify-content: space-between;">
                             <div>
-                                ${isAdmin ? '<span class="status-badge">核心管理 [ADMIN]</span>' : ''}
-                                <a href="#" class="post-title" style="color: white; text-decoration: none; display: block; margin-bottom: 10px; font-weight: 600;">${post.title}</a>
+                                ${isAdminPost ? '<span class="status-badge">ROOT ACCESS</span>' : ''}
+                                <h3 style="color: var(--secondary-accent);">${post.title}</h3>
                             </div>
-                            <div class="delete-btn" onclick="deletePost('${post.id}')">[ 抹除數據 ]</div>
+                            <div class="delete-btn" onclick="deletePost('${post.id}')">[ 抹除 ]</div>
                         </div>
-                        <div class="post-meta" style="display: flex; gap: 15px; font-size: 11px; color: var(--text-dim);">
-                            <span ${isAdmin ? 'style="color:var(--success)"' : ''}>BY ${post.author}</span>
-                            <span style="color: var(--secondary-accent)"># ${post.category}</span>
-                            <span>${new Date(post.created_at).toLocaleDateString()}</span>
+                        <p class="post-content">${post.content}</p>
+                        <div style="font-size: 11px; color: rgba(255,255,255,0.2); border-top: 1px solid var(--border-light); padding-top: 10px;">
+                            <span ${isAdminPost ? 'style="color:var(--success);"' : ''}>BY ${post.author}</span>
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        // --- 刪除邏輯 ---
+        async function addNewPost() {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if(!user) return alert("請先連線節點");
+            
+            const title = document.getElementById('post-title').value;
+            const content = document.getElementById('post-content').value;
+            if(!title || !content) return alert("數據不可為空");
+
+            // 自動識別：如果是管理員登入，is_admin 就設為 1，名字設為 SYSTEM_ADMIN
+            const isAdmin = (user.email === ADMIN_EMAIL);
+
+            const { error } = await supabaseClient.from('posts').insert([{ 
+                title, 
+                content, 
+                author: isAdmin ? "SYSTEM_ADMIN" : user.email.split('@')[0], 
+                is_admin: isAdmin ? 1 : 0
+            }]);
+
+            if(!error) location.reload(); else alert(error.message);
+        }
+
         async function deletePost(postId) {
-            const verify = prompt("⚠️ 抹除操作：請輸入管理金鑰以驗證身分");
-            if (verify !== ADMIN_SECRET) return alert("驗證失敗：拒絕訪問");
-
-            if (!confirm("確定要從雲端永久刪除此項數據嗎？此動作不可逆。")) return;
-
-            const { error } = await supabaseClient.from('posts').delete().eq('id', postId);
-
-            if (error) alert("抹除失敗: " + error.message);
-            else {
-                alert("數據已成功抹除");
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            // 只有管理員帳號可以刪除
+            if (!user || user.email !== ADMIN_EMAIL) return alert("權限不足：僅限 ROOT 節點操作");
+            
+            if (confirm("確認從資料庫永久抹除此數據？")) {
+                await supabaseClient.from('posts').delete().eq('id', postId);
                 fetchPosts();
             }
         }
 
-        async function addNewPost() {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            if(!user) return alert("請先連線節點");
-            const titleInput = document.getElementById('post-title');
-            const keyInput = document.getElementById('admin-key');
-            const isAdmin = (keyInput.value === ADMIN_SECRET) ? 1 : 0;
-
-            await supabaseClient.from('posts').insert([{ 
-                title: titleInput.value, 
-                author: user.email.split('@')[0], 
-                is_admin: isAdmin,
-                category: isAdmin ? "核心公告" : "社群議題"
-            }]);
-            titleInput.value = '';
-            fetchPosts();
-        }
-
-        // 游標與初始化
         document.addEventListener('mousemove', e => {
-            const cursor = document.getElementById('custom-cursor');
-            const dot = document.getElementById('cursor-dot');
-            cursor.style.left = dot.style.left = e.clientX + 'px';
-            cursor.style.top = dot.style.top = e.clientY + 'px';
+            document.getElementById('custom-cursor').style.left = document.getElementById('cursor-dot').style.left = e.clientX + 'px';
+            document.getElementById('custom-cursor').style.top = document.getElementById('cursor-dot').style.top = e.clientY + 'px';
         });
 
         checkUser();
