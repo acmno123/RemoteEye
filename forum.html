@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RemoteEye Tech Hub | Ultimate</title>
+    <title>RemoteEye Tech Hub | Elite v2.1</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -12,12 +12,13 @@
             --secondary-accent: #00bcd4;
             --text-light: #ffffff;
             --text-dim: #a0a0a0;
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --border-light: rgba(255, 255, 255, 0.1);
-            --nav-bg: rgba(0, 0, 0, 0.85);
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border-light: rgba(255, 255, 255, 0.08);
+            --nav-bg: rgba(0, 0, 0, 0.8);
             --success: #00ff9d;
             --warning: #ffb86c;
             --danger: #ff4d4d;
+            --glow: 0 0 20px rgba(108, 92, 231, 0.3);
         }
 
         body.light-mode {
@@ -25,50 +26,55 @@
             --text-light: #1d1d1f;
             --text-dim: #6e6e73;
             --card-bg: #ffffff;
-            --border-light: rgba(0, 0, 0, 0.1);
+            --border-light: rgba(0, 0, 0, 0.08);
             --nav-bg: rgba(255, 255, 255, 0.85);
+            --glow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.4s ease, color 0.4s ease; }
-        body { cursor: none !important; font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--text-light); overflow-x: hidden; min-height: 100vh; }
+        * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.3s, border-color 0.3s; }
+        body { cursor: none !important; font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--text-light); overflow-x: hidden; line-height: 1.6; }
         
-        #custom-cursor { width: 25px; height: 25px; border: 1.5px solid var(--secondary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transition: transform 0.1s; transform: translate(-50%, -50%); }
-        #cursor-dot { width: 4px; height: 4px; background: var(--primary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10001; transform: translate(-50%, -50%); }
+        /* 游標 */
+        #custom-cursor { width: 30px; height: 30px; border: 1px solid var(--secondary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transition: transform 0.15s ease-out; transform: translate(-50%, -50%); }
+        #cursor-dot { width: 5px; height: 5px; background: var(--primary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10001; transform: translate(-50%, -50%); box-shadow: 0 0 10px var(--primary-accent); }
 
-        /* 建議 4: 上帝廣播跑馬燈 */
-        .broadcast-bar { display: none; background: linear-gradient(90deg, var(--danger), #ff00ff); color: white; padding: 10px; text-align: center; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; position: fixed; top: 60px; width: 100%; z-index: 999; animation: flash 1s infinite alternate; }
-        @keyframes flash { from { opacity: 0.8; } to { opacity: 1; } }
+        /* 廣播列 */
+        .broadcast-bar { display: none; background: linear-gradient(90deg, #6c5ce7, #ff4d4d); color: white; padding: 12px; text-align: center; font-size: 13px; font-weight: 700; position: fixed; top: 70px; width: 100%; z-index: 999; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
 
-        /* 建議 5: 響應式導覽列 */
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; width: 100%; position: fixed; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-light); }
-        .nav-left { display: flex; align-items: center; gap: 30px; }
-        .nav-logo { font-size: 22px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; white-space: nowrap; }
-        .nav-links { display: flex; gap: 20px; }
+        /* Navbar */
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 0 5%; height: 70px; width: 100%; position: fixed; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border-light); }
+        .nav-left { display: flex; align-items: center; gap: 40px; }
+        .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; letter-spacing: -1px; }
+        .nav-links { display: flex; gap: 25px; }
+        .nav-link-item { color: var(--text-dim); text-decoration: none; font-size: 14px; font-weight: 500; transition: 0.3s; }
+        .nav-link-item:hover, .nav-link-item.active { color: var(--text-light); text-shadow: var(--glow); }
+
+        /* 管理面板 */
+        #admin-panel { display: none; background: linear-gradient(145deg, rgba(108, 92, 231, 0.1), rgba(0,0,0,0.3)); border: 1px solid var(--primary-accent); border-radius: 20px; padding: 25px; margin-bottom: 40px; animation: slideIn 0.5s ease; }
+        @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* 貼文設計 */
+        .forum-container { max-width: 900px; margin: 120px auto 60px; padding: 0 20px; }
+        .post-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 16px; padding: 25px; margin-bottom: 20px; transition: 0.3s; }
+        .post-card:hover { border-color: var(--primary-accent); background: rgba(255,255,255,0.05); transform: translateY(-2px); }
         
-        @media (max-width: 768px) {
-            .nav-links { display: none; } /* 手機版隱藏連結 */
-            .nav-logo { font-size: 18px; }
-        }
+        /* 建議 3: API 測試器優化 */
+        .api-tester { background: #0a0a0a; border-radius: 12px; padding: 15px; border: 1px solid #222; position: relative; }
+        .api-output { color: var(--success); font-family: 'Fira Code', monospace; font-size: 12px; height: 60px; overflow-y: auto; margin-top: 8px; }
 
-        .nav-link-item { color: var(--text-dim); text-decoration: none; font-size: 14px; position: relative; }
-        .nav-link-item.active { color: var(--text-light); font-weight: 700; }
-
-        /* 建議 2: 下載進度條樣式 */
-        .download-track { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 10px; display: none; overflow: hidden; }
-        .download-bar { width: 0%; height: 100%; background: var(--success); box-shadow: 0 0 10px var(--success); }
-
-        /* 論壇卡片 */
-        .forum-container { max-width: 950px; margin: 120px auto 60px; padding: 0 5%; }
-        .post-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 24px; padding: 30px; margin-bottom: 25px; position: relative; }
+        /* 輸入與按鈕 */
+        .custom-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-light); color: var(--text-light); padding: 12px 18px; border-radius: 10px; outline: none; margin-bottom: 12px; }
+        .custom-input:focus { border-color: var(--secondary-accent); }
         
-        /* 建議 3: API 測試器樣式 */
-        .api-tester { background: #111; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px solid #333; }
-        .api-output { color: var(--success); font-family: 'Fira Code', monospace; font-size: 12px; margin-top: 10px; }
+        .action-btn { background: var(--primary-accent); color: white; border: none; padding: 12px 28px; border-radius: 50px; font-weight: 600; cursor: none; transition: 0.3s; box-shadow: var(--glow); }
+        .action-btn:hover { transform: scale(1.05); filter: brightness(1.2); }
+        .action-btn.secondary { background: var(--secondary-accent); }
 
-        .custom-input { width: 100%; background: var(--card-bg); border: 1px solid var(--border-light); color: var(--text-light); padding: 12px 20px; border-radius: 12px; outline: none; margin-bottom: 10px; }
-        .action-btn { background: var(--primary-accent); color: white; border: none; padding: 10px 25px; border-radius: 50px; font-weight: 600; cursor: none; }
-        
-        #admin-panel { display: none; background: rgba(108, 92, 231, 0.1); border: 2px dashed var(--primary-accent); border-radius: 24px; padding: 30px; margin-bottom: 40px; }
+        /* 下載動畫 */
+        .download-track { width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-top: 15px; display: none; position: relative; }
+        .download-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--success), var(--secondary-accent)); border-radius: 10px; transition: width 0.3s; }
+
+        @media (max-width: 768px) { .nav-links { display: none; } }
     </style>
 </head>
 <body onload="initApp()">
@@ -76,11 +82,11 @@
     <div id="custom-cursor"></div>
     <div id="cursor-dot"></div>
 
-    <div id="broadcast" class="broadcast-bar">系統公告：遠端監控引擎已升級至 v2.0，請開發者儘速更新密鑰</div>
+    <div id="broadcast" class="broadcast-bar"></div>
 
     <nav class="navbar">
         <div class="nav-left">
-            <a href="index.html" class="nav-logo">RemoteEye <small id="admin-indicator" style="color:var(--danger); display:none; font-size:10px;">[ROOT]</small></a>
+            <a href="index.html" class="nav-logo">RemoteEye<span id="admin-indicator" style="display:none; color:var(--danger); margin-left:8px; font-size:12px;">● ROOT</span></a>
             <div class="nav-links">
                 <a href="index.html" class="nav-link-item">首頁</a>
                 <a href="download.html" class="nav-link-item">下載</a>
@@ -88,67 +94,85 @@
                 <a href="#" class="nav-link-item active">論壇</a>
             </div>
         </div>
-        <div class="user-settings">
-            <input type="text" id="global-username" class="custom-input" style="width: 80px; margin: 0; padding: 5px 10px; font-size: 12px;" placeholder="名字">
-            <button class="theme-toggle" onclick="toggleTheme()" style="background:none; border:none; cursor:none; font-size:20px;">🌓</button>
+        <div class="user-settings" style="display:flex; align-items:center; gap:15px;">
+            <input type="text" id="global-username" class="custom-input" style="width: 100px; margin: 0; padding: 6px 12px; font-size: 13px;" placeholder="Username">
+            <button onclick="toggleTheme()" style="background:none; border:none; cursor:none; font-size:20px;">🌓</button>
         </div>
     </nav>
 
     <main class="forum-container">
         <div id="admin-panel">
-            <h3 style="color:var(--primary-accent); margin-bottom:15px;">🛡️ 管理員中樞</h3>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <h3 style="margin-bottom:20px; display:flex; align-items:center; gap:10px;">🛡️ ROOT CONTROL PANEL <span style="font-size:10px; background:var(--danger); padding:2px 6px; border-radius:4px;">SECURE</span></h3>
+            <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:20px;">
                 <div>
-                    <p style="font-size:12px; color:var(--text-dim);">全站跑馬燈公告：</p>
-                    <input type="text" id="broadcast-msg" class="custom-input" placeholder="輸入公告內容...">
-                    <button class="action-btn" onclick="sendBroadcast()" style="width:100%; font-size:12px;">發布廣播</button>
+                    <p style="font-size:12px; color:var(--text-dim); margin-bottom:8px;">發布全站廣播訊息：</p>
+                    <input type="text" id="broadcast-msg" class="custom-input" placeholder="系統公告內容...">
+                    <div style="display:flex; gap:10px;">
+                        <button class="action-btn" onclick="sendBroadcast()" style="flex:1; font-size:12px;">PUSH</button>
+                        <button class="action-btn" onclick="clearBroadcast()" style="background:#333; font-size:12px;">CLEAR</button>
+                    </div>
                 </div>
                 <div class="api-tester">
-                    <p style="font-size:12px; color:var(--secondary-accent);">API 模擬測試器 (v1)</p>
-                    <code style="font-size:10px; background:none; border:none; padding:0;">GET /api/v1/status</code>
-                    <div id="api-res" class="api-output">> 點擊下方按鈕測試...</div>
-                    <button class="action-btn" onclick="testAPI()" style="padding:5px 10px; font-size:10px; margin-top:5px; background:var(--secondary-accent);">RUN TEST</button>
+                    <p style="font-size:11px; color:var(--secondary-accent);">LIVE API DEBUGGER</p>
+                    <div id="api-res" class="api-output">> System Idle...</div>
+                    <button class="action-btn secondary" onclick="testAPI()" style="width:100%; padding:6px; font-size:10px; margin-top:8px;">EXECUTE FETCH</button>
                 </div>
             </div>
         </div>
 
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-            <h1>技術討論專區</h1>
-            <button class="action-btn" onclick="document.getElementById('postModal').style.display='block'">+ 發布貼文</button>
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:40px;">
+            <div>
+                <h1 style="font-size:32px; letter-spacing:-1px;">技術討論中樞</h1>
+                <p style="color:var(--text-dim); font-size:14px;">與全球開發者同步 RemoteEye 的最新進展。</p>
+            </div>
+            <button class="action-btn" onclick="openModal()">+ 發布話題</button>
         </div>
 
         <div id="post-list"></div>
+
+        <div class="post-card" style="border: 1px dashed var(--success); margin-top:40px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h4 style="color:var(--success)">RemoteEye SDK v2.1.0-beta</h4>
+                    <p style="font-size:12px; color:var(--text-dim);">包含加密通訊模組與效能分析工具 (ZIP, 184MB)</p>
+                </div>
+                <button class="action-btn" id="dl-btn" onclick="startDownload(this)" style="background:var(--success); color:#000;">DOWNLOAD</button>
+            </div>
+            <div class="download-track" id="dl-track"><div class="download-bar" id="dl-bar"></div></div>
+        </div>
     </main>
 
-    <div class="forum-container" style="margin-top:0;">
-        <div class="post-card" style="border: 1px solid var(--success);">
-            <h4>📦 官方開發者 SDK (v2.0)</h4>
-            <p style="font-size:12px; color:var(--text-dim); margin-top:5px;">包含所有 C++ 標頭檔與虛擬引擎插件。</p>
-            <button class="action-btn" onclick="startDownload(this)" style="background:var(--success); margin-top:15px; font-size:12px;">立即下載 (240MB)</button>
-            <div class="download-track"><div class="download-bar"></div></div>
-        </div>
-    </div>
-
-    <div id="postModal" class="modal">
-        <div class="modal-content">
-            <h2>新話題</h2>
+    <div id="postModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(10px); z-index:2000;">
+        <div style="background:var(--bg-dark); border:1px solid var(--primary-accent); width:90%; max-width:500px; margin:100px auto; padding:30px; border-radius:20px;">
+            <h2 style="margin-bottom:20px;">建立新討論</h2>
             <input type="text" id="post-title" class="custom-input" placeholder="標題">
-            <textarea id="post-text" class="custom-input" style="height:100px;" placeholder="內容..."></textarea>
-            <button class="action-btn" style="width:100%;" onclick="createNewPost()">發布</button>
-            <button onclick="document.getElementById('postModal').style.display='none'" style="width:100%; background:none; border:none; color:var(--text-dim); margin-top:10px;">取消</button>
+            <textarea id="post-text" class="custom-input" style="height:120px; resize:none;" placeholder="內容..."></textarea>
+            <button class="action-btn" style="width:100%;" onclick="createNewPost()">發布貼文</button>
+            <button onclick="closeModal()" style="width:100%; background:none; border:none; color:var(--text-dim); margin-top:15px;">取消</button>
         </div>
     </div>
 
     <script>
-        // --- 建議 1: 全域同步邏輯 ---
+        // --- 初始化 & 同步 ---
         function initApp() {
-            const savedName = localStorage.getItem('re_user') || "訪客";
+            const user = localStorage.getItem('re_user') || "Guest_" + Math.floor(Math.random()*999);
             const isDark = localStorage.getItem('re_theme') !== 'light';
-            const isDev = localStorage.getItem('is_re_dev') === 'true';
+            const isRoot = localStorage.getItem('is_re_dev') === 'true';
 
-            document.getElementById('global-username').value = savedName;
+            document.getElementById('global-username').value = user;
             if(!isDark) document.body.classList.add('light-mode');
-            if(isDev) document.getElementById('admin-indicator').style.display = 'inline';
+            if(isRoot) {
+                document.getElementById('admin-indicator').style.display = 'inline';
+                if(user === 'root') document.getElementById('admin-panel').style.display = 'block';
+            }
+
+            // 恢復廣播
+            const activeBroadcast = sessionStorage.getItem('re_broadcast');
+            if(activeBroadcast) {
+                const b = document.getElementById('broadcast');
+                b.innerText = activeBroadcast;
+                b.style.display = 'block';
+            }
 
             renderPosts();
         }
@@ -158,84 +182,122 @@
             localStorage.setItem('re_theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
         }
 
-        document.getElementById('global-username').onchange = (e) => {
-            localStorage.setItem('re_user', e.target.value);
-            // 建議 4: 喚醒管理面板
-            if(e.target.value === 'root' && localStorage.getItem('is_re_dev') === 'true') {
+        document.getElementById('global-username').addEventListener('input', (e) => {
+            const val = e.target.value;
+            localStorage.setItem('re_user', val);
+            if(val === 'root' && localStorage.getItem('is_re_dev') === 'true') {
                 document.getElementById('admin-panel').style.display = 'block';
+            } else {
+                document.getElementById('admin-panel').style.display = 'none';
             }
-        };
+        });
 
-        // --- 建議 2: 下載進度條 ---
-        function startDownload(btn) {
-            const track = btn.nextElementSibling;
-            const bar = track.querySelector('.download-bar');
-            btn.innerText = "連線安全伺服器中...";
-            btn.style.opacity = "0.5";
-            track.style.display = "block";
-            
-            let width = 0;
-            const interval = setInterval(() => {
-                if (width >= 100) {
-                    clearInterval(interval);
-                    btn.innerText = "下載完成 ✓";
-                    btn.style.background = "#555";
-                } else {
-                    width += Math.random() * 10;
-                    bar.style.width = width + "%";
-                }
-            }, 300);
-        }
-
-        // --- 建議 3: API 測試器 ---
-        function testAPI() {
-            const res = document.getElementById('api-res');
-            res.innerText = "> 連線中...";
-            setTimeout(() => {
-                res.innerHTML = `> 狀態: 200 OK<br>> 延遲: 24ms<br>> 核心版本: "RemoteEye-Core-v2.0.4"`;
-            }, 1000);
-        }
-
-        // --- 建議 4: 上帝廣播 ---
+        // --- 管理功能 ---
         function sendBroadcast() {
             const msg = document.getElementById('broadcast-msg').value;
-            const bar = document.getElementById('broadcast');
             if(!msg) return;
-            bar.innerText = "管理員廣播：" + msg;
-            bar.style.display = "block";
+            sessionStorage.setItem('re_broadcast', "GLOBAL NOTIFICATION: " + msg);
+            const b = document.getElementById('broadcast');
+            b.innerText = "GLOBAL NOTIFICATION: " + msg;
+            b.style.display = 'block';
         }
 
-        // 貼文系統
-        let posts = JSON.parse(localStorage.getItem('re_posts_v4')) || [
-            { id: 1, author: "官方團隊", title: "v2.0 更新日誌", content: "優化了隱身連線效率。", likes: 12 }
+        function clearBroadcast() {
+            sessionStorage.removeItem('re_broadcast');
+            document.getElementById('broadcast').style.display = 'none';
+        }
+
+        function testAPI() {
+            const out = document.getElementById('api-res');
+            out.innerHTML = `> [FETCH] Initializing...`;
+            setTimeout(() => {
+                out.innerHTML = `> [AUTH] Handshake Success<br>> [DATA] { status: "online", node: "HK-01" }`;
+            }, 800);
+        }
+
+        // --- 下載邏輯 ---
+        function startDownload(btn) {
+            const track = document.getElementById('dl-track');
+            const bar = document.getElementById('dl-bar');
+            btn.disabled = true;
+            btn.innerText = "PREPARING...";
+            track.style.display = "block";
+            
+            let prog = 0;
+            const timer = setInterval(() => {
+                prog += Math.random() * 15;
+                if(prog >= 100) {
+                    prog = 100;
+                    clearInterval(timer);
+                    btn.innerText = "COMPLETED";
+                    btn.style.background = "#333";
+                    btn.style.color = "#fff";
+                    alert("SDK 下載要求已發送至伺服器。");
+                }
+                bar.style.width = prog + "%";
+            }, 250);
+        }
+
+        // --- 貼文系統 ---
+        let posts = JSON.parse(localStorage.getItem('re_posts_v5')) || [
+            { id: 1, author: "System", title: "歡迎來到技術中樞", content: "這是您的第一個加密討論串。", likes: 5, date: "2026-01-29" }
         ];
 
         function createNewPost() {
-            const title = document.getElementById('post-title').value;
-            const text = document.getElementById('post-text').value;
-            const author = document.getElementById('global-username').value;
-            if(!title) return;
-            posts.unshift({ id: Date.now(), author, title, content: text, likes: 0 });
-            localStorage.setItem('re_posts_v4', JSON.stringify(posts));
-            location.reload();
+            const t = document.getElementById('post-title').value;
+            const c = document.getElementById('post-text').value;
+            if(!t || !c) return;
+            posts.unshift({
+                id: Date.now(),
+                author: document.getElementById('global-username').value,
+                title: t,
+                content: c,
+                likes: 0,
+                date: new Date().toISOString().split('T')[0]
+            });
+            localStorage.setItem('re_posts_v5', JSON.stringify(posts));
+            renderPosts();
+            closeModal();
         }
 
         function renderPosts() {
-            const container = document.getElementById('post-list');
-            container.innerHTML = posts.map(p => `
+            const list = document.getElementById('post-list');
+            list.innerHTML = posts.map(p => `
                 <div class="post-card">
-                    <small style="color:var(--primary-accent)">@${p.author}</small>
-                    <h3 style="margin:5px 0;">${p.title}</h3>
-                    <p style="color:var(--text-dim); font-size:14px;">${p.content}</p>
+                    <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--primary-accent); margin-bottom:10px;">
+                        <span>@${p.author}</span>
+                        <span style="color:var(--text-dim)">${p.date}</span>
+                    </div>
+                    <h3 style="margin-bottom:10px;">${p.title}</h3>
+                    <p style="color:var(--text-dim); font-size:14px; margin-bottom:15px;">${p.content}</p>
+                    <div style="border-top:1px solid var(--border-light); padding-top:10px;">
+                        <button onclick="likePost(${p.id})" style="background:none; border:none; color:var(--text-dim); cursor:none;">❤️ ${p.likes}</button>
+                    </div>
                 </div>
             `).join('');
         }
 
-        // 游標
+        function likePost(id) {
+            const p = posts.find(x => x.id === id);
+            p.likes++;
+            localStorage.setItem('re_posts_v5', JSON.stringify(posts));
+            renderPosts();
+        }
+
+        // --- 彈窗 & 游標 ---
+        function openModal() { document.getElementById('postModal').style.display = 'block'; }
+        function closeModal() { document.getElementById('postModal').style.display = 'none'; }
+
         const cursor = document.getElementById('custom-cursor'), dot = document.getElementById('cursor-dot');
         document.addEventListener('mousemove', e => {
             cursor.style.left = dot.style.left = e.clientX + 'px';
             cursor.style.top = dot.style.top = e.clientY + 'px';
+        });
+
+        // 游標 hover 效果
+        document.querySelectorAll('button, a, input').forEach(el => {
+            el.onmouseenter = () => cursor.style.transform = 'translate(-50%, -50%) scale(1.5)';
+            el.onmouseleave = () => cursor.style.transform = 'translate(-50%, -50%) scale(1)';
         });
     </script>
 </body>
