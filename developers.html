@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RemoteEye | Developer Hub</title>
+    <title>RemoteEye | 開發者貢獻</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -13,174 +13,127 @@
             --text-light: #ffffff;
             --text-dim: #a0a0a0;
             --card-bg: rgba(255, 255, 255, 0.03);
-            --border-light: rgba(255, 255, 255, 0.1);
-            --nav-bg: rgba(0, 0, 0, 0.8);
-            --code-bg: #1e1e1e;
+            --border-light: rgba(255, 255, 255, 0.08);
+            --success: #00ff9d;
+            --nav-bg: rgba(0, 0, 0, 0.85);
         }
 
-        body.light-mode {
-            --bg-dark: #f5f5f7;
-            --text-light: #1d1d1f;
-            --text-dim: #6e6e73;
-            --card-bg: #ffffff;
-            --border-light: rgba(0, 0, 0, 0.1);
-            --nav-bg: rgba(255, 255, 255, 0.8);
-            --code-bg: #f0f0f0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--text-light); cursor: none; }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.4s ease, color 0.4s ease; }
-        
-        body {
-            font-family: 'Space Grotesk', sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-light);
-            cursor: none !important;
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
+        /* 導航欄 (統一全站) */
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 0 5%; height: 75px; width: 100%; position: fixed; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-light); }
+        .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 14px; margin-left: 25px; transition: 0.3s; }
+        .nav-links a.active { color: var(--text-light); border-bottom: 2px solid var(--primary-accent); padding-bottom: 5px; }
 
-        /* 科技游標 */
-        #custom-cursor { width: 25px; height: 25px; border: 1.5px solid var(--secondary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transition: transform 0.1s; transform: translate(-50%, -50%); }
-        #cursor-dot { width: 4px; height: 4px; background: var(--primary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10001; transform: translate(-50%, -50%); }
+        /* Header Section */
+        .dev-header { padding: 180px 5% 60px; text-align: center; }
+        .dev-header h1 { font-size: clamp(2.5rem, 6vw, 4rem); margin-bottom: 20px; }
+        .dev-header p { color: var(--text-dim); max-width: 700px; margin: 0 auto 40px; }
 
-        /* 導航列 */
-        .navbar {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 5%; width: 100%; position: fixed; top: 0; z-index: 1000;
-            background: var(--nav-bg); backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--border-light);
-        }
-        .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; letter-spacing: -1px; }
-        
-        .nav-right { display: flex; align-items: center; gap: 25px; }
-        .nav-links { display: flex; gap: 20px; }
-        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 14px; font-weight: 500; transition: 0.3s; }
-        .nav-links a:hover { color: var(--text-light); }
-        .nav-links a.active { color: var(--primary-accent); font-weight: 700; }
+        /* Tech Stack Grid */
+        .tech-stack { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 20px; max-width: 900px; margin: 0 auto 100px; }
+        .tech-item { background: var(--card-bg); border: 1px solid var(--border-light); padding: 20px; border-radius: 15px; text-align: center; transition: 0.3s; }
+        .tech-item:hover { border-color: var(--secondary-accent); transform: translateY(-5px); }
+        .tech-item span { font-family: 'Fira Code', monospace; font-size: 12px; color: var(--secondary-accent); }
 
-        .theme-toggle {
-            background: var(--card-bg); border: 1px solid var(--border-light);
-            color: var(--text-light); padding: 8px; border-radius: 50%;
-            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
-            font-size: 18px; cursor: none;
-        }
+        /* Contributors Wall */
+        .contributors-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 30px; max-width: 1000px; margin: 0 auto 100px; }
+        .contributor-card { text-align: center; }
+        .contributor-card img { width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--border-light); margin-bottom: 15px; transition: 0.3s; }
+        .contributor-card:hover img { border-color: var(--primary-accent); transform: scale(1.1); }
+        .contributor-name { font-weight: 700; font-size: 14px; display: block; }
+        .contributor-role { font-size: 11px; color: var(--text-dim); }
 
-        /* 內容區 */
-        .dev-container { max-width: 1000px; margin: 120px auto 60px; padding: 0 5%; }
-        
-        .hero-title {
-            font-size: 3.5rem; margin-bottom: 20px;
-            background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
+        /* Preloader & Cursor */
+        #preloader { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; align-items: center; justify-content: center; transition: 0.5s; }
+        #custom-cursor { width: 30px; height: 30px; border: 1.5px solid var(--secondary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transform: translate(-50%, -50%); transition: transform 0.1s; }
+        #cursor-dot { width: 5px; height: 5px; background: var(--primary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10001; transform: translate(-50%, -50%); }
 
-        .section-card {
-            background: var(--card-bg); border: 1px solid var(--border-light);
-            border-radius: 24px; padding: 40px; margin-bottom: 30px;
-            backdrop-filter: blur(10px);
-        }
-
-        code {
-            font-family: 'Fira Code', monospace;
-            background: var(--code-bg);
-            padding: 2px 6px; border-radius: 4px; color: var(--secondary-accent);
-        }
-
-        .code-block {
-            background: #121212; color: #d4d4d4;
-            padding: 25px; border-radius: 15px; overflow-x: auto;
-            margin: 20px 0; border: 1px solid var(--border-light);
-            font-size: 14px; line-height: 1.5;
-        }
-
-        footer { padding: 60px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); }
-        footer a { color: var(--primary-accent); text-decoration: none; }
+        footer { padding: 40px; text-align: center; color: var(--text-dim); font-size: 12px; border-top: 1px solid var(--border-light); }
     </style>
 </head>
 <body>
 
+    <div id="preloader"><div style="width:30px; height:30px; border:2px solid var(--border-light); border-top-color:var(--primary-accent); border-radius:50%; animation:spin 1s linear infinite;"></div></div>
     <div id="custom-cursor"></div>
     <div id="cursor-dot"></div>
 
     <nav class="navbar">
         <a href="index.html" class="nav-logo">RemoteEye</a>
-        <div class="nav-right">
-            <div class="nav-links">
-                <a href="index.html">首頁</a>
-                <a href="download.html">下載</a>
-                <a href="forum.html">論壇</a>
-                <a href="developers.html" class="active">開發者</a>
-            </div>
-            <button class="theme-toggle" onclick="toggleTheme()" title="切換主題">🌓</button>
+        <div class="nav-links">
+            <a href="index.html">首頁</a>
+            <a href="download.html">下載中心</a>
+            <a href="forum.html">技術論壇</a>
+            <a href="developers.html" class="active">開發者貢獻</a>
         </div>
     </nav>
 
-    <main class="dev-container">
-        <h1 class="hero-title">Developer Hub</h1>
-        <p style="color: var(--text-dim); font-size: 1.2rem; margin-bottom: 50px;">
-            探索 RemoteEye 的核心架構，構建下一代協作工具。
-        </p>
+    <header class="dev-header">
+        <h1>BUILDING THE <span style="color:var(--primary-accent)">FUTURE.</span></h1>
+        <p>RemoteEye 是一個由全球開發者驅動的開源項目。我們致力於打破地理限制，創造最純粹的連線體驗。歡迎加入我們的 GitHub 社群。</p>
+        
+        <div class="tech-stack">
+            <div class="tech-item"><span>RUST</span><br><small>Core Engine</small></div>
+            <div class="tech-item"><span>WEBRTC</span><br><small>P2P Tunnel</small></div>
+            <div class="tech-item"><span>WASM</span><br><small>Frontend Opt</small></div>
+            <div class="tech-item"><span>TAURI</span><br><small>GUI Framework</small></div>
+            <div class="tech-item"><span>AES-256</span><br><small>Encryption</small></div>
+        </div>
+    </header>
 
-        <section class="section-card">
-            <h2 style="margin-bottom: 20px; color: var(--secondary-accent);">🚀 快速開始</h2>
-            <p>RemoteEye 提供強大的 SDK 供開發者整合。首先請克隆我們的開源倉庫：</p>
-            <div class="code-block">
-                git clone https://github.com/acmno123/RemoteEye.git<br>
-                cd RemoteEye<br>
-                npm install
+    <section style="padding: 0 5%;">
+        <h2 style="text-align:center; margin-bottom: 50px; font-size: 20px; letter-spacing: 2px;">CORE CONTRIBUTORS</h2>
+        <div class="contributors-grid" id="contributor-wall">
             </div>
-        </section>
+    </section>
 
-        <section class="section-card">
-            <h2 style="margin-bottom: 20px; color: var(--primary-accent);">🔌 API 節點</h2>
-            <p>透過我們的 WebSocket 介面實時獲取流數據。預設端點為：</p>
-            <code>wss://api.remoteeye.tech/v1/stream</code>
-            <p style="margin-top: 15px;">所有請求必須在 Header 中包含 <code>X-API-KEY</code>。</p>
-        </section>
+    <section style="max-width: 800px; margin: 0 auto 100px; padding: 40px; background: var(--card-bg); border-radius: 30px; border: 1px solid var(--border-light);">
+        <h3 style="margin-bottom: 20px;">如何貢獻？</h3>
+        <ul style="color: var(--text-dim); line-height: 2; font-size: 14px; padding-left: 20px;">
+            <li>提交 Issue：回報 Bug 或提出新功能建議。</li>
+            <li>Pull Request：修復代碼問題或優化影像傳輸算法。</li>
+            <li>翻譯計畫：幫助我們將 RemoteEye 推向更多語系。</li>
+            <li>文檔編寫：完善技術白皮書。</li>
+        </ul>
+        <a href="https://github.com/acmno123/RemoteEye" target="_blank" style="display:inline-block; margin-top:30px; color:var(--success); text-decoration:none; font-weight:700;">前往 GitHub 專案 →</a>
+    </section>
 
-        <section class="section-card">
-            <h2 style="margin-bottom: 20px; color: var(--success, #00ff9d);">🛠 開源授權</h2>
-            <p>RemoteEye 基於 <strong>MIT License</strong> 發佈。您可以自由地修改、分發並用於商業用途，僅需保留原作者版權聲明。</p>
-        </section>
-    </main>
-
-    <footer>
-        <p>© 2026 RemoteEye Technology. 致力於開源協作的未來。</p>
-    </footer>
+    <footer>© 2026 RemoteEye Technology Global. </footer>
 
     <script>
-        // --- 核心邏輯：主題切換 ---
-        function toggleTheme() {
-            document.body.classList.toggle('light-mode');
-            const mode = document.body.classList.contains('light-mode') ? 'light' : 'dark';
-            localStorage.setItem('re_theme', mode);
-        }
-
-        // 載入使用者偏好
-        if (localStorage.getItem('re_theme') === 'light') {
-            document.body.classList.add('light-mode');
-        }
-
-        // --- 科技游標邏輯 ---
+        // 游標邏輯
         const cursor = document.getElementById('custom-cursor');
         const dot = document.getElementById('cursor-dot');
-        
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-            dot.style.left = e.clientX + 'px';
-            dot.style.top = e.clientY + 'px';
+        document.addEventListener('mousemove', e => {
+            cursor.style.left = dot.style.left = e.clientX + 'px';
+            cursor.style.top = dot.style.top = e.clientY + 'px';
         });
 
-        // 懸停放大效果
-        document.querySelectorAll('a, button, .section-card').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor.style.transform = 'translate(-50%, -50%) scale(1.5)');
-            el.addEventListener('mouseleave', () => cursor.style.transform = 'translate(-50%, -50%) scale(1)');
-        });
+        // Preloader
+        window.onload = () => { document.getElementById('preloader').style.opacity = '0'; setTimeout(()=>document.getElementById('preloader').remove(), 500); };
 
-        // 防止文字選擇時游標干擾
-        document.addEventListener('mousedown', () => cursor.style.transform = 'translate(-50%, -50%) scale(0.8)');
-        document.addEventListener('mouseup', () => cursor.style.transform = 'translate(-50%, -50%) scale(1.5)');
+        // 模擬抓取 GitHub 貢獻者 (這裡你可以換成真實的 API)
+        const mockContributors = [
+            { name: "Acmno123", role: "Project Lead", avatar: "https://github.com/acmno123.png" },
+            { name: "Dev_Core", role: "Rust Engineer", avatar: "https://i.pravatar.cc/150?u=1" },
+            { name: "PixelArt", role: "UI/UX Designer", avatar: "https://i.pravatar.cc/150?u=2" },
+            { name: "NetWizard", role: "P2P Specialist", avatar: "https://i.pravatar.cc/150?u=3" },
+            { name: "SafeMode", role: "Security Audit", avatar: "https://i.pravatar.cc/150?u=4" }
+        ];
+
+        const wall = document.getElementById('contributor-wall');
+        mockContributors.forEach(dev => {
+            wall.innerHTML += `
+                <div class="contributor-card">
+                    <img src="${dev.avatar}" alt="${dev.name}">
+                    <span class="contributor-name">${dev.name}</span>
+                    <span class="contributor-role">${dev.role}</span>
+                </div>
+            `;
+        });
     </script>
+    <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
 </body>
 </html>
