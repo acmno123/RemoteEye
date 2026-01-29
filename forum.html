@@ -16,16 +16,14 @@
             --border-light: rgba(255, 255, 255, 0.08);
             --success: #00ff9d;
             --nav-bg: rgba(0, 0, 0, 0.85);
-            --neon-blue: #00d2ff;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--text-light); cursor: none; overflow-x: hidden; }
 
-        /* 導航欄 (統一全站五大板塊) */
+        /* 導航欄 */
         .navbar { display: flex; justify-content: space-between; align-items: center; padding: 0 5%; height: 75px; width: 100%; position: fixed; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-light); }
         .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
-        /* 微調間距以容納 5 個項目 */
         .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 13px; margin-left: 20px; transition: 0.3s; }
         .nav-links a:hover, .nav-links a.active { color: var(--text-light); }
         .nav-links a.active { border-bottom: 2px solid var(--secondary-accent); padding-bottom: 5px; }
@@ -33,31 +31,29 @@
         /* 論壇布局 */
         .forum-container { display: grid; grid-template-columns: 1fr 320px; gap: 40px; max-width: 1300px; margin: 150px auto 100px; padding: 0 5%; }
 
-        /* 側邊分類與標籤 */
-        .category-bar { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
-        .tag { padding: 8px 20px; border-radius: 50px; background: var(--card-bg); border: 1px solid var(--border-light); font-size: 13px; cursor: pointer; transition: 0.3s; }
-        .tag:hover, .tag.active { border-color: var(--secondary-accent); background: rgba(0, 188, 212, 0.1); color: var(--secondary-accent); }
+        /* 發布區域 */
+        .post-editor { background: var(--card-bg); border: 1px solid var(--border-light); padding: 30px; border-radius: 24px; margin-bottom: 40px; transition: 0.3s; }
+        .post-editor:focus-within { border-color: var(--primary-accent); background: rgba(108, 92, 231, 0.05); }
+        .editor-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-light); padding: 12px 20px; border-radius: 12px; color: white; font-family: 'Space Grotesk'; outline: none; margin-bottom: 15px; transition: 0.3s; }
+        .editor-input:focus { border-color: var(--secondary-accent); }
+        .editor-btn { background: var(--primary-accent); color: white; border: none; padding: 12px 30px; border-radius: 50px; cursor: pointer; font-weight: 700; transition: 0.3s; }
+        .editor-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(108, 92, 231, 0.4); }
 
         /* 帖子列表 */
-        .post-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 20px; padding: 25px; margin-bottom: 20px; transition: 0.4s; position: relative; overflow: hidden; }
-        .post-card:hover { transform: translateX(10px); border-color: var(--primary-accent); background: rgba(108, 92, 231, 0.05); }
-        .post-card::before { content: ""; position: absolute; left: 0; top: 0; height: 100%; width: 4px; background: var(--primary-accent); opacity: 0; transition: 0.3s; }
-        .post-card:hover::before { opacity: 1; }
-
+        .post-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 20px; padding: 25px; margin-bottom: 20px; transition: 0.4s; position: relative; animation: slideIn 0.5s ease-out; }
+        .post-card:hover { transform: translateX(10px); border-color: var(--primary-accent); }
         .post-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 10px; display: block; color: var(--text-light); text-decoration: none; }
-        .post-meta { display: flex; gap: 20px; font-size: 12px; color: var(--text-dim); flex-wrap: wrap; }
+        .post-meta { display: flex; gap: 20px; font-size: 12px; color: var(--text-dim); }
         .status-badge { padding: 2px 10px; border-radius: 4px; font-size: 10px; background: rgba(0, 255, 157, 0.1); color: var(--success); border: 1px solid var(--success); margin-bottom: 10px; display: inline-block; }
 
-        /* 側欄小組件 */
+        /* 側欄 */
         .sidebar-widget { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 24px; padding: 25px; margin-bottom: 30px; }
-        .widget-title { font-size: 14px; letter-spacing: 1px; color: var(--secondary-accent); margin-bottom: 20px; text-transform: uppercase; }
-        .stat-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 13px; }
 
-        /* 游標 & 動畫 */
+        /* 游標 */
         #custom-cursor { width: 30px; height: 30px; border: 1.5px solid var(--secondary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transform: translate(-50%, -50%); transition: transform 0.1s; }
         #cursor-dot { width: 5px; height: 5px; background: var(--primary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10001; transform: translate(-50%, -50%); }
 
-        @media (max-width: 900px) { .forum-container { grid-template-columns: 1fr; } .sidebar { display: none; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -80,16 +76,17 @@
         <main>
             <div style="margin-bottom: 50px;">
                 <h1 style="font-size: 2.5rem; margin-bottom: 10px;">COMMUNITY <span style="color: var(--secondary-accent);">CORE</span></h1>
-                <p style="color: var(--text-dim);">在這裡分享你的優化腳本、回報連線問題或與全球開發者交流技術。</p>
+                <p style="color: var(--text-dim);">發布數據議題並與全球開發者同步。</p>
             </div>
 
-            <div class="category-bar">
-                <div class="tag active">全部主題</div>
-                <div class="tag">開發討論</div>
-                <div class="tag">Bug 回報</div>
-                <div class="tag">優化建議</div>
-                <div class="tag">硬體相容性</div>
-            </div>
+            <section class="post-editor">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <input type="text" id="post-author" class="editor-input" placeholder="你的暱稱">
+                    <input type="password" id="admin-key" class="editor-input" placeholder="管理員金鑰 (選填)">
+                </div>
+                <input type="text" id="post-title" class="editor-input" placeholder="在此輸入議題標題...">
+                <button onclick="addNewPost()" class="editor-btn">發送數據封包</button>
+            </section>
 
             <div id="post-list">
                 </div>
@@ -97,21 +94,16 @@
 
         <aside class="sidebar">
             <div class="sidebar-widget">
-                <div class="widget-title">系統狀態指標</div>
-                <div class="stat-row"><span>總討論數</span><span style="color: var(--text-light);">14,208</span></div>
-                <div class="stat-row"><span>今日活躍</span><span style="color: var(--success);">+142</span></div>
-                <div class="stat-row"><span>平均解決時間</span><span style="color: var(--secondary-accent);">2.4h</span></div>
-            </div>
-
-            <div class="sidebar-widget" style="background: linear-gradient(145deg, rgba(108, 92, 231, 0.1), rgba(0, 0, 0, 0));">
-                <div class="widget-title">參與開源</div>
-                <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 15px;">我們正在尋找專注於 WebRTC 優化的開發者。</p>
-                <a href="developers.html" style="color: var(--primary-accent); text-decoration: none; font-size: 13px; font-weight: 700;">查看招募計畫 →</a>
+                <div style="font-size: 14px; color: var(--secondary-accent); margin-bottom: 15px;">論壇狀態</div>
+                <div style="font-size: 13px; color: var(--text-dim);">當前活躍節點: <span style="color: var(--success);">Online</span></div>
+                <div style="font-size: 13px; color: var(--text-dim); margin-top: 10px;">管理員權限: <span id="admin-status">未驗證</span></div>
             </div>
         </aside>
     </div>
 
     <script>
+        const ADMIN_SECRET = "eye2026"; // 你的管理員暗號
+
         // 游標邏輯
         const cursor = document.getElementById('custom-cursor');
         const dot = document.getElementById('cursor-dot');
@@ -120,34 +112,68 @@
             cursor.style.top = dot.style.top = e.clientY + 'px';
         });
 
-        // 模擬帖子數據
+        // 初始帖子
         const posts = [
-            { title: "如何解決在 macOS Sequoia 下的渲染延遲問題？", author: "TechGuru", replies: 42, views: "1.2k", category: "Bug 回報", solved: true },
-            { title: "RemoteEye 自研 Frame-Turbo 2.0 算法詳解", author: "Acmno123", replies: 156, views: "8.5k", category: "開發討論", solved: false },
-            { title: "分享：我用 Rust 寫的 P2P 節點自動負載均衡腳本", author: "Rustacean_99", replies: 28, views: "900", category: "優化建議", solved: false },
-            { title: "內測版 v2.2.0 已發佈：支援 AV1 硬體解碼", author: "System_Bot", replies: 89, views: "3.2k", category: "公告", solved: true }
+            { title: "RemoteEye 自研 Frame-Turbo 2.0 算法詳解", author: "Acmno123", category: "開發討論", isAdmin: true },
+            { title: "如何解決在 macOS 下的渲染延遲問題？", author: "TechGuru", category: "Bug 回報", isAdmin: false }
         ];
 
-        const postList = document.getElementById('post-list');
-        posts.forEach(post => {
-            postList.innerHTML += `
-                <div class="post-card hover-target">
-                    ${post.solved ? '<span class="status-badge">已解決 [RESOLVED]</span>' : ''}
-                    <a href="#" class="post-title">${post.title}</a>
-                    <div class="post-meta">
-                        <span>BY ${post.author}</span>
-                        <span>討論度: ${post.replies}</span>
-                        <span>瀏覽量: ${post.views}</span>
-                        <span style="color: var(--secondary-accent)"># ${post.category}</span>
+        function renderPosts() {
+            const postList = document.getElementById('post-list');
+            postList.innerHTML = '';
+            posts.forEach(post => {
+                const adminTag = post.isAdmin ? '<span class="status-badge" style="border-color: var(--success); color: var(--success);">核心管理 [ADMIN]</span>' : '';
+                const authorStyle = post.isAdmin ? 'style="color: var(--success); font-weight: bold;"' : '';
+                
+                postList.innerHTML += `
+                    <div class="post-card">
+                        ${adminTag}
+                        <a href="#" class="post-title">${post.title}</a>
+                        <div class="post-meta">
+                            <span ${authorStyle}>BY ${post.author}</span>
+                            <span style="color: var(--secondary-accent)"># ${post.category}</span>
+                        </div>
                     </div>
-                </div>
-            `;
-        });
+                `;
+            });
+        }
 
-        // 磁吸效果與導航欄互動
-        document.querySelectorAll('.hover-target, .tag, a').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor.style.transform = 'translate(-50%, -50%) scale(1.5)');
-            el.addEventListener('mouseleave', () => cursor.style.transform = 'translate(-50%, -50%) scale(1)');
+        function addNewPost() {
+            const title = document.getElementById('post-title').value;
+            const author = document.getElementById('post-author').value || "未知節點";
+            const key = document.getElementById('admin-key').value;
+
+            if (!title) return alert("請輸入議題標題");
+
+            const isAdmin = (key === ADMIN_SECRET);
+            
+            // 將新貼文加入數組最前方
+            posts.unshift({
+                title: title,
+                author: author,
+                category: "社群議題",
+                isAdmin: isAdmin
+            });
+
+            if(isAdmin) document.getElementById('admin-status').innerText = "已驗證 [ROOT]";
+
+            renderPosts();
+            
+            // 清空
+            document.getElementById('post-title').value = '';
+            document.getElementById('admin-key').value = '';
+        }
+
+        renderPosts();
+
+        // 磁吸效果
+        document.addEventListener('mouseover', e => {
+            if(e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.classList.contains('editor-input')) {
+                cursor.style.transform = 'translate(-50%, -50%) scale(1.5)';
+            }
+        });
+        document.addEventListener('mouseout', e => {
+            cursor.style.transform = 'translate(-50%, -50%) scale(1)';
         });
     </script>
 </body>
