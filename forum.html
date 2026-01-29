@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RemoteEye | 技術論壇 (Live)</title>
+    <title>RemoteEye | 技術論壇 (Secure)</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
@@ -22,39 +22,31 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--text-light); cursor: none; overflow-x: hidden; }
 
-        /* 導航欄 */
         .navbar { display: flex; justify-content: space-between; align-items: center; padding: 0 5%; height: 75px; width: 100%; position: fixed; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-light); }
         .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
+        .nav-links { display: flex; align-items: center; }
         .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 13px; margin-left: 20px; transition: 0.3s; }
         .nav-links a:hover, .nav-links a.active { color: var(--text-light); }
-        .nav-links a.active { border-bottom: 2px solid var(--secondary-accent); padding-bottom: 5px; }
+        
+        /* 登入按鈕樣式 */
+        #auth-trigger { color: var(--success); border: 1px solid var(--success); padding: 5px 15px; border-radius: 50px; cursor: pointer; }
 
-        /* 論壇布局 */
         .forum-container { display: grid; grid-template-columns: 1fr 320px; gap: 40px; max-width: 1300px; margin: 150px auto 100px; padding: 0 5%; }
 
-        /* 發布區域 */
-        .post-editor { background: var(--card-bg); border: 1px solid var(--border-light); padding: 30px; border-radius: 24px; margin-bottom: 40px; transition: 0.3s; }
-        .post-editor:focus-within { border-color: var(--primary-accent); background: rgba(108, 92, 231, 0.05); }
-        .editor-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-light); padding: 12px 20px; border-radius: 12px; color: white; font-family: 'Space Grotesk'; outline: none; margin-bottom: 15px; transition: 0.3s; }
-        .editor-input:focus { border-color: var(--secondary-accent); }
+        .post-editor { background: var(--card-bg); border: 1px solid var(--border-light); padding: 30px; border-radius: 24px; margin-bottom: 40px; }
+        .editor-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-light); padding: 12px 20px; border-radius: 12px; color: white; outline: none; margin-bottom: 15px; transition: 0.3s; }
+        .editor-input:disabled { opacity: 0.5; cursor: not-allowed; }
         .editor-btn { background: var(--primary-accent); color: white; border: none; padding: 12px 30px; border-radius: 50px; cursor: pointer; font-weight: 700; transition: 0.3s; }
-        .editor-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* 帖子列表 */
-        .post-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 20px; padding: 25px; margin-bottom: 20px; transition: 0.4s; position: relative; animation: slideIn 0.5s ease-out; }
-        .post-card:hover { transform: translateX(10px); border-color: var(--primary-accent); }
-        .post-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 10px; display: block; color: var(--text-light); text-decoration: none; }
-        .post-meta { display: flex; gap: 20px; font-size: 11px; color: var(--text-dim); }
+        /* 彈窗樣式 */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; backdrop-filter: blur(10px); }
+        .modal-content { background: var(--card-bg); width: 350px; margin: 15vh auto; padding: 40px; border: 1px solid var(--primary-accent); border-radius: 24px; text-align: center; }
+
+        .post-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 20px; padding: 25px; margin-bottom: 20px; }
         .status-badge { padding: 2px 10px; border-radius: 4px; font-size: 10px; background: rgba(0, 255, 157, 0.1); color: var(--success); border: 1px solid var(--success); margin-bottom: 10px; display: inline-block; }
 
-        /* 側欄 */
-        .sidebar-widget { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 24px; padding: 25px; margin-bottom: 30px; }
-
-        /* 游標 */
         #custom-cursor { width: 30px; height: 30px; border: 1.5px solid var(--secondary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transform: translate(-50%, -50%); transition: transform 0.1s; }
         #cursor-dot { width: 5px; height: 5px; background: var(--primary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10001; transform: translate(-50%, -50%); }
-
-        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -62,54 +54,134 @@
     <div id="custom-cursor"></div>
     <div id="cursor-dot"></div>
 
+    <div id="auth-modal" class="modal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 20px; color: var(--secondary-accent);">NODE ACCESS</h2>
+            <input type="email" id="auth-email" class="editor-input" placeholder="系統郵件 (Email)">
+            <input type="password" id="auth-password" class="editor-input" placeholder="存取密鑰 (Password)">
+            <button onclick="handleAuth('login')" class="editor-btn" style="width: 100%; margin-bottom: 10px;">授權登入</button>
+            <button onclick="handleAuth('signup')" class="editor-btn" style="width: 100%; background: transparent; border: 1px solid var(--text-dim);">註冊新節點</button>
+            <p onclick="closeModal()" style="margin-top: 15px; cursor: pointer; color: var(--text-dim); font-size: 12px;">取消訪問</p>
+        </div>
+    </div>
+
     <nav class="navbar">
         <a href="index.html" class="nav-logo">RemoteEye</a>
         <div class="nav-links">
             <a href="index.html">首頁</a>
-            <a href="download.html">下載中心</a>
             <a href="forum.html" class="active">技術論壇</a>
-            <a href="developers.html">開發者貢獻</a>
-            <a href="feedback.html">意見回饋</a>
+            <a id="auth-trigger" onclick="openModal()">連線節點</a>
         </div>
     </nav>
 
     <div class="forum-container">
         <main>
             <div style="margin-bottom: 50px;">
-                <h1 style="font-size: 2.5rem; margin-bottom: 10px;">LIVE <span style="color: var(--secondary-accent);">NODE</span></h1>
-                <p style="color: var(--text-dim);">已連線至全球即時數據庫。</p>
+                <h1 style="font-size: 2.5rem; margin-bottom: 10px;">SECURE <span style="color: var(--secondary-accent);">NODE</span></h1>
+                <p style="color: var(--text-dim);">驗證身分以解鎖高級通訊權限。</p>
             </div>
 
             <section class="post-editor">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <input type="text" id="post-author" class="editor-input" placeholder="你的暱稱">
+                    <input type="text" id="post-author" class="editor-input" placeholder="尚未驗證身分" disabled>
                     <input type="password" id="admin-key" class="editor-input" placeholder="管理員金鑰 (選填)">
                 </div>
                 <input type="text" id="post-title" class="editor-input" placeholder="在此輸入議題標題...">
                 <button id="submit-btn" onclick="addNewPost()" class="editor-btn">發送數據封包</button>
             </section>
 
-            <div id="post-list">
-                <div style="text-align: center; padding: 50px; color: var(--text-dim);">同步中...</div>
-            </div>
+            <div id="post-list"></div>
         </main>
 
         <aside class="sidebar">
             <div class="sidebar-widget">
-                <div style="font-size: 14px; color: var(--secondary-accent); margin-bottom: 15px;">雲端狀態</div>
-                <div style="font-size: 13px; color: var(--text-dim);">通訊埠: <span id="sync-status" style="color: var(--success);">ESTABLISHED</span></div>
-                <div style="font-size: 13px; color: var(--text-dim); margin-top: 10px;">管理員權限: <span id="admin-status">未授權</span></div>
+                <div style="font-size: 14px; color: var(--secondary-accent); margin-bottom: 15px;">身分識別</div>
+                <div id="user-display" style="font-size: 13px; color: var(--text-dim);">當前狀態: <span style="color: #ff7675;">GUEST_NODE</span></div>
+                <div style="font-size: 13px; color: var(--text-dim); margin-top: 10px;">權限等級: <span id="admin-status">LEVEL_0</span></div>
             </div>
         </aside>
     </div>
 
     <script>
-        // --- 核心配置 ---
         const SUPABASE_URL = 'https://kbsamlpdfqdikwpilill.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtic2FtbHBkZnFkaWt3cGlsaWxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk2NzY4MTYsImV4cCI6MjA4NTI1MjgxNn0.JTJXBjiymJokrrkZj_iyvbSZMrdc99xhBsivRQ6lxuY';
         const ADMIN_SECRET = "eye2026"; 
 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // --- Auth 邏輯 ---
+        function openModal() { document.getElementById('auth-modal').style.display = 'block'; }
+        function closeModal() { document.getElementById('auth-modal').style.display = 'none'; }
+
+        async function handleAuth(type) {
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+            if(!email || !password) return alert("請輸入完整憑證");
+
+            const { data, error } = (type === 'signup') 
+                ? await supabaseClient.auth.signUp({ email, password })
+                : await supabaseClient.auth.signInWithPassword({ email, password });
+
+            if(error) alert("驗證失敗: " + error.message);
+            else {
+                alert(type === 'signup' ? "註冊成功！" : "節點連線成功");
+                location.reload();
+            }
+        }
+
+        async function checkUser() {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if(user) {
+                const username = user.email.split('@')[0];
+                document.getElementById('post-author').value = username;
+                document.getElementById('user-display').innerHTML = `當前狀態: <span style="color: var(--success);">${username}</span>`;
+                const btn = document.getElementById('auth-trigger');
+                btn.innerText = "斷開連線";
+                btn.onclick = async () => { await supabaseClient.auth.signOut(); location.reload(); };
+            }
+        }
+
+        // --- 核心功能 (保持與之前一致) ---
+        async function fetchPosts() {
+            const { data, error } = await supabaseClient.from('posts').select('*').order('created_at', { ascending: false });
+            if (data) renderPosts(data);
+        }
+
+        function renderPosts(postData) {
+            const postList = document.getElementById('post-list');
+            postList.innerHTML = postData.map(post => {
+                const isAdmin = (post.is_admin == 1);
+                return `
+                    <div class="post-card">
+                        ${isAdmin ? '<span class="status-badge">核心管理 [ADMIN]</span>' : ''}
+                        <a href="#" class="post-title">${post.title}</a>
+                        <div class="post-meta">
+                            <span ${isAdmin ? 'style="color:var(--success); font-weight:bold"' : ''}>BY ${post.author}</span>
+                            <span style="color: var(--secondary-accent)"># ${post.category || '社群議題'}</span>
+                            <span style="opacity:0.5">${new Date(post.created_at).toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function addNewPost() {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if(!user) return alert("請先連線節點 (登入)");
+
+            const titleInput = document.getElementById('post-title');
+            const keyInput = document.getElementById('admin-key');
+            const isAdmin = (keyInput.value === ADMIN_SECRET) ? 1 : 0;
+
+            const { error } = await supabaseClient.from('posts').insert([{ 
+                title: titleInput.value, 
+                author: user.email.split('@')[0], 
+                is_admin: isAdmin,
+                category: isAdmin ? "核心公告" : "社群議題"
+            }]);
+
+            if(!error) { titleInput.value = ''; fetchPosts(); }
+        }
 
         // 游標邏輯
         const cursor = document.getElementById('custom-cursor');
@@ -119,98 +191,8 @@
             cursor.style.top = dot.style.top = e.clientY + 'px';
         });
 
-        async function fetchPosts() {
-            document.getElementById('sync-status').innerText = "Syncing...";
-            const { data, error } = await supabaseClient
-                .from('posts')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            if (error) {
-                console.error('Fetch Error:', error);
-                document.getElementById('post-list').innerHTML = '<div style="color:#ff7675">連線失敗: 驗證未通過或欄位錯誤。</div>';
-                return;
-            }
-            renderPosts(data);
-            document.getElementById('sync-status').innerText = "Connected";
-        }
-
-        function renderPosts(postData) {
-            const postList = document.getElementById('post-list');
-            postList.innerHTML = '';
-            
-            if (!postData || postData.length === 0) {
-                postList.innerHTML = '<div style="text-align:center; color:var(--text-dim); padding:40px;">緩衝區為空。</div>';
-                return;
-            }
-
-            postData.forEach(post => {
-                const isAdmin = (post.is_admin == 1); // 這裡改用數字 1 判斷
-                const adminTag = isAdmin ? '<span class="status-badge" style="border-color: var(--success); color: var(--success);">核心管理 [ADMIN]</span>' : '';
-                const authorStyle = isAdmin ? 'style="color: var(--success); font-weight: bold;"' : '';
-                const date = new Date(post.created_at).toLocaleDateString();
-                
-                postList.innerHTML += `
-                    <div class="post-card">
-                        ${adminTag}
-                        <a href="#" class="post-title">${post.title}</a>
-                        <div class="post-meta">
-                            <span ${authorStyle}>BY ${post.author}</span>
-                            <span style="color: var(--secondary-accent)"># ${post.category || '社群議題'}</span>
-                            <span style="opacity:0.5">${date}</span>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        async function addNewPost() {
-            const titleInput = document.getElementById('post-title');
-            const authorInput = document.getElementById('post-author');
-            const keyInput = document.getElementById('admin-key');
-            const btn = document.getElementById('submit-btn');
-
-            if (!titleInput.value) return alert("請輸入標題");
-
-            btn.disabled = true;
-            btn.innerText = "加密傳輸中...";
-
-            const isAdminStatus = (keyInput.value === ADMIN_SECRET) ? 1 : 0; // 傳送 1 或 0
-
-            const { error } = await supabaseClient
-                .from('posts')
-                .insert([
-                    { 
-                        title: titleInput.value, 
-                        author: authorInput.value || "匿名節點", 
-                        is_admin: isAdminStatus, 
-                        category: (isAdminStatus === 1) ? "核心公告" : "社群議題"
-                    }
-                ]);
-
-            if (error) {
-                alert("錯誤: " + error.message);
-            } else {
-                if(isAdminStatus === 1) document.getElementById('admin-status').innerText = "已授權 [ROOT]";
-                titleInput.value = '';
-                keyInput.value = '';
-                await fetchPosts();
-            }
-            btn.disabled = false;
-            btn.innerText = "發送數據封包";
-        }
-
+        checkUser();
         fetchPosts();
-
-        // 磁吸效果
-        document.addEventListener('mouseover', e => {
-            if(e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.classList.contains('editor-input')) {
-                cursor.style.transform = 'translate(-50%, -50%) scale(1.5)';
-            }
-        });
-        document.addEventListener('mouseout', e => {
-            cursor.style.transform = 'translate(-50%, -50%) scale(1)';
-        });
     </script>
 </body>
 </html>
