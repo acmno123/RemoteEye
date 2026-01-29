@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RemoteEye | 意見回饋</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -21,7 +22,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--text-light); cursor: none; overflow: hidden; }
 
-        /* 導航欄 (與其他頁面保持統一) */
+        /* 導航欄 */
         .navbar { display: flex; justify-content: space-between; align-items: center; padding: 0 5%; height: 75px; width: 100%; position: fixed; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-light); }
         .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
         .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 13px; margin-left: 25px; transition: 0.3s; }
@@ -30,13 +31,11 @@
         /* 回饋中心布局 */
         .feedback-wrapper { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 5%; }
         .feedback-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 32px; padding: 50px; width: 100%; max-width: 600px; backdrop-filter: blur(10px); position: relative; }
-        
         .terminal-header { display: flex; gap: 8px; margin-bottom: 30px; }
         .dot { width: 10px; height: 10px; border-radius: 50%; }
 
         .input-group { margin-bottom: 25px; }
         .input-group label { display: block; font-size: 12px; color: var(--secondary-accent); margin-bottom: 10px; font-family: 'Fira Code', monospace; }
-        
         input, textarea { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-light); border-radius: 12px; padding: 15px; color: white; outline: none; transition: 0.3s; font-family: 'Fira Code', monospace; }
         input:focus, textarea:focus { border-color: var(--primary-accent); background: rgba(108, 92, 231, 0.1); }
 
@@ -46,7 +45,7 @@
         /* 傳送動畫層 */
         #sending-overlay { display: none; position: fixed; inset: 0; background: #000; z-index: 2000; flex-direction: column; align-items: center; justify-content: center; font-family: 'Fira Code', monospace; }
         .progress-bar { width: 250px; height: 2px; background: #111; margin-top: 20px; position: relative; overflow: hidden; }
-        .progress-fill { width: 0%; height: 100%; background: var(--secondary-accent); position: absolute; transition: 2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .progress-fill { width: 0%; height: 100%; background: var(--secondary-accent); position: absolute; transition: 1s cubic-bezier(0.4, 0, 0.2, 1); }
 
         /* 游標 */
         #custom-cursor { width: 30px; height: 30px; border: 1.5px solid var(--secondary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transform: translate(-50%, -50%); transition: transform 0.1s; }
@@ -77,24 +76,24 @@
                 <div class="dot" style="background: #27c93f;"></div>
             </div>
             <h2 style="margin-bottom: 10px;">傳送反饋封包</h2>
-            <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 30px;">您的數據將經過 TLS 1.3 加密傳送至核心節點。</p>
+            <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 30px;">您的數據將直接同步至 RemoteEye 核心資料庫。</p>
             
             <form id="feedbackForm">
                 <div class="input-group">
-                    <label>> NODE_IDENTIFIER</label>
+                    <label>> NODE_IDENTIFIER (名稱/Email)</label>
                     <input type="text" id="user_id" placeholder="例如: User_77" required>
                 </div>
                 <div class="input-group">
-                    <label>> DATA_PAYLOAD (您的反饋)</label>
-                    <textarea id="message" rows="5" placeholder="輸入建議或問題回報..." required></textarea>
+                    <label>> DATA_PAYLOAD (反饋內容)</label>
+                    <textarea id="message" rows="5" placeholder="請描述您的問題或建議..." required></textarea>
                 </div>
-                <button type="submit" class="submit-btn">封裝並傳送 PROTOCOL →</button>
+                <button type="submit" class="submit-btn">執行加密傳輸 PROTOCOL →</button>
             </form>
         </div>
     </div>
 
     <div id="sending-overlay">
-        <div style="color: var(--secondary-accent); font-size: 18px; letter-spacing: 2px;">UPLOADING_DATA_PACKET...</div>
+        <div id="status-text" style="color: var(--secondary-accent); font-size: 18px; letter-spacing: 2px;">UPLOADING_DATA_PACKET...</div>
         <div id="terminal-log" style="font-size: 11px; color: #555; margin-top: 15px; text-align: center;">> Initializing Secure Tunnel...</div>
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill"></div>
@@ -102,7 +101,12 @@
     </div>
 
     <script>
-        // 1. 游標邏輯
+        // 1. Supabase 配置 (請替換為你的實際金鑰)
+        const SUPABASE_URL = 'https://kbsamlpdfqdikwpilill.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtic2FtbHBkZnFkaWt3cGlsaWxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk2NzY4MTYsImV4cCI6MjA4NTI1MjgxNn0.JTJXBjiymJokrrkZj_iyvbSZMrdc99xhBsivRQ6lxuY';
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // 2. 游標邏輯
         const cursor = document.getElementById('custom-cursor');
         const dot = document.getElementById('cursor-dot');
         document.addEventListener('mousemove', e => {
@@ -110,44 +114,68 @@
             cursor.style.top = dot.style.top = e.clientY + 'px';
         });
 
-        // 2. 表單提交動畫邏輯
+        // 3. 表單提交與 Supabase 寫入
         const form = document.getElementById('feedbackForm');
         const overlay = document.getElementById('sending-overlay');
         const progressFill = document.getElementById('progressFill');
         const log = document.getElementById('terminal-log');
+        const statusText = document.getElementById('status-text');
 
-        // 這裡可以填入你的 Google 表單連結
-        const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSd87313wWqTvsPIvBVqZ5iznxgx5QH7uUg0tkq996iXwjATpQ/viewform";
-
-        form.onsubmit = (e) => {
+        form.onsubmit = async (e) => {
             e.preventDefault();
             
+            const u_id = document.getElementById('user_id').value;
+            const msg = document.getElementById('message').value;
+
             // 顯示全螢幕動畫
             overlay.style.display = 'flex';
-            
-            // 階段性動畫流程
-            setTimeout(() => {
-                progressFill.style.width = '40%';
-                log.innerText = "> Performing AES-256 Handshake...";
-                
+            progressFill.style.width = '30%';
+            log.innerText = "> Establishing TLS 1.3 Handshake...";
+
+            try {
+                // 執行 Supabase 寫入
+                const { error } = await _supabase
+                    .from('feedback')
+                    .insert([{ 
+                        name: u_id, 
+                        message: msg, 
+                        type: 'Web_Form',
+                        email: u_id // 暫時將 ID 存入 Email 欄位
+                    }]);
+
+                if (error) throw error;
+
+                // 寫入成功，跑完剩餘動畫
                 setTimeout(() => {
-                    progressFill.style.width = '80%';
-                    log.innerText = "> Data Encapsulation Complete. Relaying to Google_Node...";
+                    progressFill.style.width = '70%';
+                    log.innerText = "> AES-256 Encryption Complete. Synchronizing...";
                     
                     setTimeout(() => {
                         progressFill.style.width = '100%';
-                        log.innerText = "> Redirecting to Submission Gateway...";
+                        log.innerText = "> DATA_PACKET_RECEIVED. SUCCESS.";
+                        statusText.innerText = "UPLOAD_COMPLETE";
+                        statusText.style.color = "var(--success)";
                         
-                        // 動畫跑完後跳轉
                         setTimeout(() => {
-                            window.location.href = GOOGLE_FORM_URL;
-                        }, 800);
-                    }, 1000);
-                }, 1000);
-            }, 500);
+                            window.location.href = 'index.html'; // 成功後跳轉回首頁
+                        }, 1200);
+                    }, 800);
+                }, 800);
+
+            } catch (err) {
+                console.error(err);
+                log.innerText = "> CRITICAL_ERROR: SECURE_LINK_BROKEN";
+                log.style.color = "#ff5f56";
+                statusText.innerText = "UPLOAD_FAILED";
+                
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    alert("傳輸失敗，請檢查網路連線或 RLS 政策設定。");
+                }, 2000);
+            }
         };
 
-        // 3. 磁吸效果 (滑鼠移到按鈕上游標會放大)
+        // 4. 磁吸效果
         document.querySelectorAll('input, textarea, button, a').forEach(el => {
             el.addEventListener('mouseenter', () => cursor.style.transform = 'translate(-50%, -50%) scale(1.5)');
             el.addEventListener('mouseleave', () => cursor.style.transform = 'translate(-50%, -50%) scale(1)');
