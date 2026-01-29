@@ -239,7 +239,6 @@
             dot.style.top = e.clientY + 'px';
         });
 
-        // 游標互動效果
         document.querySelectorAll('a, button, .download-card, .community-card').forEach(el => {
             el.addEventListener('mouseenter', () => cursor.style.transform = 'translate(-50%, -50%) scale(1.5)');
             el.addEventListener('mouseleave', () => cursor.style.transform = 'translate(-50%, -50%) scale(1)');
@@ -249,7 +248,6 @@
         function detectOS() {
             const userAgent = window.navigator.userAgent.toLowerCase();
             let targetId = "";
-
             if (userAgent.includes('win')) targetId = "os-windows";
             else if (userAgent.includes('mac')) targetId = "os-mac";
             else if (userAgent.includes('linux')) targetId = "os-linux";
@@ -262,7 +260,44 @@
             }
         }
 
-        const RELEASE_URL = "https://github.com/acmno123/RemoteEye/releases";
+        // --- [重要更新] 直連下載路徑設定 ---
+        const DOWNLOAD_LINKS = {
+            'Windows': './files/RemoteEye_Setup.exe',
+            'macOS': './files/RemoteEye_Mac.dmg',
+            'Linux': './files/RemoteEye_Linux.AppImage'
+        };
+
+        // --- [重要更新] 處理下載函數 ---
+        function handleDownload(btn, platform) {
+            const originalText = btn.innerText;
+            const downloadUrl = DOWNLOAD_LINKS[platform];
+
+            // 視覺回饋
+            btn.innerText = "🚀 正在啟動安全下載...";
+            btn.style.opacity = "0.7";
+            btn.style.pointerEvents = "none";
+
+            setTimeout(() => {
+                // 建立隱藏下載連結
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = `RemoteEye_${platform}`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // 更新狀態
+                btn.innerText = "下載已開始！";
+                btn.style.background = "var(--success)";
+                
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.style.opacity = "1";
+                    btn.style.background = "var(--primary-accent)";
+                    btn.style.pointerEvents = "auto";
+                }, 3000);
+            }, 800);
+        }
 
         // 主題切換
         function toggleTheme() {
@@ -270,18 +305,6 @@
             localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
         }
         if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');
-
-        // 下載處理
-        function handleDownload(btn, platform) {
-            const originalText = btn.innerText;
-            btn.innerText = "正在準備安全連結...";
-            btn.style.opacity = "0.7";
-            setTimeout(() => {
-                window.open(RELEASE_URL, '_blank');
-                btn.innerText = originalText;
-                btn.style.opacity = "1";
-            }, 800);
-        }
 
         // 滾動進度條
         window.onscroll = () => {
@@ -331,7 +354,7 @@
         }), { threshold: 0.1 });
         document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
         
-        window.onload = detectOS; // 頁面加載後啟動偵測
+        window.onload = detectOS;
 
         // 3D 視差
         document.querySelectorAll('.download-card').forEach(card => {
