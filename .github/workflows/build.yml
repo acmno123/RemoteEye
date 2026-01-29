@@ -1,55 +1,48 @@
-name: Multi-Platform Build
+name: Build Cross-Platform Apps
 
 on:
   push:
-    branches: [ main ]
+    tags:
+      - 'v*' # 當你推送 v1.0 等標籤時觸發
 
 jobs:
-  build:
-    name: Build on ${{ matrix.os }}
+  release:
     runs-on: ${{ matrix.os }}
+
     strategy:
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
+        # 同時在 Mac 和 Ubuntu 上執行
+        os: [macos-latest, ubuntu-latest]
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: 檢出程式碼
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
+      - name: 安裝 Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
 
-    - name: Install Linux Dependencies
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y python3-tk tk-dev libx11-dev libxext-dev libxinerama-dev libxrandr-dev libxcursor-dev
+      - name: 安裝依賴
+        run: npm install
 
-    - name: Install Python Libraries
-      run: |
-        python -m pip install --upgrade pip
-        pip install customtkinter mss pillow pyautogui pyinstaller
+      - name: 編譯應用程式
+        # 這裡會根據不同的 OS 執行對應的打包指令
+        run: |
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            npm run build -- --mac dmg
+          elif [ "$RUNNER_OS" == "Linux" ]; then
+            npm run build -- --linux AppImage
+          fi
 
-    - name: Build Executable
-      shell: bash  # 強制所有系統使用 bash 語法，避免 PowerShell 衝突
-      run: |
-        # 跨平台獲取 customtkinter 路徑
-        CTK_PATH=$(python -c "import customtkinter; import os; print(customtkinter.__path__[0])")
-        
-        # 根據作業系統決定分隔符 (Windows 用 ; 其他用 :)
-        if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-          SEP=";"
-        else
-          SEP=":"
-        fi
-        
-        # 執行 PyInstaller
-        python -m PyInstaller --noconfirm --onefile --windowed --add-data "${CTK_PATH}${SEP}customtkinter/" RemoteEye_Global.py
-
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: RemoteEye-${{ matrix.os }}
-        path: dist/*
+      - name: 上傳 Release 檔案
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          # 它會自動抓取 dist 資料夾下的 .dmg 或 .AppImage
+          files: |
+            dist/*.dmg
+            dist/*.AppImage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
