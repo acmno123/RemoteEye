@@ -27,7 +27,7 @@
             --nav-bg: rgba(255, 255, 255, 0.8);
         }
 
-        /* --- [新增] 科技游標 CSS --- */
+        /* --- 科技游標 CSS --- */
         body { cursor: none !important; }
         a, button, .download-card, .community-card, .theme-toggle { cursor: none !important; }
 
@@ -115,7 +115,6 @@
         }
         .download-card:hover { border-color: var(--secondary-accent); }
         
-        /* 推薦標籤樣式 */
         .recommended-badge {
             color: var(--success); font-size: 12px; font-weight: 700; 
             margin-bottom: 10px; display: block; letter-spacing: 1px;
@@ -188,13 +187,13 @@
             <div class="download-card fade-in" id="os-mac">
                 <div style="font-size: 50px; margin-bottom: 10px;">🍎</div>
                 <h3>macOS</h3>
-                <p style="font-size: 13px; color: var(--text-dim); margin: 15px 0;">通用版 (Intel / M1 / M2 / M3)</p>
+                <p style="font-size: 13px; color: var(--text-dim); margin: 15px 0;">通用版 (Intel / Apple Silicon)</p>
                 <button class="download-btn" onclick="handleDownload(this, 'macOS')">取得 DMG</button>
             </div>
             <div class="download-card fade-in" id="os-linux">
                 <div style="font-size: 50px; margin-bottom: 10px;">🐧</div>
                 <h3>Linux</h3>
-                <p style="font-size: 13px; color: var(--text-dim); margin: 15px 0;">AppImage / Debian 套件</p>
+                <p style="font-size: 13px; color: var(--text-dim); margin: 15px 0;">跨發行版通用封裝 (.AppImage)</p>
                 <button class="download-btn" onclick="handleDownload(this, 'Linux')">取得封裝檔</button>
             </div>
         </div>
@@ -228,7 +227,7 @@
     </footer>
 
     <script>
-        // --- [新增] 科技游標控制 ---
+        // --- 科技游標控制 ---
         const cursor = document.getElementById('custom-cursor');
         const dot = document.getElementById('cursor-dot');
         
@@ -244,7 +243,7 @@
             el.addEventListener('mouseleave', () => cursor.style.transform = 'translate(-50%, -50%) scale(1)');
         });
 
-        // --- [新增] OS 自動偵測邏輯 ---
+        // --- OS 自動偵測邏輯 ---
         function detectOS() {
             const userAgent = window.navigator.userAgent.toLowerCase();
             let targetId = "";
@@ -260,43 +259,42 @@
             }
         }
 
-        // --- [重要更新] 直連下載路徑設定 ---
+        // --- [重要修正] 指向 GitHub Releases 的最新下載路徑 ---
+        const GITHUB_USER = "acmno123";
+        const REPO_NAME = "RemoteEye";
+        const GITHUB_BASE = `https://github.com/${GITHUB_USER}/${REPO_NAME}/releases/latest/download`;
+
         const DOWNLOAD_LINKS = {
-            'Windows': './files/RemoteEye_Setup.exe',
-            'macOS': './files/RemoteEye_Mac.dmg',
-            'Linux': './files/RemoteEye_Linux.AppImage'
+            'Windows': `${GITHUB_BASE}/RemoteEye.exe`,
+            'macOS': `${GITHUB_BASE}/RemoteEye.dmg`,
+            'Linux': `${GITHUB_BASE}/RemoteEye.AppImage`
         };
 
-        // --- [重要更新] 處理下載函數 ---
+        // --- [優化] 處理下載函數 ---
         function handleDownload(btn, platform) {
             const originalText = btn.innerText;
             const downloadUrl = DOWNLOAD_LINKS[platform];
 
-            // 視覺回饋
-            btn.innerText = "🚀 正在啟動安全下載...";
+            btn.innerText = "🚀 正在連線 GitHub...";
             btn.style.opacity = "0.7";
             btn.style.pointerEvents = "none";
 
-            setTimeout(() => {
-                // 建立隱藏下載連結
-                const link = document.createElement('a');
-                link.href = downloadUrl;
-                link.download = `RemoteEye_${platform}`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+            // 直接觸發 GitHub 直連下載
+            window.location.href = downloadUrl;
 
-                // 更新狀態
-                btn.innerText = "下載已開始！";
+            setTimeout(() => {
+                btn.innerText = "✅ 下載已啟動";
                 btn.style.background = "var(--success)";
+                btn.style.color = "#000";
                 
                 setTimeout(() => {
                     btn.innerText = originalText;
                     btn.style.opacity = "1";
                     btn.style.background = "var(--primary-accent)";
+                    btn.style.color = "#fff";
                     btn.style.pointerEvents = "auto";
-                }, 3000);
-            }, 800);
+                }, 4000);
+            }, 1000);
         }
 
         // 主題切換
@@ -348,7 +346,7 @@
         }
         window.onresize = init; init(); draw();
 
-        // 滾動動畫與偵測 OS
+        // 滾動動畫
         const observer = new IntersectionObserver(e => e.forEach(entry => {
             if (entry.isIntersecting) entry.target.classList.add('active');
         }), { threshold: 0.1 });
