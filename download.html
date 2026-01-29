@@ -32,7 +32,7 @@
         #cursor-dot { width: 5px; height: 5px; background: var(--primary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10001; transform: translate(-50%, -50%); }
         .cursor-active { transform: translate(-50%, -50%) scale(1.5) !important; background: rgba(0, 188, 212, 0.1); }
 
-        /* 導航欄 - 統一規格 */
+        /* 導航欄 */
         .navbar { display: flex; justify-content: space-between; align-items: center; padding: 0 5%; height: 75px; width: 100%; position: fixed; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-light); }
         .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
         .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 13px; margin-left: 20px; transition: 0.3s; }
@@ -130,7 +130,7 @@
             el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-active'));
         });
 
-        // 3. GitHub API
+        // 3. GitHub API 獲取最新版本
         async function fetchVersion() {
             try {
                 const res = await fetch('https://api.github.com/repos/acmno123/RemoteEye/releases/latest');
@@ -142,7 +142,7 @@
         }
         fetchVersion();
 
-        // 4. 下載邏輯
+        // 4. 下載邏輯與自動跳轉
         function openGuide(os) {
             const repo = "acmno123/RemoteEye";
             const fileNames = {
@@ -157,24 +157,52 @@
                 <h2 style="color:var(--secondary-accent); margin-bottom:15px;">準備傳輸 ${os.toUpperCase()} 引擎</h2>
                 <div class="terminal-text">
                     > 來源: GitHub Global CDN<br>
-                    > 狀態: <span style="color:var(--success)">等待數據握手...</span><br>
+                    > 狀態: <span id="sync-status" style="color:var(--success)">等待數據握手...</span><br>
                     > 加密: TLS 1.3 隧道
                 </div>
-                <p style="font-size:14px; color:var(--text-dim); margin-bottom:20px;">點擊下方按鈕啟動數據接收。</p>
+                <p id="guide-desc" style="font-size:14px; color:var(--text-dim); margin-bottom:20px;">點擊下方按鈕啟動數據接收。</p>
                 
-                <a href="${downloadUrl}" style="text-decoration:none;" onclick="this.querySelector('button').innerText='正在下載...'; setTimeout(closeGuide, 3000);">
-                    <button class="download-btn hover-target">啟動數據接收</button>
-                </a>
+                <button id="start-btn" class="download-btn hover-target" onclick="triggerDownload('${downloadUrl}')">
+                    啟動數據接收
+                </button>
             `;
             document.getElementById('guideOverlay').style.display = 'flex';
         }
 
+        async function triggerDownload(url) {
+            const btn = document.getElementById('start-btn');
+            const status = document.getElementById('sync-status');
+            const desc = document.getElementById('guide-desc');
+
+            // 增加儀式感動畫
+            btn.disabled = true;
+            btn.innerText = "正在傳輸...";
+            status.innerText = "正在同步封包中...";
+            desc.innerText = "請勿關閉視窗，準備跳轉感謝頁面...";
+
+            // 模擬傳輸時間
+            await new Promise(r => setTimeout(r, 1500));
+
+            // 執行下載
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', '');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // 下載啟動後，立即跳轉到感謝頁面
+            setTimeout(() => {
+                window.location.href = 'thanks.html';
+            }, 1000);
+        }
+
         function closeGuide() { document.getElementById('guideOverlay').style.display = 'none'; }
 
-        // 背景粒子
+        // 背景粒子動畫
         const canvas = document.getElementById('particleCanvas'), ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        let p = Array.from({length: 30}, () => ({x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: 0.2, vy: 0.2}));
+        let p = Array.from({length: 30}, () => ({x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5}));
         function draw() {
             ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = "#6c5ce7";
             p.forEach(i => { i.x+=i.vx; i.y+=i.vy; if(i.x>canvas.width) i.x=0; if(i.y>canvas.height) i.y=0; ctx.beginPath(); ctx.arc(i.x,i.y,1,0,7); ctx.fill(); });
