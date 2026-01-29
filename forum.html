@@ -22,17 +22,19 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--text-light); cursor: none; overflow-x: hidden; }
 
-        /* 導航欄 (統一全站) */
+        /* 導航欄 (統一全站五大板塊) */
         .navbar { display: flex; justify-content: space-between; align-items: center; padding: 0 5%; height: 75px; width: 100%; position: fixed; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-light); }
         .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
-        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 14px; margin-left: 25px; transition: 0.3s; }
-        .nav-links a.active { color: var(--text-light); border-bottom: 2px solid var(--secondary-accent); padding-bottom: 5px; }
+        /* 微調間距以容納 5 個項目 */
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 13px; margin-left: 20px; transition: 0.3s; }
+        .nav-links a:hover, .nav-links a.active { color: var(--text-light); }
+        .nav-links a.active { border-bottom: 2px solid var(--secondary-accent); padding-bottom: 5px; }
 
         /* 論壇布局 */
         .forum-container { display: grid; grid-template-columns: 1fr 320px; gap: 40px; max-width: 1300px; margin: 150px auto 100px; padding: 0 5%; }
 
         /* 側邊分類與標籤 */
-        .category-bar { display: flex; gap: 15px; margin-bottom: 30px; }
+        .category-bar { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
         .tag { padding: 8px 20px; border-radius: 50px; background: var(--card-bg); border: 1px solid var(--border-light); font-size: 13px; cursor: pointer; transition: 0.3s; }
         .tag:hover, .tag.active { border-color: var(--secondary-accent); background: rgba(0, 188, 212, 0.1); color: var(--secondary-accent); }
 
@@ -43,8 +45,8 @@
         .post-card:hover::before { opacity: 1; }
 
         .post-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 10px; display: block; color: var(--text-light); text-decoration: none; }
-        .post-meta { display: flex; gap: 20px; font-size: 12px; color: var(--text-dim); }
-        .status-badge { padding: 2px 10px; border-radius: 4px; font-size: 10px; background: rgba(0, 255, 157, 0.1); color: var(--success); border: 1px solid var(--success); }
+        .post-meta { display: flex; gap: 20px; font-size: 12px; color: var(--text-dim); flex-wrap: wrap; }
+        .status-badge { padding: 2px 10px; border-radius: 4px; font-size: 10px; background: rgba(0, 255, 157, 0.1); color: var(--success); border: 1px solid var(--success); margin-bottom: 10px; display: inline-block; }
 
         /* 側欄小組件 */
         .sidebar-widget { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 24px; padding: 25px; margin-bottom: 30px; }
@@ -70,6 +72,7 @@
             <a href="download.html">下載中心</a>
             <a href="forum.html" class="active">技術論壇</a>
             <a href="developers.html">開發者貢獻</a>
+            <a href="feedback.html">意見回饋</a>
         </div>
     </nav>
 
@@ -141,7 +144,7 @@
             `;
         });
 
-        // 磁吸效果增加感官體驗
+        // 磁吸效果與導航欄互動
         document.querySelectorAll('.hover-target, .tag, a').forEach(el => {
             el.addEventListener('mouseenter', () => cursor.style.transform = 'translate(-50%, -50%) scale(1.5)');
             el.addEventListener('mouseleave', () => cursor.style.transform = 'translate(-50%, -50%) scale(1)');

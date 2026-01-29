@@ -31,11 +31,11 @@
         #cursor-dot { width: 5px; height: 5px; background: var(--primary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10001; transform: translate(-50%, -50%); }
         .cursor-active { transform: translate(-50%, -50%) scale(1.5) !important; background: rgba(0, 188, 212, 0.1); }
 
-        /* 導航欄 */
+        /* 導航欄 - 修正間距以容納五個選項 */
         .navbar { display: flex; justify-content: space-between; align-items: center; padding: 0 5%; height: 75px; width: 100%; position: fixed; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-light); }
         .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
-        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 14px; margin-left: 25px; transition: 0.3s; }
-        .nav-links a:hover { color: var(--text-light); }
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 13px; margin-left: 20px; transition: 0.3s; }
+        .nav-links a:hover, .nav-links a.active { color: var(--text-light); }
 
         /* Hero Section */
         .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 5%; }
@@ -45,7 +45,7 @@
         .btn-primary { background: var(--primary-accent); color: white; padding: 18px 35px; border-radius: 50px; text-decoration: none; font-weight: 700; transition: 0.3s; }
         .btn-secondary { border: 1px solid var(--border-light); color: white; padding: 18px 35px; border-radius: 50px; text-decoration: none; transition: 0.3s; }
 
-        /* 功能區塊 - 玻璃擬態 */
+        /* 功能區塊 */
         #features { padding: 100px 5%; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
         .glass-card { background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid var(--border-light); border-radius: 32px; padding: 40px; transition: 0.4s ease; }
         .glass-card:hover { transform: translateY(-10px); border-color: var(--primary-accent); background: rgba(255,255,255,0.05); }
@@ -75,9 +75,11 @@
     <nav class="navbar">
         <a href="index.html" class="nav-logo">RemoteEye</a>
         <div class="nav-links">
+            <a href="index.html" class="active">首頁</a>
             <a href="download.html">下載中心</a>
             <a href="forum.html">技術論壇</a>
             <a href="developers.html">開發者貢獻</a>
+            <a href="feedback.html">意見回饋</a>
         </div>
     </nav>
 
@@ -87,7 +89,7 @@
         <p>為下一代協作而生。RemoteEye 基於加密 P2P 隧道技術，將延遲降至物理極限，數據僅在您的裝置間流動。</p>
         <div class="cta-group">
             <a href="download.html" class="btn-primary hover-target">立即獲取引擎</a>
-            <a href="#features" class="btn-secondary hover-target">技術白皮書</a>
+            <a href="feedback.html" class="btn-secondary hover-target">提供反饋</a>
         </div>
     </section>
 
@@ -128,15 +130,7 @@
         </div>
     </section>
 
-    <section style="text-align: center; padding: 60px 0 100px;">
-        <div class="hover-target" style="display: inline-flex; align-items: center; gap: 12px; background: #0a0a0a; border: 1px solid #222; padding: 12px 25px; border-radius: 50px;">
-            <span style="font-size: 18px;">⭐</span>
-            <span style="font-size: 14px; font-weight: 500;">GitHub Stars: <span id="star-count" style="color:var(--success)">--</span></span>
-            <a href="https://github.com/acmno123/RemoteEye" target="_blank" style="color: var(--primary-accent); text-decoration: none; font-size: 12px; margin-left: 10px;">源碼庫 →</a>
-        </div>
-    </section>
-
-    <footer>© 2026 RemoteEye Technology Global. </footer>
+    <footer style="margin-top: 50px;">© 2026 RemoteEye Technology Global. </footer>
 
     <script>
         // 1. Preloader 邏輯
@@ -176,14 +170,7 @@
         });
 
         // 4. 動態 Log
-        const logs = [
-            "[INFO] Secure Tunnel Established.",
-            "[NETWORK] P2P node matching success.",
-            "[SECURE] AES-256 Handshake verified.",
-            "[GLOBAL] Node connected: Tokyo (HND-1)",
-            "[INFO] Optimized via Frame-Turbo 2.0",
-            "[SYSTEM] Memory usage: 42MB"
-        ];
+        const logs = ["[INFO] Secure Tunnel Established.", "[NETWORK] P2P node matching success.", "[SECURE] AES-256 Handshake verified.", "[GLOBAL] Node connected: Tokyo (HND-1)", "[INFO] Optimized via Frame-Turbo 2.0"];
         const logBox = document.getElementById('log-content');
         setInterval(() => {
             const p = document.createElement('div');
@@ -192,13 +179,13 @@
             if(logBox.children.length > 8) logBox.lastChild.remove();
         }, 2000);
 
-        // 5. GitHub Stars
+        // 5. GitHub Stars (保持模擬數據或真實 API)
         async function fetchStars() {
             try {
                 const res = await fetch('https://api.github.com/repos/acmno123/RemoteEye');
                 const data = await res.json();
                 document.getElementById('star-count').innerText = data.stargazers_count || '1.2k';
-            } catch { document.getElementById('star-count').innerText = '1.2k'; }
+            } catch { /* 靜默處理 */ }
         }
         fetchStars();
 

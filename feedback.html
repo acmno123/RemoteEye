@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RemoteEye | 意見回饋</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #000000;
+            --primary-accent: #6c5ce7;
+            --secondary-accent: #00bcd4;
+            --text-light: #ffffff;
+            --text-dim: #a0a0a0;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border-light: rgba(255, 255, 255, 0.08);
+            --success: #00ff9d;
+            --nav-bg: rgba(0, 0, 0, 0.85);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--text-light); cursor: none; overflow: hidden; }
+
+        /* 導航欄 (全站統一) */
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 0 5%; height: 75px; width: 100%; position: fixed; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-light); }
+        .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 14px; margin-left: 25px; transition: 0.3s; }
+        .nav-links a:hover { color: var(--text-light); }
+
+        /* 回饋中心布局 */
+        .feedback-wrapper { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 5%; }
+        
+        .feedback-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 32px; padding: 50px; width: 100%; max-width: 600px; backdrop-filter: blur(10px); position: relative; }
+        
+        .terminal-header { display: flex; gap: 8px; margin-bottom: 30px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+
+        .input-group { margin-bottom: 25px; }
+        .input-group label { display: block; font-size: 12px; color: var(--secondary-accent); margin-bottom: 10px; font-family: 'Fira Code', monospace; }
+        
+        input, textarea { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-light); border-radius: 12px; padding: 15px; color: white; outline: none; transition: 0.3s; font-family: 'Fira Code', monospace; }
+        input:focus, textarea:focus { border-color: var(--primary-accent); background: rgba(108, 92, 231, 0.1); }
+
+        .submit-btn { background: var(--primary-accent); color: white; border: none; padding: 18px; border-radius: 50px; width: 100%; font-weight: 700; cursor: pointer; transition: 0.3s; font-size: 16px; margin-top: 20px; }
+        .submit-btn:hover { box-shadow: 0 0 20px rgba(108, 92, 231, 0.4); transform: scale(1.02); }
+
+        /* 傳送動畫 */
+        #sending-overlay { display: none; position: fixed; inset: 0; background: #000; z-index: 2000; flex-direction: column; align-items: center; justify-content: center; font-family: 'Fira Code', monospace; }
+        .progress-bar { width: 200px; height: 2px; background: #111; margin-top: 20px; position: relative; overflow: hidden; }
+        .progress-fill { width: 0%; height: 100%; background: var(--secondary-accent); position: absolute; transition: 2s; }
+
+        /* 游標 */
+        #custom-cursor { width: 30px; height: 30px; border: 1.5px solid var(--secondary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transform: translate(-50%, -50%); transition: transform 0.1s; }
+        #cursor-dot { width: 5px; height: 5px; background: var(--primary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10001; transform: translate(-50%, -50%); }
+    </style>
+</head>
+<body>
+
+    <div id="custom-cursor"></div>
+    <div id="cursor-dot"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo">RemoteEye</a>
+        <div class="nav-links">
+            <a href="index.html">首頁</a>
+            <a href="download.html">下載中心</a>
+            <a href="forum.html">技術論壇</a>
+            <a href="developers.html">開發者貢獻</a>
+        </div>
+    </nav>
+
+    <div class="feedback-wrapper">
+        <div class="feedback-card">
+            <div class="terminal-header">
+                <div class="dot" style="background: #ff5f56;"></div>
+                <div class="dot" style="background: #ffbd2e;"></div>
+                <div class="dot" style="background: #27c93f;"></div>
+            </div>
+            <h2 style="margin-bottom: 10px;">傳送反饋封包</h2>
+            <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 30px;">您的意見將直接加密傳送至核心開發團隊。</p>
+            
+            <form id="feedbackForm">
+                <div class="input-group">
+                    <label>> 使用者識別 (Email / ID)</label>
+                    <input type="text" id="user_id" placeholder="Anonymous_Node_01" required>
+                </div>
+                <div class="input-group">
+                    <label>> 反饋內容 (Message Content)</label>
+                    <textarea id="message" rows="5" placeholder="請輸入您的建議或問題描述..." required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">封裝並傳送 →</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="sending-overlay">
+        <div style="color: var(--secondary-accent);">UPLOADING_DATA_PACKET...</div>
+        <div id="terminal-log" style="font-size: 10px; color: #444; margin-top: 10px;">> Initializing Tunnel...</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <script>
+        // 游標邏輯
+        const cursor = document.getElementById('custom-cursor');
+        const dot = document.getElementById('cursor-dot');
+        document.addEventListener('mousemove', e => {
+            cursor.style.left = dot.style.left = e.clientX + 'px';
+            cursor.style.top = dot.style.top = e.clientY + 'px';
+        });
+
+        // 表單提交邏輯
+        const form = document.getElementById('feedbackForm');
+        const overlay = document.getElementById('sending-overlay');
+        const progress = document.getElementById('progressFill');
+        const log = document.getElementById('terminal-log');
+
+        // ！！！ 這裡填寫你的 Google 表單連結 ！！！
+        const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSd87313wWqTvsPIvBVqZ5iznxgx5QH7uUg0tkq996iXwjATpQ/viewform?usp=header";
+
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            
+            // 顯示動畫
+            overlay.style.display = 'flex';
+            setTimeout(() => {
+                progress.style.width = '100%';
+                log.innerText = "> Encrypting data with AES-256...";
+                
+                setTimeout(() => {
+                    log.innerText = "> Establishing P2P link to Google_Server...";
+                    
+                    setTimeout(() => {
+                        // 正式跳轉到 Google 表單
+                        window.location.href = GOOGLE_FORM_URL;
+                    }, 1000);
+                }, 1000);
+            }, 100);
+        };
+
+        // 磁吸
+        document.querySelectorAll('input, textarea, button, a').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.style.transform = 'translate(-50%, -50%) scale(1.5)');
+            el.addEventListener('mouseleave', () => cursor.style.transform = 'translate(-50%, -50%) scale(1)');
+        });
+    </script>
+</body>
+</html>
