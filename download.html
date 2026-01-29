@@ -15,6 +15,7 @@
             --card-bg: rgba(255, 255, 255, 0.05);
             --border-light: rgba(255, 255, 255, 0.1);
             --success: #00ff9d;
+            --warning: #ff9f43;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -132,6 +133,46 @@
             pointer-events: none;
         }
 
+        /* --- 手機版預告樣式 --- */
+        .mobile-preview {
+            background: linear-gradient(135deg, rgba(108, 92, 231, 0.1), rgba(0, 188, 212, 0.1));
+            border: 1px dashed var(--primary-accent);
+            border-radius: 24px; padding: 60px 30px; margin-bottom: 60px;
+            max-width: 1000px; width: 100%; position: relative; overflow: hidden;
+        }
+        .mobile-tag {
+            position: absolute; top: 20px; left: -35px;
+            background: var(--warning); color: #000;
+            padding: 5px 40px; transform: rotate(-45deg);
+            font-size: 10px; font-weight: 900; letter-spacing: 1px;
+            box-shadow: 0 0 15px var(--warning);
+        }
+        .tech-stack-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+            margin-top: 30px; text-align: left;
+        }
+        .tech-item {
+            background: rgba(255,255,255,0.03); padding: 15px;
+            border-radius: 12px; border: 1px solid var(--border-light);
+        }
+        .tech-item h4 { color: var(--secondary-accent); font-size: 14px; margin-bottom: 5px; }
+        .tech-item p { font-size: 12px; color: var(--text-dim); }
+
+        /* --- 問卷區塊 --- */
+        .poll-section {
+            background: var(--card-bg); border-radius: 24px; padding: 40px;
+            max-width: 800px; width: 100%; margin-bottom: 80px;
+            border: 1px solid var(--border-light);
+        }
+        .poll-options { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 20px; }
+        .poll-btn {
+            background: transparent; border: 1px solid var(--primary-accent);
+            color: var(--primary-accent); padding: 8px 18px; border-radius: 50px;
+            cursor: pointer; transition: 0.3s; font-size: 14px;
+        }
+        .poll-btn:hover { background: var(--primary-accent); color: white; }
+        .poll-btn.voted { background: var(--success); border-color: var(--success); color: #000; }
+
         .checksum {
             font-family: monospace; font-size: 10px; color: var(--text-dim);
             background: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 4px;
@@ -203,6 +244,47 @@
             </div>
         </div>
 
+        <div class="mobile-preview">
+            <div class="mobile-tag">COMING SOON</div>
+            <h2 style="color: var(--secondary-accent); margin-bottom: 15px;">RemoteEye Mobile</h2>
+            <p style="color: var(--text-dim); max-width: 650px; margin: 0 auto 20px; font-size: 15px;">
+                跨平台開發計畫啟動！我們正在開發 iOS 與 Android 專用 App，將超低延遲控制帶到您的指尖。
+            </p>
+            
+            <div style="font-size: 50px; margin: 20px 0;">📱 ✨ 🤖</div>
+
+            <div class="tech-stack-grid">
+                <div class="tech-item">
+                    <h4>🛠️ Flutter 核心</h4>
+                    <p>利用 Google Flutter 框架，實現一套代碼雙平台運行，保證 UI 流暢度與一致性。</p>
+                </div>
+                <div class="tech-item">
+                    <h4>⚡ WebRTC 影音</h4>
+                    <p>採用 Peer-to-Peer 加密傳輸，實現手機與電腦間的毫秒級畫面同步。</p>
+                </div>
+                <div class="tech-item">
+                    <h4>🎮 虛擬控制介面</h4>
+                    <p>內建自定義虛擬鍵盤與滑鼠觸控板，模擬所有電腦端複雜操作。</p>
+                </div>
+                <div class="tech-item">
+                    <h4>🔒 端到端安全</h4>
+                    <p>手機端同樣支援 AES-256 加密，確保您的遠端連線隱私無虞。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="poll-section">
+            <h3 style="color: var(--text-light);">🚀 您最期待手機版的什麼功能？</h3>
+            <p style="color: var(--text-dim); font-size: 14px; margin-top: 5px;">點擊選項以投下您的一票</p>
+            <div class="poll-options">
+                <button class="poll-btn" onclick="castVote(this)">虛擬搖桿操控遊戲</button>
+                <button class="poll-btn" onclick="castVote(this)">遠端開啟視訊鏡頭</button>
+                <button class="poll-btn" onclick="castVote(this)">手機控制多螢幕切換</button>
+                <button class="poll-btn" onclick="castVote(this)">一鍵文件雙向互傳</button>
+            </div>
+            <div id="poll-msg" style="margin-top: 15px; color: var(--success); font-size: 13px; display: none;">感謝您的建議！開發團隊已收到。</div>
+        </div>
+
         <div class="changelog">
             <h2 id="log_title">最新版本資訊 (RemoteEye)</h2>
             <div class="log-item">
@@ -224,10 +306,8 @@
     </footer>
 
     <script>
-        // --- 直接指向你的 GitHub Release ---
         const RELEASE_URL = "https://github.com/acmno123/RemoteEye/releases/tag/RemoteEye";
 
-        // 1. 自動偵測系統並標註推薦
         window.onload = () => {
             const userAgent = window.navigator.userAgent;
             if (userAgent.includes("Win")) document.getElementById('card-win').classList.add('recommended');
@@ -237,24 +317,16 @@
             animate();
         };
 
-        // 2. 導向你的 Release 頁面
         function handleDownload(btn, platform) {
             const originalText = btn.innerText;
             btn.classList.add('loading');
-            
             let progress = 0;
             const timer = setInterval(() => {
                 progress += Math.floor(Math.random() * 30) + 10;
                 if (progress >= 100) {
                     clearInterval(timer);
                     btn.innerText = "✅ 正在跳轉至 GitHub...";
-
-                    // 在新分頁開啟你的 Release 連結
-                    setTimeout(() => {
-                        window.open(RELEASE_URL, '_blank');
-                    }, 500);
-
-                    // 恢復按鈕狀態
+                    setTimeout(() => { window.open(RELEASE_URL, '_blank'); }, 500);
                     setTimeout(() => {
                         btn.classList.remove('loading');
                         btn.innerText = originalText;
@@ -265,21 +337,29 @@
             }, 100);
         }
 
-        // 3. 滾動進度條
+        function castVote(btn) {
+            btn.classList.add('voted');
+            btn.innerText = "已投票 ✓";
+            document.getElementById('poll-msg').style.display = 'block';
+            // 禁止重複投票
+            const buttons = document.querySelectorAll('.poll-btn');
+            buttons.forEach(b => b.onclick = null);
+        }
+
+        // 滾動與計數器邏輯
         window.onscroll = () => {
             let winScroll = document.documentElement.scrollTop;
             let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
             document.getElementById("myBar").style.width = (winScroll / height) * 100 + "%";
         };
 
-        // 4. 實時計數器
         let count = 1284560;
         setInterval(() => {
             count += Math.floor(Math.random() * 3);
             document.getElementById('download-count').innerText = count.toLocaleString();
         }, 3000);
 
-        // 5. 粒子動畫
+        // 粒子背景
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
