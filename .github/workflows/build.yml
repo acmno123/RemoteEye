@@ -44,19 +44,31 @@ jobs:
         # 統一輸出名稱為 RemoteEye
         python -m PyInstaller --noconfirm --onefile --windowed --name "RemoteEye" --add-data "${CTK_PATH}${SEP}customtkinter/" RemoteEye_Global.py
 
-    # --- Linux 轉 AppImage ---
+    # --- [修正版] Linux 轉 AppImage ---
     - name: Package AppImage (Linux)
       if: matrix.os == 'ubuntu-latest'
       run: |
-        wget -O appimagetool https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage
+        # 使用更穩定的連續構建版本載點
+        wget -O appimagetool https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
         chmod +x appimagetool
+        
+        # 建立 AppDir 結構
         mkdir -p AppDir/usr/bin
         cp dist/RemoteEye AppDir/usr/bin/
+        
+        # 寫入啟動腳本
         echo -e '#!/bin/sh\nexec ./usr/bin/RemoteEye "$@"' > AppDir/AppRun
         chmod +x AppDir/AppRun
-        echo -e "[Desktop Entry]\nName=RemoteEye\nExec=RemoteEye\nIcon=icon\nType=Application\nCategories=Utility;" > AppDir/remoteeye.desktop
-        touch AppDir/icon.png
+        
+        # 建立桌面入口檔案
+        echo -e "[Desktop Entry]\nName=RemoteEye\nExec=RemoteEye\nIcon=remoteeye\nType=Application\nCategories=Utility;" > AppDir/remoteeye.desktop
+        
+        # 建立一個空白圖示避免報錯
+        touch AppDir/remoteeye.png
+        
+        # 打包成 AppImage (加上 --appimage-extract-and-run 以相容 GitHub 環境)
         ARCH=x86_64 ./appimagetool --appimage-extract-and-run AppDir dist/RemoteEye.AppImage
+      shell: bash
 
     # --- macOS 轉 DMG ---
     - name: Create DMG (macOS)
