@@ -12,13 +12,12 @@
             --secondary-accent: #00bcd4;
             --text-light: #ffffff;
             --text-dim: #a0a0a0;
-            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-bg: rgba(255, 255, 255, 0.03);
             --border-light: rgba(255, 255, 255, 0.1);
             --nav-bg: rgba(0, 0, 0, 0.8);
             --success-green: #00ff9d;
         }
 
-        /* 淺色模式同步 */
         body.light-mode {
             --bg-dark: #f5f5f7;
             --text-light: #1d1d1f;
@@ -28,7 +27,7 @@
             --nav-bg: rgba(255, 255, 255, 0.8);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.3s ease, color 0.3s ease; }
+        * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.4s ease, color 0.4s ease; }
         
         body {
             font-family: 'Space Grotesk', sans-serif;
@@ -40,21 +39,23 @@
 
         /* 1. 全局視覺組件 */
         .progress-bar-container { position: fixed; top: 0; left: 0; width: 100%; height: 3px; z-index: 9999; }
-        #myBar { height: 100%; width: 0%; background: linear-gradient(to right, var(--secondary-accent), var(--primary-accent)); }
-        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.3; pointer-events: none; }
+        #myBar { height: 100%; width: 0%; background: linear-gradient(to right, var(--secondary-accent), var(--primary-accent)); box-shadow: 0 0 10px var(--secondary-accent); }
+        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.5; pointer-events: none; }
 
-        /* 導航列 (與 index/download 同步) */
+        /* 導航列 */
         .navbar {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 5%; width: 100%; top: 0; z-index: 1000;
-            background: var(--nav-bg); backdrop-filter: blur(10px);
+            padding: 15px 5%; width: 100%; top: 0; z-index: 1000;
+            background: var(--nav-bg); backdrop-filter: blur(15px);
             border-bottom: 1px solid var(--border-light);
             position: fixed;
         }
-        .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
+        .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; letter-spacing: -1px; }
         .nav-right { display: flex; align-items: center; gap: 20px; }
-        .nav-links { display: flex; gap: 20px; }
-        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 15px; font-weight: 500; }
+        .nav-links { display: flex; gap: 25px; }
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 15px; font-weight: 500; position: relative; padding: 5px 0; }
+        .nav-links a::after { content: ""; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--secondary-accent); transition: width 0.3s; }
+        .nav-links a:hover::after { width: 100%; }
         .nav-links a:hover { color: var(--text-light); }
         
         .theme-toggle {
@@ -64,59 +65,76 @@
         }
 
         /* 論壇內容區 */
-        .forum-container { max-width: 1000px; margin: 120px auto 50px; padding: 0 5%; }
+        .forum-container { max-width: 1000px; margin: 150px auto 50px; padding: 0 5%; }
         
-        .forum-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-        .forum-header h1 { font-size: 2.5rem; background: linear-gradient(45deg, var(--secondary-accent), var(--primary-accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .forum-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 50px; }
+        .forum-header h1 { 
+            font-size: 3rem; 
+            background: linear-gradient(90deg, #fff, var(--secondary-accent), var(--primary-accent), #fff);
+            background-size: 200% auto;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+            animation: shine 5s linear infinite;
+            font-weight: 700;
+        }
+        @keyframes shine { to { background-position: 200% center; } }
 
         .new-post-btn {
-            background: var(--primary-accent); color: white; padding: 12px 25px; 
-            border-radius: 12px; font-weight: 700; border: none; cursor: pointer; transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+            background: var(--primary-accent); color: white; padding: 14px 28px; 
+            border-radius: 50px; font-weight: 700; border: none; cursor: pointer; transition: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
         }
-        .new-post-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4); }
+        .new-post-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(108, 92, 231, 0.5); }
 
         /* 標籤樣式 */
-        .tags-container { display: flex; gap: 10px; margin-bottom: 30px; overflow-x: auto; padding-bottom: 5px; }
+        .tags-container { display: flex; gap: 12px; margin-bottom: 40px; overflow-x: auto; padding-bottom: 10px; }
         .tag {
             background: var(--card-bg); border: 1px solid var(--border-light);
-            padding: 6px 16px; border-radius: 20px; font-size: 13px; color: var(--text-dim);
-            cursor: pointer; white-space: nowrap;
+            padding: 8px 20px; border-radius: 50px; font-size: 14px; color: var(--text-dim);
+            cursor: pointer; white-space: nowrap; backdrop-filter: blur(5px);
         }
-        .tag:hover, .tag.active { border-color: var(--secondary-accent); color: var(--secondary-accent); }
+        .tag:hover, .tag.active { border-color: var(--secondary-accent); color: var(--secondary-accent); background: rgba(0, 188, 212, 0.1); }
 
-        /* 貼文卡片優化 */
+        /* 貼文卡片 - 3D 視差支援 */
         .post-card {
             background: var(--card-bg); border: 1px solid var(--border-light);
-            border-radius: 20px; padding: 25px; margin-bottom: 20px;
-            display: flex; justify-content: space-between; align-items: center; transition: 0.3s;
+            border-radius: 24px; padding: 30px; margin-bottom: 25px;
+            display: flex; justify-content: space-between; align-items: center; 
+            transition: transform 0.1s ease, border-color 0.3s ease;
+            backdrop-filter: blur(10px);
+            transform-style: preserve-3d;
         }
-        .post-card:hover { transform: scale(1.01); border-color: var(--primary-accent); }
+        .post-card:hover { border-color: var(--primary-accent); }
         
-        .post-info h3 { font-size: 1.25rem; margin-bottom: 8px; color: var(--text-light); }
-        .post-meta { font-size: 13px; color: var(--text-dim); display: flex; gap: 15px; }
-        .post-status { color: var(--success-green); font-weight: bold; font-size: 12px; }
+        .post-info h3 { font-size: 1.3rem; margin-bottom: 10px; color: var(--text-light); }
+        .post-meta { font-size: 13px; color: var(--text-dim); display: flex; gap: 20px; }
+        .post-status { display: inline-block; padding: 2px 10px; border-radius: 5px; background: rgba(0, 255, 157, 0.1); color: var(--success-green); font-weight: bold; font-size: 11px; margin-bottom: 8px; }
 
-        .post-stats { display: flex; gap: 20px; }
-        .stat-item { text-align: center; min-width: 50px; }
-        .stat-num { display: block; font-weight: 700; color: var(--text-light); }
-        .stat-label { font-size: 11px; color: var(--text-dim); }
+        .post-stats { display: flex; gap: 25px; }
+        .stat-item { text-align: center; min-width: 60px; }
+        .stat-num { display: block; font-weight: 700; color: var(--text-light); font-size: 1.1rem; }
+        .stat-label { font-size: 12px; color: var(--text-dim); }
 
-        /* Modal 彈窗樣式同步 */
+        /* Modal 彈窗樣式 */
         .modal {
             display: none; position: fixed; z-index: 2000; top: 0; left: 0; 
-            width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+            width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px);
         }
         .modal-content {
             background: var(--bg-dark); border: 1px solid var(--primary-accent);
-            width: 90%; max-width: 500px; margin: 10% auto; padding: 40px; border-radius: 24px;
+            width: 90%; max-width: 550px; margin: 8% auto; padding: 50px; border-radius: 32px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
         }
         .modal-content input, .modal-content textarea {
-            width: 100%; background: var(--card-bg); border: 1px solid var(--border-light);
-            color: var(--text-light); padding: 12px; margin-top: 15px; border-radius: 12px; outline: none;
+            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-light);
+            color: var(--text-light); padding: 15px; margin-top: 20px; border-radius: 15px; outline: none;
+            font-family: inherit;
         }
+        .modal-content input:focus { border-color: var(--secondary-accent); }
 
-        footer { padding: 50px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); }
+        .fade-in { opacity: 0; transform: translateY(30px); transition: 1s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .fade-in.active { opacity: 1; transform: translateY(0); }
+
+        footer { padding: 60px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); }
     </style>
 </head>
 <body>
@@ -133,23 +151,19 @@
                 <a href="forum.html" style="color: var(--secondary-accent);">論壇</a>
             </div>
             <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
-            <select class="lang-select" style="background:transparent; color:var(--text-light); border:1px solid var(--border-light); border-radius:5px; padding: 2px 5px;">
-                <option value="zh">ZH</option>
-                <option value="en">EN</option>
-            </select>
         </div>
     </nav>
 
     <main class="forum-container">
-        <div class="forum-header">
+        <div class="forum-header fade-in">
             <div>
                 <h1>技術社群</h1>
-                <p style="color: var(--text-dim);">與全球開發者討論遠端協作的未來</p>
+                <p style="color: var(--text-dim); font-size: 1.1rem;">與全球開發者討論遠端協作的未來</p>
             </div>
             <button class="new-post-btn" onclick="openModal()">+ 發布新話題</button>
         </div>
 
-        <div class="tags-container">
+        <div class="tags-container fade-in">
             <div class="tag active">全部內容</div>
             <div class="tag"># Bug回報</div>
             <div class="tag"># 功能建議</div>
@@ -158,13 +172,13 @@
         </div>
 
         <div id="post-list">
-            <div class="post-card">
+            <div class="post-card fade-in">
                 <div class="post-info">
-                    <span class="post-status">● 公告</span>
+                    <span class="post-status">● 官方公告</span>
                     <h3>RemoteEye V1.0.4 正式發布：優化了 4K 串流延遲</h3>
                     <div class="post-meta">
-                        <span>管理員 @Admin</span>
-                        <span>2 小時前</span>
+                        <span>👤 管理員 @Admin</span>
+                        <span>🕒 2 小時前</span>
                     </div>
                 </div>
                 <div class="post-stats">
@@ -173,12 +187,13 @@
                 </div>
             </div>
 
-            <div class="post-card">
+            <div class="post-card fade-in">
                 <div class="post-info">
+                    <span class="post-status" style="background:rgba(108, 92, 231, 0.1); color:var(--primary-accent)">● 技術探討</span>
                     <h3>如何在 Linux Ubuntu 22.04 上安裝 RemoteEye？</h3>
                     <div class="post-meta">
-                        <span>嘉進 @GiaJin</span>
-                        <span>昨天</span>
+                        <span>👤 嘉進 @GiaJin</span>
+                        <span>🕒 昨天</span>
                     </div>
                 </div>
                 <div class="post-stats">
@@ -191,12 +206,13 @@
 
     <div id="postModal" class="modal">
         <div class="modal-content">
-            <h2 style="color: var(--secondary-accent);">發起新討論</h2>
+            <h2 style="color: var(--secondary-accent); font-weight: 700;">發起新討論</h2>
+            <p style="color: var(--text-dim); font-size: 14px;">請遵守社群規範，保持友善交流。</p>
             <input type="text" placeholder="話題標題">
-            <textarea rows="5" placeholder="分享你的想法..."></textarea>
-            <div style="display: flex; gap: 10px; margin-top: 25px;">
+            <textarea rows="6" placeholder="分享你的想法、問題或建議..."></textarea>
+            <div style="display: flex; gap: 15px; margin-top: 30px;">
                 <button class="new-post-btn" style="flex:1" onclick="closeModal()">送出貼文</button>
-                <button class="new-post-btn" style="flex:1; background: var(--card-bg); color: var(--text-light);" onclick="closeModal()">取消</button>
+                <button class="new-post-btn" style="flex:1; background: var(--card-bg); color: var(--text-light); box-shadow: none;" onclick="closeModal()">取消</button>
             </div>
         </div>
     </div>
@@ -213,41 +229,68 @@
             document.getElementById("myBar").style.width = (winScroll / height) * 100 + "%";
         };
 
-        // 主題切換邏輯 (與全站同步)
+        // 主題切換
         function toggleTheme() {
             document.body.classList.toggle('light-mode');
-            const isLight = document.body.classList.contains('light-mode');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
         }
-
-        // 載入預設主題
-        if (localStorage.getItem('theme') === 'light') {
-            document.body.classList.add('light-mode');
-        }
+        if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');
 
         // 彈窗控制
         function openModal() { document.getElementById('postModal').style.display = 'block'; }
         function closeModal() { document.getElementById('postModal').style.display = 'none'; }
 
-        // 粒子背景動畫
+        // 神經網絡粒子動畫 (全站同步版)
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
-        let pts = [];
+        let particles = [];
         function init() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            pts = [];
-            for(let i=0; i<50; i++) pts.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, v:Math.random()*0.5 + 0.2});
+            particles = Array.from({length: 80}, () => ({
+                x: Math.random()*canvas.width, y: Math.random()*canvas.height,
+                vx: (Math.random()-0.5)*0.6, vy: (Math.random()-0.5)*0.6, size: 2
+            }));
         }
         function draw() {
             ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--primary-accent');
-            pts.forEach(p => {
-                p.y -= p.v; if(p.y < 0) p.y = canvas.height;
-                ctx.beginPath(); ctx.arc(p.x, p.y, 1.2, 0, Math.PI*2); ctx.fill();
+            const color = getComputedStyle(document.body).getPropertyValue('--secondary-accent');
+            ctx.fillStyle = color; ctx.strokeStyle = color;
+            particles.forEach((p, i) => {
+                p.x += p.vx; p.y += p.vy;
+                if(p.x<0 || p.x>canvas.width) p.vx*=-1;
+                if(p.y<0 || p.y>canvas.height) p.vy*=-1;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
+                for(let j=i+1; j<particles.length; j++){
+                    let p2 = particles[j];
+                    let dist = Math.hypot(p.x-p2.x, p.y-p2.y);
+                    if(dist < 120){
+                        ctx.globalAlpha = 1 - (dist/120);
+                        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y);
+                        ctx.lineWidth = 0.5; ctx.stroke();
+                    }
+                }
+                ctx.globalAlpha = 1;
             });
             requestAnimationFrame(draw);
         }
         window.onresize = init; init(); draw();
+
+        // 滾動動畫觀察者
+        const observer = new IntersectionObserver(e => e.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('active');
+        }), { threshold: 0.1 });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // 3D 視差效果 (套用到貼文卡片)
+        document.querySelectorAll('.post-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width - 0.5;
+                const y = (e.clientY - rect.top) / rect.height - 0.5;
+                card.style.transform = `perspective(1000px) rotateX(${y * -10}deg) rotateY(${x * 10}deg) scale(1.02)`;
+            });
+            card.addEventListener('mouseleave', () => card.style.transform = `none`);
+        });
     </script>
 </body>
 </html>

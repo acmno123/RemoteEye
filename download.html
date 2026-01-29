@@ -12,13 +12,12 @@
             --secondary-accent: #00bcd4;
             --text-light: #ffffff;
             --text-dim: #a0a0a0;
-            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-bg: rgba(255, 255, 255, 0.03);
             --border-light: rgba(255, 255, 255, 0.1);
             --success: #00ff9d;
             --nav-bg: rgba(0, 0, 0, 0.8);
         }
 
-        /* 淺色模式同步 (與 index/forum 一致) */
         body.light-mode {
             --bg-dark: #f5f5f7;
             --text-light: #1d1d1f;
@@ -28,7 +27,7 @@
             --nav-bg: rgba(255, 255, 255, 0.8);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.3s ease, color 0.3s ease; }
+        * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.4s ease, color 0.4s ease; }
         
         body {
             font-family: 'Space Grotesk', sans-serif;
@@ -41,23 +40,31 @@
 
         /* 1. 進度條 */
         .progress-bar-container { position: fixed; top: 0; left: 0; width: 100%; height: 3px; z-index: 9999; }
-        #myBar { height: 100%; width: 0%; background: linear-gradient(to right, var(--secondary-accent), var(--primary-accent)); }
+        #myBar { height: 100%; width: 0%; background: linear-gradient(to right, var(--secondary-accent), var(--primary-accent)); box-shadow: 0 0 10px var(--secondary-accent); }
 
         /* 2. 粒子畫布 */
-        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; opacity: 0.4; }
+        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; opacity: 0.5; }
 
-        /* 3. 導航列 (修復了 href 連結) */
+        /* 3. 導航列 */
         .navbar {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 5%; width: 100%; top: 0; z-index: 1000;
-            background: var(--nav-bg); backdrop-filter: blur(10px);
+            padding: 15px 5%; width: 100%; top: 0; z-index: 1000;
+            background: var(--nav-bg); backdrop-filter: blur(15px);
             border-bottom: 1px solid var(--border-light);
             position: fixed;
         }
-        .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
+        .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; letter-spacing: -1px; }
         .nav-right { display: flex; align-items: center; gap: 20px; }
-        .nav-links { display: flex; gap: 20px; }
-        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 15px; font-weight: 500; }
+        .nav-links { display: flex; gap: 25px; }
+        .nav-links a { 
+            color: var(--text-dim); text-decoration: none; font-size: 15px; font-weight: 500; 
+            position: relative; padding: 5px 0;
+        }
+        .nav-links a::after {
+            content: ""; position: absolute; bottom: 0; left: 0; width: 0; height: 2px;
+            background: var(--secondary-accent); transition: width 0.3s;
+        }
+        .nav-links a:hover::after { width: 100%; }
         .nav-links a:hover { color: var(--text-light); }
         
         .theme-toggle {
@@ -71,35 +78,64 @@
         
         .live-counter-box {
             background: rgba(108, 92, 231, 0.1); border: 1px solid var(--primary-accent);
-            padding: 10px 20px; border-radius: 50px; margin-bottom: 30px;
-            font-size: 14px; color: var(--primary-accent); animation: pulse 2s infinite;
+            padding: 8px 24px; border-radius: 50px; margin-bottom: 30px;
+            font-size: 14px; color: var(--primary-accent); font-weight: 700;
+            animation: glow-pulse 2s infinite;
         }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(108, 92, 231, 0); } 100% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0); } }
+        @keyframes glow-pulse { 0% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(108, 92, 231, 0); } 100% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0); } }
 
-        h1 { font-size: clamp(2.5rem, 8vw, 4rem); background: linear-gradient(45deg, var(--secondary-accent), var(--primary-accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
-        .sub-title { color: var(--text-dim); margin-bottom: 50px; }
+        h1 { 
+            font-size: clamp(2.5rem, 8vw, 4rem); 
+            background: linear-gradient(90deg, #fff, var(--secondary-accent), var(--primary-accent), #fff);
+            background-size: 200% auto;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+            animation: shine 5s linear infinite;
+            margin-bottom: 15px; font-weight: 700;
+        }
+        @keyframes shine { to { background-position: 200% center; } }
+        
+        .sub-title { color: var(--text-dim); margin-bottom: 60px; font-size: 1.1rem; }
 
-        .download-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; max-width: 1000px; width: 100%; margin-bottom: 60px; }
-        .download-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 24px; padding: 40px; transition: 0.3s; }
-        .download-card:hover { transform: translateY(-10px); border-color: var(--primary-accent); }
+        /* 下載卡片 - 支援 3D 視差 */
+        .download-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1100px; width: 100%; margin-bottom: 80px; }
+        .download-card { 
+            background: var(--card-bg); border: 1px solid var(--border-light); 
+            border-radius: 32px; padding: 50px; transition: transform 0.1s ease, border-color 0.3s ease; 
+            backdrop-filter: blur(10px); position: relative; overflow: hidden;
+            transform-style: preserve-3d;
+        }
+        .download-card:hover { border-color: var(--secondary-accent); }
         
         .download-btn {
-            background: var(--primary-accent); color: white; padding: 15px; border-radius: 50px;
-            text-decoration: none; font-weight: 700; display: block; margin-top: 20px; border: none; cursor: pointer; width: 100%;
-            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+            background: var(--primary-accent); color: white; padding: 16px; border-radius: 50px;
+            text-decoration: none; font-weight: 700; display: block; margin-top: 25px; border: none; cursor: pointer; width: 100%;
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3); transition: 0.3s;
         }
+        .download-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(108, 92, 231, 0.5); }
 
-        /* 系統需求與社群 */
-        .specs-container { max-width: 1000px; width: 100%; background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 24px; padding: 40px; margin-bottom: 60px; text-align: left; }
-        .specs-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .specs-table th, .specs-table td { padding: 15px; border-bottom: 1px solid var(--border-light); text-align: left; color: var(--text-light); }
-        .specs-table th { color: var(--secondary-accent); font-size: 14px; }
+        /* 系統需求表格 */
+        .specs-container { 
+            max-width: 1000px; width: 100%; background: var(--card-bg); 
+            border: 1px solid var(--border-light); border-radius: 32px; padding: 40px; 
+            margin-bottom: 80px; text-align: left; backdrop-filter: blur(10px);
+        }
+        .specs-table { width: 100%; border-collapse: collapse; margin-top: 25px; }
+        .specs-table th, .specs-table td { padding: 20px; border-bottom: 1px solid var(--border-light); color: var(--text-light); }
+        .specs-table th { color: var(--secondary-accent); font-weight: 700; text-transform: uppercase; font-size: 13px; letter-spacing: 1px; }
 
-        .community-section { display: flex; gap: 20px; max-width: 1000px; width: 100%; margin-bottom: 60px; }
-        .community-card { flex: 1; background: var(--card-bg); border: 1px solid var(--border-light); padding: 30px; border-radius: 20px; text-decoration: none; color: inherit; transition: 0.3s; }
-        .community-card:hover { border-color: var(--primary-accent); transform: translateY(-5px); }
+        /* 社群卡片 */
+        .community-section { display: flex; gap: 25px; max-width: 1000px; width: 100%; margin-bottom: 80px; }
+        .community-card { 
+            flex: 1; background: var(--card-bg); border: 1px solid var(--border-light); 
+            padding: 35px; border-radius: 24px; text-decoration: none; color: inherit; 
+            transition: 0.3s; backdrop-filter: blur(5px);
+        }
+        .community-card:hover { border-color: var(--primary-accent); transform: translateY(-8px); background: rgba(255, 255, 255, 0.08); }
 
-        footer { padding: 50px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); width: 100%; }
+        .fade-in { opacity: 0; transform: translateY(30px); transition: 1s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .fade-in.active { opacity: 1; transform: translateY(0); }
+
+        footer { padding: 60px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); width: 100%; }
     </style>
 </head>
 <body>
@@ -115,88 +151,83 @@
                 <a href="download.html" style="color: var(--secondary-accent);">下載</a>
                 <a href="forum.html">論壇</a>
             </div>
-            <button class="theme-toggle" onclick="toggleTheme()" title="切換主題">🌓</button>
-            <select class="lang-select" style="background:transparent; color:var(--text-light); border:1px solid var(--border-light); border-radius:5px; padding: 2px 5px;">
-                <option value="zh">ZH</option>
-                <option value="en">EN</option>
-            </select>
+            <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
         </div>
     </nav>
 
     <section class="download-section">
-        <div class="live-counter-box">🔥 全球累計下載：<span id="download-count">1,284,560</span> 次</div>
-        <h1>下載 RemoteEye</h1>
-        <p class="sub-title">選擇您的作業系統，即刻開啟遠端協作</p>
+        <div class="live-counter-box fade-in">🔥 全球累計下載：<span id="download-count">1,284,560</span> 次</div>
+        <h1 class="fade-in">取得 RemoteEye</h1>
+        <p class="sub-title fade-in">跨越物理距離，重塑您的數位協作工作流</p>
         
         <div class="download-grid">
-            <div class="download-card">
-                <div style="font-size: 40px;">🪟</div>
-                <h3 style="margin-top:10px;">Windows</h3>
-                <p style="font-size: 12px; color: var(--text-dim); margin: 15px 0;">支援 Win 10/11 (64-bit)</p>
+            <div class="download-card fade-in">
+                <div style="font-size: 50px; margin-bottom: 10px;">🪟</div>
+                <h3>Windows</h3>
+                <p style="font-size: 13px; color: var(--text-dim); margin: 15px 0;">支援 Windows 10/11 (64-bit)</p>
                 <button class="download-btn" onclick="handleDownload(this, 'Windows')">立即下載</button>
             </div>
-            <div class="download-card">
-                <div style="font-size: 40px;">🍎</div>
-                <h3 style="margin-top:10px;">macOS</h3>
-                <p style="font-size: 12px; color: var(--text-dim); margin: 15px 0;">支援 Intel & Apple Silicon</p>
+            <div class="download-card fade-in">
+                <div style="font-size: 50px; margin-bottom: 10px;">🍎</div>
+                <h3>macOS</h3>
+                <p style="font-size: 13px; color: var(--text-dim); margin: 15px 0;">通用版 (Intel / M1 / M2 / M3)</p>
                 <button class="download-btn" onclick="handleDownload(this, 'macOS')">取得 DMG</button>
             </div>
-            <div class="download-card">
-                <div style="font-size: 40px;">🐧</div>
-                <h3 style="margin-top:10px;">Linux</h3>
-                <p style="font-size: 12px; color: var(--text-dim); margin: 15px 0;">支援 Ubuntu / Debian</p>
-                <button class="download-btn" onclick="handleDownload(this, 'Linux')">取得 AppImage</button>
+            <div class="download-card fade-in">
+                <div style="font-size: 50px; margin-bottom: 10px;">🐧</div>
+                <h3>Linux</h3>
+                <p style="font-size: 13px; color: var(--text-dim); margin: 15px 0;">AppImage / Debian 套件</p>
+                <button class="download-btn" onclick="handleDownload(this, 'Linux')">取得封裝檔</button>
             </div>
         </div>
 
-        <div class="specs-container">
-            <h3 style="color: var(--primary-accent);">💻 系統需求</h3>
+        <div class="specs-container fade-in">
+            <h3 style="color: var(--primary-accent); display: flex; align-items: center; gap: 10px;">
+                <span>💻</span> 系統運作建議
+            </h3>
             <table class="specs-table">
                 <tr><th>組件</th><th>最低需求</th><th>建議配備</th></tr>
                 <tr><td>處理器</td><td>Dual-core 1.8GHz</td><td>Quad-core 2.5GHz+</td></tr>
                 <tr><td>記憶體</td><td>2 GB RAM</td><td>8 GB RAM</td></tr>
-                <tr><td>網路速度</td><td>5 Mbps 下載</td><td>20 Mbps+</td></tr>
+                <tr><td>網路速度</td><td>5 Mbps 下載</td><td>20 Mbps+ (Low Latency)</td></tr>
             </table>
         </div>
 
         <div class="community-section">
-            <a href="https://github.com/acmno123/RemoteEye" target="_blank" class="community-card">
-                <h4>🐙 GitHub 專案</h4>
-                <p style="font-size: 12px; color: var(--text-dim);">回報 Bug 或給個 Star</p>
+            <a href="https://github.com/acmno123/RemoteEye" target="_blank" class="community-card fade-in">
+                <h4 style="margin-bottom: 10px;">🐙 Open Source</h4>
+                <p style="font-size: 13px; color: var(--text-dim);">參與 GitHub 社群開發與貢獻</p>
             </a>
-            <a href="forum.html" class="community-card">
-                <h4>💬 技術論壇</h4>
-                <p style="font-size: 12px; color: var(--text-dim);">與全球用戶交流心得</p>
+            <a href="forum.html" class="community-card fade-in">
+                <h4 style="margin-bottom: 10px;">💬 User Forum</h4>
+                <p style="font-size: 13px; color: var(--text-dim);">獲取技術支援或功能建議</p>
             </a>
         </div>
     </section>
 
     <footer>
-        <p>© 2026 RemoteEye Technology. Powering Remote Future.</p>
+        <p>© 2026 RemoteEye Technology. Powering the Future of Remote Work.</p>
     </footer>
 
     <script>
         const RELEASE_URL = "https://github.com/acmno123/RemoteEye/releases";
 
-        // 主題切換 (全站同步邏輯)
+        // 主題切換
         function toggleTheme() {
             document.body.classList.toggle('light-mode');
-            const isLight = document.body.classList.contains('light-mode');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
         }
+        if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');
 
-        // 初始化主題
-        if (localStorage.getItem('theme') === 'light') {
-            document.body.classList.add('light-mode');
-        }
-
-        // 下載跳轉處理
+        // 下載處理
         function handleDownload(btn, platform) {
             const originalText = btn.innerText;
-            btn.innerText = "正在準備...";
+            btn.innerText = "正在準備安全連結...";
+            btn.style.opacity = "0.7";
             setTimeout(() => {
                 window.open(RELEASE_URL, '_blank');
                 btn.innerText = originalText;
+                btn.style.opacity = "1";
             }, 800);
         }
 
@@ -207,27 +238,57 @@
             document.getElementById("myBar").style.width = (winScroll / height) * 100 + "%";
         };
 
-        // 粒子動畫
+        // 神經網絡粒子動畫 (同步首頁邏輯)
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
         function init() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            particles = [];
-            for(let i=0; i<40; i++) particles.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: Math.random()-0.5, vy: Math.random()-0.5});
+            particles = Array.from({length: 80}, () => ({
+                x: Math.random()*canvas.width, y: Math.random()*canvas.height,
+                vx: (Math.random()-0.5)*0.6, vy: (Math.random()-0.5)*0.6, size: 2
+            }));
         }
-        function animate() {
+        function draw() {
             ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--primary-accent');
-            particles.forEach(p => {
+            const color = getComputedStyle(document.body).getPropertyValue('--secondary-accent');
+            ctx.fillStyle = color; ctx.strokeStyle = color;
+            particles.forEach((p, i) => {
                 p.x += p.vx; p.y += p.vy;
-                if(p.x<0 || p.x>canvas.width) p.vx *= -1;
-                if(p.y<0 || p.y>canvas.height) p.vy *= -1;
-                ctx.beginPath(); ctx.arc(p.x, p.y, 1.2, 0, Math.PI*2); ctx.fill();
+                if(p.x<0 || p.x>canvas.width) p.vx*=-1;
+                if(p.y<0 || p.y>canvas.height) p.vy*=-1;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
+                for(let j=i+1; j<particles.length; j++){
+                    let p2 = particles[j];
+                    let dist = Math.hypot(p.x-p2.x, p.y-p2.y);
+                    if(dist < 120){
+                        ctx.globalAlpha = 1 - (dist/120);
+                        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y);
+                        ctx.lineWidth = 0.5; ctx.stroke();
+                    }
+                }
+                ctx.globalAlpha = 1;
             });
-            requestAnimationFrame(animate);
+            requestAnimationFrame(draw);
         }
-        window.onresize = init; init(); animate();
+        window.onresize = init; init(); draw();
+
+        // 滾動動畫
+        const observer = new IntersectionObserver(e => e.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('active');
+        }), { threshold: 0.1 });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // 3D 視差
+        document.querySelectorAll('.download-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width - 0.5;
+                const y = (e.clientY - rect.top) / rect.height - 0.5;
+                card.style.transform = `perspective(1000px) rotateX(${y * -15}deg) rotateY(${x * 15}deg) translateY(-10px)`;
+            });
+            card.addEventListener('mouseleave', () => card.style.transform = `none`);
+        });
     </script>
 </body>
 </html>
