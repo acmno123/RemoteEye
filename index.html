@@ -8,15 +8,27 @@
     <style>
         :root {
             --bg-dark: #000000;
-            --primary-accent: #6c5ce7; /* 科技紫 */
-            --secondary-accent: #00bcd4; /* 霓虹藍 */
+            --primary-accent: #6c5ce7;
+            --secondary-accent: #00bcd4;
             --text-light: #ffffff;
             --text-dim: #a0a0a0;
             --card-bg: rgba(255, 255, 255, 0.05);
             --border-light: rgba(255, 255, 255, 0.1);
+            --nav-bg: rgba(0, 0, 0, 0.8);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        /* 淺色模式變數 (與下載頁同步) */
+        body.light-mode {
+            --bg-dark: #f5f5f7;
+            --text-light: #1d1d1f;
+            --text-dim: #6e6e73;
+            --card-bg: #ffffff;
+            --border-light: rgba(0, 0, 0, 0.1);
+            --nav-bg: rgba(255, 255, 255, 0.8);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.3s ease, color 0.3s ease; }
+        
         body {
             font-family: 'Space Grotesk', sans-serif;
             background: var(--bg-dark);
@@ -28,239 +40,218 @@
 
         /* 1. 頂部捲動進度條 */
         .progress-bar-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 4px;
+            position: fixed; top: 0; left: 0; width: 100%; height: 3px;
             background: transparent; z-index: 9999;
         }
         #myBar {
             height: 100%; width: 0%;
             background: linear-gradient(to right, var(--secondary-accent), var(--primary-accent));
-            box-shadow: 0 0 10px var(--secondary-accent);
         }
 
         /* 2. 背景粒子畫布 */
         #particleCanvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; pointer-events: none; opacity: 0.5;
+            z-index: -1; pointer-events: none; opacity: 0.4;
         }
 
-        /* 全局動畫基礎 */
-        .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 1s ease-out, transform 1s ease-out; }
-        .fade-in.active { opacity: 1; transform: translateY(0); }
-
-        /* 導航列 */
+        /* 導航列 (同步設計) */
         .navbar {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 5%; position: fixed; width: 100%; top: 0; z-index: 1000;
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 20px 5%; width: 100%; top: 0; z-index: 1000;
+            background: var(--nav-bg); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-light);
+            position: fixed;
         }
         .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
-        .nav-links { display: flex; gap: 30px; }
-        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 16px; font-weight: 500; transition: color 0.3s ease; }
+        .nav-right { display: flex; align-items: center; gap: 20px; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 15px; font-weight: 500; }
         .nav-links a:hover { color: var(--text-light); }
-        .lang-select {
+        
+        .theme-toggle {
             background: var(--card-bg); border: 1px solid var(--border-light);
-            color: var(--text-light); padding: 8px 12px; border-radius: 8px; font-size: 14px;
-            cursor: pointer; appearance: none;
+            color: var(--text-light); padding: 8px; border-radius: 50%;
+            cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
         }
 
-        /* 3. 呼吸燈狀態標籤 */
+        /* Hero Section */
+        .hero-section {
+            height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; position: relative; overflow: hidden;
+            padding-top: 80px;
+        }
+        
         .status-badge {
             display: inline-flex; align-items: center; gap: 8px;
             background: rgba(0, 255, 157, 0.1); border: 1px solid rgba(0, 255, 157, 0.3);
             padding: 5px 15px; border-radius: 20px; color: #00ff9d; font-size: 12px; margin-bottom: 20px;
         }
-        .status-dot { width: 8px; height: 8px; background: #00ff9d; border-radius: 50%; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0, 255, 157, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(0, 255, 157, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 255, 157, 0); } }
+        .status-dot { width: 8px; height: 8px; background: #00ff9d; border-radius: 50%; animation: pulse-green 1.5s infinite; }
+        @keyframes pulse-green { 0% { box-shadow: 0 0 0 0 rgba(0, 255, 157, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(0, 255, 157, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 255, 157, 0); } }
 
-        /* Hero Section */
-        .hero-section {
-            height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center; background: radial-gradient(circle at center top, #1a0f2b 0%, #000 70%);
-            position: relative; overflow: hidden;
-        }
-        .hero-content { z-index: 1; padding: 0 5%; }
-        .hero-content h1 {
-            font-size: clamp(3rem, 10vw, 5.5rem); font-weight: 700;
-            background: linear-gradient(45deg, var(--secondary-accent), var(--primary-accent));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            line-height: 1.1; margin-bottom: 20px;
-        }
-        .hero-content p { font-size: clamp(1rem, 3vw, 1.5rem); color: var(--text-dim); max-width: 800px; margin: 0 auto 40px; }
+        h1 { font-size: clamp(3rem, 10vw, 5rem); background: linear-gradient(45deg, var(--secondary-accent), var(--primary-accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1; margin-bottom: 20px; }
+        .hero-subtitle { font-size: clamp(1rem, 3vw, 1.3rem); color: var(--text-dim); max-width: 700px; margin-bottom: 40px; }
+
         .hero-cta {
-            background: linear-gradient(45deg, var(--secondary-accent), var(--primary-accent));
-            color: var(--text-light); padding: 15px 30px; border-radius: 50px;
-            text-decoration: none; font-size: 18px; font-weight: 700;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 0 15px rgba(0, 200, 255, 0.3);
+            background: var(--primary-accent); color: white; padding: 15px 40px; border-radius: 50px;
+            text-decoration: none; font-weight: 700; transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
         }
-        .hero-cta:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0, 200, 255, 0.5); }
+        .hero-cta:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(108, 92, 231, 0.5); }
 
-        /* Feature Section */
-        .features-section { padding: 100px 5%; text-align: center; }
-        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        /* Features */
+        .features-section { padding: 100px 5%; text-align: center; max-width: 1200px; margin: 0 auto; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 50px; }
         .feature-card {
             background: var(--card-bg); border: 1px solid var(--border-light);
-            border-radius: 20px; padding: 40px; text-align: left;
-            transition: transform 0.3s ease;
+            border-radius: 24px; padding: 40px; text-align: left;
         }
-        .feature-card:hover { transform: translateY(-10px); }
 
-        /* 4. FAQ 區塊樣式 */
-        .faq-section { padding: 100px 5%; max-width: 900px; margin: 0 auto; text-align: center; }
-        .faq-container { margin-top: 50px; }
+        /* FAQ */
+        .faq-section { padding: 100px 5%; max-width: 900px; margin: 0 auto; }
         .faq-item {
-            background: var(--card-bg); margin-bottom: 15px; border-radius: 15px;
-            border: 1px solid var(--border-light); overflow: hidden; transition: 0.3s;
+            background: var(--card-bg); margin-bottom: 15px; border-radius: 16px;
+            border: 1px solid var(--border-light); overflow: hidden;
         }
-        .faq-question {
-            padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
-            font-weight: 700; text-align: left;
-        }
-        .faq-answer {
-            padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease;
-            color: var(--text-dim); text-align: left;
-        }
-        .faq-item.active .faq-answer { max-height: 200px; padding-bottom: 20px; }
+        .faq-question { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; font-weight: 700; }
+        .faq-answer { padding: 0 20px; max-height: 0; overflow: hidden; transition: 0.3s ease; color: var(--text-dim); }
+        .faq-item.active .faq-answer { max-height: 150px; padding-bottom: 20px; }
 
-        /* Footer */
+        .fade-in { opacity: 0; transform: translateY(30px); transition: 1s all ease; }
+        .fade-in.active { opacity: 1; transform: translateY(0); }
+
         footer { padding: 50px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); }
     </style>
 </head>
 <body>
 
     <div class="progress-bar-container"><div id="myBar"></div></div>
-
     <canvas id="particleCanvas"></canvas>
 
     <nav class="navbar">
         <a href="index.html" class="nav-logo">RemoteEye</a>
-        <div class="nav-links">
-            <a href="index.html" id="nav_home">首頁</a>
-            <a href="download.html" id="nav_download">下載</a>
-            <a href="forum.html" id="nav_forum">論壇</a>
+        <div class="nav-right">
+            <div class="nav-links">
+                <a href="index.html">首頁</a>
+                <a href="download.html">下載</a>
+                <a href="forum.html">論壇</a>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()" title="切換主題">🌓</button>
+            <select class="lang-select" onchange="setLang(this.value)" style="background:transparent; color:var(--text-light); border:1px solid var(--border-light); border-radius:5px; padding: 2px 5px;">
+                <option value="zh">ZH</option>
+                <option value="en">EN</option>
+            </select>
         </div>
-        <select class="lang-select" onchange="setLang(this.value)">
-            <option value="zh">繁體中文</option>
-            <option value="en">English</option>
-        </select>
     </nav>
 
     <section class="hero-section">
-        <div class="hero-content fade-in">
-            <div class="status-badge">
-                <div class="status-dot"></div>
-                <span id="system_status">系統運作正常: V1.0.4</span>
-            </div>
-            <h1 id="hero_main_title">次世代遠端體驗</h1>
-            <p id="hero_subtitle">RemoteEye 提供無縫、安全且跨平台的協作解決方案。</p>
-            <a href="download.html" class="hero-cta" id="hero_cta_btn">立即體驗</a>
+        <div class="status-badge fade-in">
+            <div class="status-dot"></div>
+            <span>系統運作正常: V1.0.4</span>
         </div>
+        <h1 class="fade-in">次世代遠端體驗</h1>
+        <p class="hero-subtitle fade-in">RemoteEye 提供無縫、安全且跨平台的協作解決方案，讓距離不再是障礙。</p>
+        <a href="download.html" class="hero-cta fade-in">立即體驗</a>
     </section>
 
     <section class="features-section">
-        <h2 class="fade-in" id="features_title" style="margin-bottom: 50px; font-size: 3rem;">核心優勢</h2>
+        <h2 class="fade-in" style="font-size: 2.5rem;">核心優勢</h2>
         <div class="features-grid">
             <div class="feature-card fade-in">
-                <div class="icon" style="font-size: 40px; margin-bottom: 20px;">⚡</div>
-                <h3 id="feature1_title">極致效能</h3>
-                <p id="feature1_desc">採用革命性低延遲協議，確保流暢的遠端操作體驗。</p>
+                <div style="font-size: 40px; margin-bottom: 20px;">⚡</div>
+                <h3>極致效能</h3>
+                <p>採用革命性低延遲協議，確保流暢的遠端操作體驗。</p>
             </div>
             <div class="feature-card fade-in">
-                <div class="icon" style="font-size: 40px; margin-bottom: 20px;">🔒</div>
-                <h3 id="feature2_title">軍規加密</h3>
-                <p id="feature2_desc">端到端 AES-256 加密，全面保障您的資料安全與隱私。</p>
+                <div style="font-size: 40px; margin-bottom: 20px;">🔒</div>
+                <h3>軍規加密</h3>
+                <p>端到端 AES-256 加密，全面保障您的資料安全與隱私。</p>
             </div>
             <div class="feature-card fade-in">
-                <div class="icon" style="font-size: 40px; margin-bottom: 20px;">🌍</div>
-                <h3 id="feature3_title">無縫跨平台</h3>
-                <p id="feature3_desc">原生支援 Windows, macOS, Linux，隨時隨地連結。</p>
+                <div style="font-size: 40px; margin-bottom: 20px;">🌍</div>
+                <h3>無縫跨平台</h3>
+                <p>原生支援 Windows, macOS, Linux，隨時隨地連結您的設備。</p>
             </div>
         </div>
     </section>
 
     <section class="faq-section fade-in">
-        <h2 id="faq_title" style="font-size: 2.5rem;">常見問題</h2>
-        <div class="faq-container">
-            <div class="faq-item" onclick="toggleFaq(this)">
-                <div class="faq-question">RemoteEye 是免費的嗎？ <span>+</span></div>
-                <div class="faq-answer">是的，我們為個人用戶提供強大的免費基礎版本。</div>
-            </div>
-            <div class="faq-item" onclick="toggleFaq(this)">
-                <div class="faq-question">支援哪些操作系統？ <span>+</span></div>
-                <div class="faq-answer">目前原生支援 Windows 10/11, macOS Monterey+ 以及主流 Linux 發行版。</div>
-            </div>
+        <h2 style="text-align: center; margin-bottom: 40px;">常見問題</h2>
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">RemoteEye 是免費的嗎？ <span>+</span></div>
+            <div class="faq-answer">是的，我們為個人用戶提供強大的免費基礎版本。</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">支援哪些操作系統？ <span>+</span></div>
+            <div class="faq-answer">目前原生支援 Windows 10/11, macOS Monterey+ 以及主流 Linux 發行版。</div>
         </div>
     </section>
 
     <footer>
-        <p id="footer_copyright">© 2026 RemoteEye Technology. 版權所有。</p>
+        <p>© 2026 RemoteEye Technology. 版權所有。</p>
     </footer>
 
     <script>
-        // 1. 滾動進度條邏輯
-        window.onscroll = function() {
-            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        // 進度條邏輯
+        window.onscroll = () => {
+            let winScroll = document.documentElement.scrollTop;
             let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            let scrolled = (winScroll / height) * 100;
-            document.getElementById("myBar").style.width = scrolled + "%";
+            document.getElementById("myBar").style.width = (winScroll / height) * 100 + "%";
         };
 
-        // 2. FAQ 摺疊邏輯
-        function toggleFaq(element) {
-            element.classList.toggle('active');
-            const icon = element.querySelector('span');
-            icon.innerText = element.classList.contains('active') ? '-' : '+';
+        // 主題切換 (與下載頁同步)
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
         }
 
-        // 3. 粒子背景動畫
+        // 載入預設主題
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-mode');
+        }
+
+        // FAQ 摺疊
+        function toggleFaq(el) {
+            el.classList.toggle('active');
+            const span = el.querySelector('span');
+            span.innerText = el.classList.contains('active') ? '-' : '+';
+        }
+
+        // 粒子動畫
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
-        function initParticles() {
+        function init() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             particles = [];
             for(let i=0; i<60; i++) {
                 particles.push({
-                    x: Math.random() * canvas.width, y: Math.random() * canvas.height,
-                    vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5,
-                    size: Math.random() * 2
+                    x: Math.random()*canvas.width, y: Math.random()*canvas.height,
+                    vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5, size: 1.5
                 });
             }
         }
-        function drawParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#6c5ce7';
+        function draw() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--primary-accent');
             particles.forEach(p => {
                 p.x += p.vx; p.y += p.vy;
-                if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
-                if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                if(p.x<0 || p.x>canvas.width) p.vx*=-1;
+                if(p.y<0 || p.y>canvas.height) p.vy*=-1;
                 ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
             });
-            requestAnimationFrame(drawParticles);
+            requestAnimationFrame(draw);
         }
-        window.addEventListener('resize', initParticles);
-        initParticles(); drawParticles();
+        window.onresize = init; init(); draw();
 
-        // 4. 多國語言與滾動監測 (保留您原有的邏輯並優化)
-        const i18n = {
-            zh: { nav_home: "首頁", nav_download: "下載", nav_forum: "論壇", hero_main_title: "次世代遠端體驗", faq_title: "常見問題" },
-            en: { nav_home: "Home", nav_download: "Download", nav_forum: "Forum", hero_main_title: "Next-Gen Remote", faq_title: "FAQ" }
-        };
-
-        function setLang(lang) {
-            const elements = document.querySelectorAll('[id^="nav_"], [id^="hero_"], [id^="faq_"]');
-            elements.forEach(el => { if (i18n[lang][el.id]) el.innerText = i18n[lang][el.id]; });
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) entry.target.classList.add('active');
-                });
-            }, { threshold: 0.1 });
-            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-        });
+        // 滾動觀察者 (Fade In 動畫)
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
     </script>
 </body>
 </html>

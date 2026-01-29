@@ -14,10 +14,22 @@
             --text-dim: #a0a0a0;
             --card-bg: rgba(255, 255, 255, 0.05);
             --border-light: rgba(255, 255, 255, 0.1);
+            --nav-bg: rgba(0, 0, 0, 0.8);
             --success-green: #00ff9d;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        /* 淺色模式同步 */
+        body.light-mode {
+            --bg-dark: #f5f5f7;
+            --text-light: #1d1d1f;
+            --text-dim: #6e6e73;
+            --card-bg: #ffffff;
+            --border-light: rgba(0, 0, 0, 0.1);
+            --nav-bg: rgba(255, 255, 255, 0.8);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.3s ease, color 0.3s ease; }
+        
         body {
             font-family: 'Space Grotesk', sans-serif;
             background: var(--bg-dark);
@@ -26,78 +38,85 @@
             overflow-x: hidden;
         }
 
-        /* 1. 全局視覺組件 (進度條 & 粒子) */
+        /* 1. 全局視覺組件 */
         .progress-bar-container { position: fixed; top: 0; left: 0; width: 100%; height: 3px; z-index: 9999; }
         #myBar { height: 100%; width: 0%; background: linear-gradient(to right, var(--secondary-accent), var(--primary-accent)); }
         #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.3; pointer-events: none; }
 
-        /* 導航列 */
+        /* 導航列 (與 index/download 同步) */
         .navbar {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 5%; position: fixed; width: 100%; top: 0; z-index: 1000;
-            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px);
+            padding: 20px 5%; width: 100%; top: 0; z-index: 1000;
+            background: var(--nav-bg); backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border-light);
+            position: fixed;
         }
         .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
-        .nav-links { display: flex; gap: 30px; }
-        .nav-links a { color: var(--text-dim); text-decoration: none; transition: 0.3s; }
+        .nav-right { display: flex; align-items: center; gap: 20px; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 15px; font-weight: 500; }
         .nav-links a:hover { color: var(--text-light); }
+        
+        .theme-toggle {
+            background: var(--card-bg); border: 1px solid var(--border-light);
+            color: var(--text-light); padding: 8px; border-radius: 50%;
+            cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+        }
 
-        /* 論壇主體 */
+        /* 論壇內容區 */
         .forum-container { max-width: 1000px; margin: 120px auto 50px; padding: 0 5%; }
         
-        /* 標題與發帖按鈕 */
-        .forum-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; }
-        .forum-header h1 { font-size: 2.5rem; background: linear-gradient(45deg, #fff, var(--text-dim)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        
-        .new-post-btn {
-            background: var(--primary-accent); color: #fff; padding: 12px 25px; 
-            border-radius: 12px; text-decoration: none; font-weight: 700; transition: 0.3s;
-            border: none; cursor: pointer;
-        }
-        .new-post-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--primary-accent); }
+        .forum-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        .forum-header h1 { font-size: 2.5rem; background: linear-gradient(45deg, var(--secondary-accent), var(--primary-accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        /* 2. 熱門標籤區 */
-        .tags-container { display: flex; gap: 10px; margin-bottom: 30px; overflow-x: auto; padding-bottom: 10px; }
+        .new-post-btn {
+            background: var(--primary-accent); color: white; padding: 12px 25px; 
+            border-radius: 12px; font-weight: 700; border: none; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+        }
+        .new-post-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4); }
+
+        /* 標籤樣式 */
+        .tags-container { display: flex; gap: 10px; margin-bottom: 30px; overflow-x: auto; padding-bottom: 5px; }
         .tag {
             background: var(--card-bg); border: 1px solid var(--border-light);
-            padding: 6px 15px; border-radius: 20px; font-size: 13px; color: var(--text-dim);
-            white-space: nowrap; cursor: pointer; transition: 0.3s;
+            padding: 6px 16px; border-radius: 20px; font-size: 13px; color: var(--text-dim);
+            cursor: pointer; white-space: nowrap;
         }
-        .tag:hover, .tag.active { border-color: var(--secondary-accent); color: var(--secondary-accent); background: rgba(0, 188, 212, 0.1); }
+        .tag:hover, .tag.active { border-color: var(--secondary-accent); color: var(--secondary-accent); }
 
-        /* 3. 貼文列表 */
+        /* 貼文卡片優化 */
         .post-card {
             background: var(--card-bg); border: 1px solid var(--border-light);
-            border-radius: 16px; padding: 25px; margin-bottom: 20px;
-            transition: 0.3s; display: flex; justify-content: space-between; align-items: center;
+            border-radius: 20px; padding: 25px; margin-bottom: 20px;
+            display: flex; justify-content: space-between; align-items: center; transition: 0.3s;
         }
-        .post-card:hover { border-color: rgba(255,255,255,0.2); transform: translateX(5px); background: rgba(255,255,255,0.08); }
+        .post-card:hover { transform: scale(1.01); border-color: var(--primary-accent); }
         
-        .post-info h3 { font-size: 1.2rem; margin-bottom: 8px; color: var(--text-light); }
+        .post-info h3 { font-size: 1.25rem; margin-bottom: 8px; color: var(--text-light); }
         .post-meta { font-size: 13px; color: var(--text-dim); display: flex; gap: 15px; }
-        .post-status { color: var(--success-green); font-weight: bold; }
+        .post-status { color: var(--success-green); font-weight: bold; font-size: 12px; }
 
-        .post-stats { display: flex; gap: 20px; text-align: center; }
-        .stat-item { display: flex; flex-direction: column; }
-        .stat-num { font-weight: 700; color: var(--text-light); }
-        .stat-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; }
+        .post-stats { display: flex; gap: 20px; }
+        .stat-item { text-align: center; min-width: 50px; }
+        .stat-num { display: block; font-weight: 700; color: var(--text-light); }
+        .stat-label { font-size: 11px; color: var(--text-dim); }
 
-        /* 4. 模擬彈窗 (Modal) */
+        /* Modal 彈窗樣式同步 */
         .modal {
             display: none; position: fixed; z-index: 2000; top: 0; left: 0; 
-            width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
         }
         .modal-content {
-            background: #111; border: 1px solid var(--primary-accent);
-            width: 90%; max-width: 500px; margin: 10% auto; padding: 30px; border-radius: 20px;
+            background: var(--bg-dark); border: 1px solid var(--primary-accent);
+            width: 90%; max-width: 500px; margin: 10% auto; padding: 40px; border-radius: 24px;
         }
         .modal-content input, .modal-content textarea {
-            width: 100%; background: #000; border: 1px solid var(--border-light);
-            color: #fff; padding: 12px; margin-top: 15px; border-radius: 8px;
+            width: 100%; background: var(--card-bg); border: 1px solid var(--border-light);
+            color: var(--text-light); padding: 12px; margin-top: 15px; border-radius: 12px; outline: none;
         }
 
-        footer { padding: 40px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); font-size: 14px; }
+        footer { padding: 50px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); }
     </style>
 </head>
 <body>
@@ -107,21 +126,24 @@
 
     <nav class="navbar">
         <a href="index.html" class="nav-logo">RemoteEye</a>
-        <div class="nav-links">
-            <a href="index.html" id="nav_home">首頁</a>
-            <a href="download.html" id="nav_download">下載</a>
-            <a href="forum.html" id="nav_forum">論壇</a>
+        <div class="nav-right">
+            <div class="nav-links">
+                <a href="index.html">首頁</a>
+                <a href="download.html">下載</a>
+                <a href="forum.html" style="color: var(--secondary-accent);">論壇</a>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+            <select class="lang-select" style="background:transparent; color:var(--text-light); border:1px solid var(--border-light); border-radius:5px; padding: 2px 5px;">
+                <option value="zh">ZH</option>
+                <option value="en">EN</option>
+            </select>
         </div>
-        <select style="background:none; color:#fff; border:none; cursor:pointer;">
-            <option>繁體中文</option>
-            <option>English</option>
-        </select>
     </nav>
 
     <main class="forum-container">
         <div class="forum-header">
             <div>
-                <h1 id="forum_title">技術社群</h1>
+                <h1>技術社群</h1>
                 <p style="color: var(--text-dim);">與全球開發者討論遠端協作的未來</p>
             </div>
             <button class="new-post-btn" onclick="openModal()">+ 發布新話題</button>
@@ -133,7 +155,6 @@
             <div class="tag"># 功能建議</div>
             <div class="tag"># 教學文</div>
             <div class="tag"># 系統公告</div>
-            <div class="tag"># 使用心得</div>
         </div>
 
         <div id="post-list">
@@ -165,20 +186,6 @@
                     <div class="stat-item"><span class="stat-num">12</span><span class="stat-label">回覆</span></div>
                 </div>
             </div>
-
-            <div class="post-card">
-                <div class="post-info">
-                    <h3>建議增加「多人協作白板」功能</h3>
-                    <div class="post-meta">
-                        <span>設計師 @TechLink</span>
-                        <span>3 天前</span>
-                    </div>
-                </div>
-                <div class="post-stats">
-                    <div class="stat-item"><span class="stat-num">420</span><span class="stat-label">瀏覽</span></div>
-                    <div class="stat-item"><span class="stat-num">25</span><span class="stat-label">回覆</span></div>
-                </div>
-            </div>
         </div>
     </main>
 
@@ -187,9 +194,9 @@
             <h2 style="color: var(--secondary-accent);">發起新討論</h2>
             <input type="text" placeholder="話題標題">
             <textarea rows="5" placeholder="分享你的想法..."></textarea>
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <div style="display: flex; gap: 10px; margin-top: 25px;">
                 <button class="new-post-btn" style="flex:1" onclick="closeModal()">送出貼文</button>
-                <button class="new-post-btn" style="flex:1; background: #333;" onclick="closeModal()">取消</button>
+                <button class="new-post-btn" style="flex:1; background: var(--card-bg); color: var(--text-light);" onclick="closeModal()">取消</button>
             </div>
         </div>
     </div>
@@ -206,25 +213,37 @@
             document.getElementById("myBar").style.width = (winScroll / height) * 100 + "%";
         };
 
+        // 主題切換邏輯 (與全站同步)
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        }
+
+        // 載入預設主題
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-mode');
+        }
+
         // 彈窗控制
         function openModal() { document.getElementById('postModal').style.display = 'block'; }
         function closeModal() { document.getElementById('postModal').style.display = 'none'; }
 
-        // 粒子動畫 (簡約版)
+        // 粒子背景動畫
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let pts = [];
         function init() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             pts = [];
-            for(let i=0; i<40; i++) pts.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, v:Math.random()*0.5});
+            for(let i=0; i<50; i++) pts.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, v:Math.random()*0.5 + 0.2});
         }
         function draw() {
             ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = '#6c5ce7';
+            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--primary-accent');
             pts.forEach(p => {
                 p.y -= p.v; if(p.y < 0) p.y = canvas.height;
-                ctx.beginPath(); ctx.arc(p.x, p.y, 1, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(p.x, p.y, 1.2, 0, Math.PI*2); ctx.fill();
             });
             requestAnimationFrame(draw);
         }
