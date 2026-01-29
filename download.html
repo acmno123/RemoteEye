@@ -78,6 +78,10 @@
         .nav-links a:hover::after { width: 100%; }
         .nav-links a:hover { color: var(--text-light); }
         
+        /* 開發者連結樣式 */
+        .nav-links a.dev-link { color: var(--primary-accent); opacity: 0.8; }
+        .nav-links a.dev-link:hover { opacity: 1; }
+
         .theme-toggle {
             background: var(--card-bg); border: 1px solid var(--border-light);
             color: var(--text-light); padding: 8px; border-radius: 50%;
@@ -150,6 +154,8 @@
         .fade-in.active { opacity: 1; transform: translateY(0); }
 
         footer { padding: 60px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); width: 100%; }
+        footer a { color: var(--text-dim); text-decoration: none; margin: 0 10px; }
+        footer a:hover { color: var(--primary-accent); text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -167,6 +173,7 @@
                 <a href="index.html">首頁</a>
                 <a href="download.html" style="color: var(--secondary-accent);">下載</a>
                 <a href="forum.html">論壇</a>
+                <a href="developers.html" class="dev-link">開發者</a>
             </div>
             <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
         </div>
@@ -219,11 +226,15 @@
                 <h4 style="margin-bottom: 10px;">💬 User Forum</h4>
                 <p style="font-size: 13px; color: var(--text-dim);">獲取技術支援或功能建議</p>
             </a>
+            <a href="developers.html" class="community-card fade-in" style="border-color: var(--primary-accent);">
+                <h4 style="margin-bottom: 10px;">🛠 Dev Hub</h4>
+                <p style="font-size: 13px; color: var(--text-dim);">查看技術文件與 API 架構</p>
+            </a>
         </div>
     </section>
 
     <footer>
-        <p>© 2026 RemoteEye Technology. Powering the Future of Remote Work.</p>
+        <p>© 2026 RemoteEye Technology. <a href="developers.html">開發者中心</a> | Powering the Future of Remote Work.</p>
     </footer>
 
     <script>
@@ -259,7 +270,6 @@
             }
         }
 
-        // --- [重要修正] 指向 GitHub Releases 的最新下載路徑 ---
         const GITHUB_USER = "acmno123";
         const REPO_NAME = "RemoteEye";
         const GITHUB_BASE = `https://github.com/${GITHUB_USER}/${REPO_NAME}/releases/latest/download`;
@@ -270,7 +280,6 @@
             'Linux': `${GITHUB_BASE}/RemoteEye.AppImage`
         };
 
-        // --- [優化] 處理下載函數 ---
         function handleDownload(btn, platform) {
             const originalText = btn.innerText;
             const downloadUrl = DOWNLOAD_LINKS[platform];
@@ -279,7 +288,6 @@
             btn.style.opacity = "0.7";
             btn.style.pointerEvents = "none";
 
-            // 直接觸發 GitHub 直連下載
             window.location.href = downloadUrl;
 
             setTimeout(() => {
@@ -297,21 +305,18 @@
             }, 1000);
         }
 
-        // 主題切換
         function toggleTheme() {
             document.body.classList.toggle('light-mode');
             localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
         }
         if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');
 
-        // 滾動進度條
         window.onscroll = () => {
             let winScroll = document.documentElement.scrollTop;
             let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
             document.getElementById("myBar").style.width = (winScroll / height) * 100 + "%";
         };
 
-        // 粒子動畫
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -346,7 +351,6 @@
         }
         window.onresize = init; init(); draw();
 
-        // 滾動動畫
         const observer = new IntersectionObserver(e => e.forEach(entry => {
             if (entry.isIntersecting) entry.target.classList.add('active');
         }), { threshold: 0.1 });
@@ -354,7 +358,6 @@
         
         window.onload = detectOS;
 
-        // 3D 視差
         document.querySelectorAll('.download-card').forEach(card => {
             card.addEventListener('mousemove', e => {
                 const rect = card.getBoundingClientRect();

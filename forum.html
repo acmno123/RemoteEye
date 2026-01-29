@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RemoteEye Community | Theme & Navigation</title>
+    <title>RemoteEye Community | Forum</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* 深色模式變數 */
             --bg-dark: #000000;
             --primary-accent: #6c5ce7;
             --secondary-accent: #00bcd4;
@@ -18,7 +17,6 @@
             --nav-bg: rgba(0, 0, 0, 0.8);
         }
 
-        /* 淺色模式變數 */
         body.light-mode {
             --bg-dark: #f5f5f7;
             --text-light: #1d1d1f;
@@ -30,43 +28,48 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.4s ease, color 0.4s ease; }
         
-        body { cursor: none !important; font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--text-light); overflow-x: hidden; }
+        body { cursor: none !important; font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--text-light); overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; }
         
         /* 科技游標 */
         #custom-cursor { width: 25px; height: 25px; border: 1.5px solid var(--secondary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transition: transform 0.1s; transform: translate(-50%, -50%); }
         #cursor-dot { width: 4px; height: 4px; background: var(--primary-accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10001; transform: translate(-50%, -50%); }
 
-        /* 導航列 - 已更新佈局 */
+        /* 導航列 */
         .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; width: 100%; position: fixed; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border-light); }
-        .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; }
+        .nav-logo { font-size: 24px; font-weight: 700; color: var(--secondary-accent); text-decoration: none; letter-spacing: -1px; }
         
-        /* 右側功能區塊容器 */
         .nav-right-group { display: flex; align-items: center; gap: 30px; }
-        
         .nav-links { display: flex; gap: 20px; align-items: center; }
-        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 14px; transition: 0.3s; }
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 14px; font-weight: 500; transition: 0.3s; position: relative; }
         .nav-links a:hover, .nav-links a.active { color: var(--secondary-accent); }
+        .nav-links a.dev-link { color: var(--primary-accent); opacity: 0.8; }
+        .nav-links a.dev-link:hover { opacity: 1; }
 
-        /* 使用者設定分區 */
         .user-settings { display: flex; align-items: center; gap: 15px; border-left: 1px solid var(--border-light); padding-left: 20px; }
 
-        /* 主題切換按鈕 */
         .theme-toggle { background: var(--card-bg); border: 1px solid var(--border-light); color: var(--text-light); padding: 8px; border-radius: 50%; cursor: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
 
-        .forum-container { max-width: 900px; margin: 120px auto; padding: 0 5%; }
+        /* 內容區 */
+        .forum-container { max-width: 900px; margin: 120px auto 60px; padding: 0 5%; flex-grow: 1; width: 100%; }
         
-        /* 貼文卡片與輸入框 */
-        .post-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 24px; padding: 30px; margin-bottom: 25px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .post-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 24px; padding: 30px; margin-bottom: 25px; position: relative; backdrop-filter: blur(10px); }
         .custom-input { width: 100%; background: var(--card-bg); border: 1px solid var(--border-light); color: var(--text-light); padding: 12px 20px; border-radius: 12px; outline: none; font-family: inherit; margin-bottom: 10px; }
-        .action-btn { background: var(--primary-accent); color: white; border: none; padding: 10px 25px; border-radius: 50px; font-weight: 600; cursor: none; }
+        .action-btn { background: var(--primary-accent); color: white; border: none; padding: 10px 25px; border-radius: 50px; font-weight: 600; cursor: none; transition: 0.3s; }
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4); }
 
-        .action-link { background: none; border: none; color: var(--text-dim); font-size: 14px; cursor: none; margin-right: 15px; }
+        .action-link { background: none; border: none; color: var(--text-dim); font-size: 14px; cursor: none; margin-right: 15px; transition: 0.2s; }
+        .action-link:hover { color: var(--text-light); }
+        
         .reply-section { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-light); display: none; }
-        .reply-item { font-size: 14px; margin-bottom: 12px; color: var(--text-dim); background: rgba(100,100,100,0.05); padding: 12px; border-radius: 12px; }
+        .reply-item { font-size: 14px; margin-bottom: 12px; color: var(--text-dim); background: rgba(100,100,100,0.05); padding: 12px; border-radius: 12px; border-left: 3px solid var(--primary-accent); }
 
         /* Modal */
         .modal { display: none; position: fixed; z-index: 2000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
-        .modal-content { background: var(--bg-dark); border: 1px solid var(--primary-accent); width: 90%; max-width: 500px; margin: 100px auto; padding: 40px; border-radius: 30px; }
+        .modal-content { background: var(--bg-dark); border: 1px solid var(--primary-accent); width: 90%; max-width: 500px; margin: 100px auto; padding: 40px; border-radius: 30px; box-shadow: 0 0 50px rgba(108, 92, 231, 0.2); }
+
+        footer { padding: 40px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); font-size: 14px; }
+        footer a { color: var(--text-dim); text-decoration: none; margin: 0 10px; }
+        footer a:hover { color: var(--secondary-accent); }
     </style>
 </head>
 <body>
@@ -82,6 +85,7 @@
                 <a href="index.html">首頁</a>
                 <a href="download.html">下載</a>
                 <a href="forum.html" class="active">論壇</a>
+                <a href="developers.html" class="dev-link">開發者</a>
             </div>
             
             <div class="user-settings">
@@ -93,7 +97,10 @@
 
     <main class="forum-container">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
-            <h1 style="font-size: 2.5rem; letter-spacing: -1px;">技術社群</h1>
+            <div>
+                <h1 style="font-size: 2.5rem; letter-spacing: -1px; background: linear-gradient(90deg, var(--text-light), var(--secondary-accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">技術社群</h1>
+                <p style="color: var(--text-dim); margin-top: 5px;">分享靈感、解決問題與功能提案</p>
+            </div>
             <button class="action-btn" onclick="openModal()">+ 發起話題</button>
         </div>
         <div id="post-list"></div>
@@ -103,16 +110,20 @@
         <div class="modal-content">
             <h2 style="margin-bottom: 20px;">發布話題</h2>
             <input type="text" id="post-title" class="custom-input" placeholder="話題標題">
-            <textarea id="post-text" class="custom-input" style="height:120px; border-radius:20px;" placeholder="內容..."></textarea>
+            <textarea id="post-text" class="custom-input" style="height:120px; border-radius:20px;" placeholder="你想討論什麼？"></textarea>
             <button class="action-btn" style="width:100%;" onclick="createNewPost()">發布</button>
-            <button onclick="closeModal()" style="width:100%; background:none; border:none; color:var(--text-dim); margin-top:15px;">取消</button>
+            <button onclick="closeModal()" style="width:100%; background:none; border:none; color:var(--text-dim); margin-top:15px; cursor: none;">取消</button>
         </div>
     </div>
+
+    <footer>
+        <p>© 2026 RemoteEye Technology. <a href="developers.html">開發者中心</a> | <a href="https://github.com/acmno123/RemoteEye">GitHub</a></p>
+    </footer>
 
     <script>
         // --- 核心資料邏輯 ---
         let posts = JSON.parse(localStorage.getItem('re_posts')) || [
-            { id: 1, title: "RemoteEye V1.0 正式上線", content: "歡迎大家下載體驗並回報問題！", author: "官方", likes: 12, replies: [] }
+            { id: 1, title: "RemoteEye V1.0 正式上線", content: "歡迎大家下載體驗並回報問題！我們致力於打造最流暢的遠端協作工具。", author: "官方團隊", likes: 12, replies: [{user: "系統管理員", text: "歡迎提出任何建議！"}] }
         ];
         
         function saveToStorage() {
@@ -126,13 +137,17 @@
             posts.forEach(post => {
                 const postHtml = `
                     <div class="post-card">
-                        <h3 style="margin-bottom: 10px;">${post.title}</h3>
-                        <p style="color: var(--text-dim); font-size: 15px;">${post.content}</p>
-                        <div style="margin-top: 15px; font-size: 12px; color: var(--primary-accent); font-weight:bold;">👤 ${post.author}</div>
-                        <div style="margin-top: 20px; display:flex; gap:15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <h3 style="margin-bottom: 10px;">${post.title}</h3>
+                            <button class="action-link" style="color:#ff4d4d; margin:0;" onclick="deletePost(${post.id})">🗑️</button>
+                        </div>
+                        <p style="color: var(--text-dim); font-size: 15px; line-height: 1.6;">${post.content}</p>
+                        <div style="margin-top: 15px; font-size: 12px; color: var(--primary-accent); font-weight:bold; display: flex; align-items: center; gap: 5px;">
+                            <span>👤</span> ${post.author}
+                        </div>
+                        <div style="margin-top: 20px; display:flex; gap:20px; border-top: 1px solid var(--border-light); padding-top: 15px;">
                             <button class="action-link" onclick="likePost(${post.id})">❤️ ${post.likes}</button>
                             <button class="action-link" onclick="toggleReply(${post.id})">💬 ${post.replies.length} 回覆</button>
-                            <button class="action-link" style="color:#ff4d4d" onclick="deletePost(${post.id})">🗑️ 刪除</button>
                         </div>
                         <div class="reply-section" id="rep-sec-${post.id}">
                             <div id="rep-list-${post.id}">
@@ -158,23 +173,31 @@
         function createNewPost() {
             const title = document.getElementById('post-title').value;
             const text = document.getElementById('post-text').value;
+            const author = document.getElementById('global-username').value || "匿名訪客";
             if(!title || !text) return;
-            posts.unshift({ id: Date.now(), title, content: text, author: document.getElementById('global-username').value, likes: 0, replies: [] });
-            renderPosts(); closeModal();
+            posts.unshift({ id: Date.now(), title, content: text, author: author, likes: 0, replies: [] });
+            renderPosts(); 
+            closeModal();
+            // 清空輸入
+            document.getElementById('post-title').value = '';
+            document.getElementById('post-text').value = '';
         }
 
         function deletePost(id) {
-            if(confirm("確定刪除？")) { posts = posts.filter(p => p.id !== id); renderPosts(); }
+            if(confirm("確定要刪除這條話題嗎？")) { posts = posts.filter(p => p.id !== id); renderPosts(); }
         }
 
         function likePost(id) {
-            posts.find(p => p.id === id).likes++; renderPosts();
+            const post = posts.find(p => p.id === id);
+            post.likes++; 
+            renderPosts();
         }
 
         function addReply(id, btn) {
             const input = btn.previousElementSibling;
+            const author = document.getElementById('global-username').value || "匿名訪客";
             if(!input.value) return;
-            posts.find(p => p.id === id).replies.push({ user: document.getElementById('global-username').value, text: input.value });
+            posts.find(p => p.id === id).replies.push({ user: author, text: input.value });
             renderPosts();
             document.getElementById(`rep-sec-${id}`).style.display = 'block';
         }
@@ -184,12 +207,11 @@
             el.style.display = (el.style.display === 'block') ? 'none' : 'block';
         }
 
-        // --- 初始化設定 ---
         function saveName() { saveToStorage(); }
         function openModal() { document.getElementById('postModal').style.display = 'block'; }
         function closeModal() { document.getElementById('postModal').style.display = 'none'; }
 
-        // 讀取名字與主題
+        // 讀取狀態
         document.getElementById('global-username').value = localStorage.getItem('re_user') || "訪客";
         if(localStorage.getItem('re_theme') === 'light') document.body.classList.add('light-mode');
         
@@ -199,6 +221,12 @@
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
             dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';
+        });
+
+        // 懸停縮放
+        document.querySelectorAll('a, button, input, textarea').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.style.transform = 'translate(-50%, -50%) scale(1.5)');
+            el.addEventListener('mouseleave', () => cursor.style.transform = 'translate(-50%, -50%) scale(1)');
         });
 
         renderPosts();

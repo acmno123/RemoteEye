@@ -26,8 +26,8 @@
             --nav-bg: rgba(255, 255, 255, 0.8);
         }
 
-        /* --- [新增] 科技游標 CSS --- */
-        body { cursor: none !important; } /* 隱藏原生滑鼠 */
+        /* 科技游標 CSS */
+        body { cursor: none !important; }
         a, button, .tag, .feature-card, .faq-item, .theme-toggle { cursor: none !important; }
 
         #custom-cursor {
@@ -80,6 +80,10 @@
         .nav-links a:hover::after { width: 100%; }
         .nav-links a:hover { color: var(--text-light); }
         
+        /* 特別強調開發者連結 */
+        .nav-links a.dev-link { color: var(--primary-accent); opacity: 0.8; }
+        .nav-links a.dev-link:hover { opacity: 1; }
+
         .theme-toggle {
             background: var(--card-bg); border: 1px solid var(--border-light);
             color: var(--text-light); padding: 8px; border-radius: 50%;
@@ -97,7 +101,6 @@
         }
         @keyframes shine { to { background-position: 200% center; } }
 
-        /* --- [新增] 延遲儀表樣式 --- */
         .status-badge {
             display: inline-flex; align-items: center; gap: 8px;
             background: rgba(0, 255, 157, 0.1); border: 1px solid rgba(0, 255, 157, 0.3);
@@ -143,6 +146,8 @@
         .fade-in.active { opacity: 1; transform: translateY(0); }
 
         footer { padding: 60px 5%; text-align: center; border-top: 1px solid var(--border-light); color: var(--text-dim); font-size: 0.9rem; }
+        footer a { color: var(--text-dim); text-decoration: none; margin: 0 10px; }
+        footer a:hover { color: var(--primary-accent); text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -160,6 +165,7 @@
                 <a href="index.html">首頁</a>
                 <a href="download.html">下載</a>
                 <a href="forum.html">論壇</a>
+                <a href="developers.html" class="dev-link">開發者</a>
             </div>
             <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
         </div>
@@ -210,11 +216,11 @@
     </section>
 
     <footer>
-        <p>© 2026 RemoteEye Technology. Made with ❤️ for a connected world.</p>
+        <p>© 2026 RemoteEye Technology. <a href="developers.html">開發者中心</a> | Made with ❤️ for a connected world.</p>
     </footer>
 
     <script>
-        // --- [新增] 科技游標控制 ---
+        // 科技游標控制
         const cursor = document.getElementById('custom-cursor');
         const dot = document.getElementById('cursor-dot');
         
@@ -225,16 +231,16 @@
             dot.style.top = e.clientY + 'px';
         });
 
-        // 游標碰到連結時放大
         document.querySelectorAll('a, button, .faq-item, .feature-card').forEach(el => {
             el.addEventListener('mouseenter', () => cursor.style.transform = 'translate(-50%, -50%) scale(1.5)');
             el.addEventListener('mouseleave', () => cursor.style.transform = 'translate(-50%, -50%) scale(1)');
         });
 
-        // --- [新增] 動態模擬延遲儀表 ---
+        // 動態模擬延遲儀表
         setInterval(() => {
             const pingVal = Math.floor(Math.random() * 5) + 12;
-            document.getElementById('ping').innerText = pingVal;
+            const pingEl = document.getElementById('ping');
+            if(pingEl) pingEl.innerText = pingVal;
         }, 2500);
 
         // 進度條
