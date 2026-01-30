@@ -3,7 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>RemoteEye Global | 跨越國界的毫秒級連線</title>
+    <meta name="description" content="RemoteEye Global: 專為下一代協作而生的超低延遲 P2P 隧道技術。將延遲降至物理極限，數據僅在您的裝置間流動。">
+    <meta name="keywords" content="RemoteEye, 遠端桌面, P2P 連線, 超低延遲, 加密隧道, 協作工具, 毫秒連線">
+    <meta name="author" content="RemoteEye Technology Global">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://你的網址.com/">
+    <meta property="og:title" content="RemoteEye Global | ULTRALOW LATENCY.">
+    <meta property="og:description" content="基於加密 P2P 隧道技術，實現毫秒級連線。體驗超越國界的同步協作。">
+    <meta property="og:image" content="https://你的網址.com/og-image.jpg">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="RemoteEye Global | 跨越國界的連線">
+    <meta name="twitter:description" content="為下一代協作而生。RemoteEye 將延遲降至物理極限。">
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -179,12 +196,12 @@
             if(logBox.children.length > 8) logBox.lastChild.remove();
         }, 2000);
 
-        // 5. GitHub Stars (保持模擬數據或真實 API)
+        // 5. GitHub Stars
         async function fetchStars() {
             try {
                 const res = await fetch('https://api.github.com/repos/acmno123/RemoteEye');
                 const data = await res.json();
-                document.getElementById('star-count').innerText = data.stargazers_count || '1.2k';
+                // 這裡你可以根據需要更新特定的 DOM 元素
             } catch { /* 靜默處理 */ }
         }
         fetchStars();
